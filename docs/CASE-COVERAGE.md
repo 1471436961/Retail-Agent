@@ -2,7 +2,7 @@
 
 日期：2026-09-29。关联 [实施计划](E:/Retail-Agent/docs/IMPLEMENTATION-PLAN.md) 与 [业务规则台账](E:/Retail-Agent/docs/POLICY-REGISTER.md)。
 
-来源：[零售服务 134 项公开案例](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1)。下列 ID 为原文件的 0–133；T-001 对应 ID 0。历史 `case_file_XX.md` 不是这组公开案例 ID。
+来源：[零售服务 134 项公开案例](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1)。下列 ID 为原文件的 0–133；T-001 对应 ID 0。历史 `case_file_XX.md` 不是这组公开案例 ID。
 
 **状态说明**：已完成逐项需求阅读与结果标签分类；未实现这些业务，未运行这 134 项远程评测。逐项原子要求、规则、API、具体测试函数的完整追踪是 M0/M6 的待交付物。当前任务仍为 t1，`case_ids: null` 不代表获准运行全部案例。
 
@@ -43,7 +43,7 @@
 | 金额与进度沟通 | 16、19、28、46、47、95、116–118、124、127 | MO-01、RF-01/02 | 原价、差价、退款、补款、跨单合计分清；申请不等于到账 | M4–M6 |
 | 不支持与自助边界 | 39、50、62、63、130–133 | BN-01、HO-01 | 不下单、不加卡、不改邮箱、不减数量、不恢复取消；按需要真实转人工 | M4–M6 |
 
-选定原文定位：[ID 5](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:82)、[ID 19](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:282)、[ID 25](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:374)、[ID 33](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:495)、[ID 105](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1602)、[ID 120](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1824)、[ID 125](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1898)、[ID 130](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1972)。
+选定原文定位：[ID 5](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:82)、[ID 19](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:282)、[ID 25](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:374)、[ID 33](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:495)、[ID 105](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1602)、[ID 120](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1824)、[ID 125](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1898)、[ID 130](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md:1972)。
 
 ## 3. 建议本地测试批次
 

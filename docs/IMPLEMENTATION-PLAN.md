@@ -31,7 +31,7 @@
 | 方面 | 当前事实 | 实施含义 |
 |---|---|---|
 | 项目位置 | `E:\Retail-Agent` | 代码、开发测试及派生项目文档放在这里 |
-| 原始材料 | `E:\enterprise-ai-materials`；解压资料在 `extracted\materials` | 保持仓库外；运行时不读取本机这个路径 |
+| 原始材料 | `E:\enterprise-ai-materials\retail_plus`；解压资料在 `extracted\materials` | 保持仓库外；运行时不读取本机这个路径 |
 | 凭证 | `E:\Enterprise-AI.json` | 保持仓库外；本计划不读取内容，不复制到代码或文档 |
 | 绑定 | `5147314e-f2da-4bac-924a-e2ad95e647e4` | 不替换、不重新绑定 |
 | 仓库/分支 | `1471436961/retail-agent` / `main` | 不擅自改评测分支 |

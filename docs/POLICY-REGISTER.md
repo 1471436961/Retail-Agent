@@ -4,35 +4,35 @@
 
 ## 1. 证据使用方法
 
-原始材料保持在 `E:\enterprise-ai-materials`。以下链接指向原件，ZIP 内成员以文字注明；开发不需要把原包复制进仓库。邮件必须阅读已解码正文及往来时间线，会议必须区分讨论、否决和最终决定，Slack 需去重并按裁决时间追踪。
+原始材料保持在 `E:\enterprise-ai-materials\retail_plus`。以下链接指向原件，ZIP 内成员以文字注明；开发不需要把原包复制进仓库。邮件必须阅读已解码正文及往来时间线，会议必须区分讨论、否决和最终决定，Slack 需去重并按裁决时间追踪。
 
 | 来源编号 | 原始来源 | 用途及边界 |
 |---|---|---|
-| S01 | [身份 intake](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/intake_form.md) | 只采纳 Confirmed pilot decision；Proposed/TBD 不构成授权 |
-| S02 | [Slack 导出](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/workspace_export.json) | 取消原因、退款去向、数量/拆单、邮箱规则的日期裁决；不能把历史讨论全部累加 |
-| S03 | [确认与 QA 会议](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/meeting_transcript_01.vtt) | 2026-05-28，所有相关记录变更的复述、确认、客户改口与一次性提交 |
-| S04 | [身份与服务会议](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/meeting_transcript_03.vtt) | 2026-05-28，身份失败边界与不支持操作的处理 |
-| S05 | [当前流程总图 Frame 1](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/process_map_02.png) | 图标注更新 2026-07-28；状态准入、现行/旧规则区分 |
-| S06 | [取消 Frame 2](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/process_map_03.png) | 原因、复述、明确确认、逐笔原路退款与时效 |
-| S07 | [地址/支付 Frame 3](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/process_map_05.png) | 完整地址回读；已有单一支付方式、全额覆盖、先扣后退 |
-| S08 | [商品修改 Frame 4](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/process_map_01.png) | 完整清单、一单一次、最后补充询问与等待、修改后锁单 |
-| S09 | [决策与待议 Frame 5](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/process_map_04.png) | 审核历史；parked 项是未批准想法，不是额外操作权限 |
-| S10 | [QA 培训 PDF](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/slide_deck.pdf) | 25 页，修订 2026-06-12；第 3 页说明标签，第 5/8/10/13 页为现行行为卡，第 25 页说明各规则归属 |
-| S11 | [取消账务邮件](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/email_06.eml) | 后端取消与退款记录语义；不授权 Agent 自行写账本 |
-| S12 | [逐 charge 退款邮件](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/email_11.eml) | 2026-04-16 裁决，用逐笔原金额、原支付方式替代 3 月净额记账 |
-| S13 | [退款时效更新](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/email_12.eml) | 4 月裁决定于 5 月培训版采用 3–6 工作日，替代旧 6–9 工作日 |
-| S14 | [支付切换退款时效](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/email_07.eml) | 切换退款适用同一支付渠道时效，不另设等发货再退款 |
-| S15 | [支付切换状态](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/email_08.eml) | 成功切换后仍是 pending，不人为推进履约 |
-| S16 | [先扣后退](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/email_09.eml) | 新方式整单扣款成功才退旧款；明确拒付时不改变订单 |
-| S17 | [系统导出 ZIP](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/system_export.zip) | `policy_contracts.json` 中 active/published/production、effective 2026-05-29 的 CONTRACT-1001/1002/1003；其他合同须看范围，不能全部当订单权限 |
-| S18 | [历史记录接口 ZIP](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/api_contract.zip) | `record_contract_notes.md` 为 2026-06-12 的 Care Record 合同；金额精度等语义有用，字段及 REST 路径不能覆盖教学 API |
-| S19 | [商品修改帮助](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/screenshot_16.png) | 具体 item 与完整规格选择，不能按名称相似替换 |
-| S20 | [退货帮助](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/screenshot_46.png) | 退货整单提交一次、不能随后追加，使用原订单成交信息 |
-| S21 | [换货帮助](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/screenshot_54.png) | 同产品可用规格、选中具体组合并核实 |
-| S22 | [选购约束帮助](E:/enterprise-ai-materials/extracted/materials/uploaded_materials/screenshot_57.png) | 硬约束、偏好和回退需区分；规格价格不能混用 |
+| S01 | [身份 intake](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/intake_form.md) | 只采纳 Confirmed pilot decision；Proposed/TBD 不构成授权 |
+| S02 | [Slack 导出](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/workspace_export.json) | 取消原因、退款去向、数量/拆单、邮箱规则的日期裁决；不能把历史讨论全部累加 |
+| S03 | [确认与 QA 会议](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/meeting_transcript_01.vtt) | 2026-05-28，所有相关记录变更的复述、确认、客户改口与一次性提交 |
+| S04 | [身份与服务会议](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/meeting_transcript_03.vtt) | 2026-05-28，身份失败边界与不支持操作的处理 |
+| S05 | [当前流程总图 Frame 1](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/process_map_02.png) | 图标注更新 2026-07-28；状态准入、现行/旧规则区分 |
+| S06 | [取消 Frame 2](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/process_map_03.png) | 原因、复述、明确确认、逐笔原路退款与时效 |
+| S07 | [地址/支付 Frame 3](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/process_map_05.png) | 完整地址回读；已有单一支付方式、全额覆盖、先扣后退 |
+| S08 | [商品修改 Frame 4](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/process_map_01.png) | 完整清单、一单一次、最后补充询问与等待、修改后锁单 |
+| S09 | [决策与待议 Frame 5](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/process_map_04.png) | 审核历史；parked 项是未批准想法，不是额外操作权限 |
+| S10 | [QA 培训 PDF](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/slide_deck.pdf) | 25 页，修订 2026-06-12；第 3 页说明标签，第 5/8/10/13 页为现行行为卡，第 25 页说明各规则归属 |
+| S11 | [取消账务邮件](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/email_06.eml) | 后端取消与退款记录语义；不授权 Agent 自行写账本 |
+| S12 | [逐 charge 退款邮件](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/email_11.eml) | 2026-04-16 裁决，用逐笔原金额、原支付方式替代 3 月净额记账 |
+| S13 | [退款时效更新](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/email_12.eml) | 4 月裁决定于 5 月培训版采用 3–6 工作日，替代旧 6–9 工作日 |
+| S14 | [支付切换退款时效](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/email_07.eml) | 切换退款适用同一支付渠道时效，不另设等发货再退款 |
+| S15 | [支付切换状态](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/email_08.eml) | 成功切换后仍是 pending，不人为推进履约 |
+| S16 | [先扣后退](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/email_09.eml) | 新方式整单扣款成功才退旧款；明确拒付时不改变订单 |
+| S17 | [系统导出 ZIP](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/system_export.zip) | `policy_contracts.json` 中 active/published/production、effective 2026-05-29 的 CONTRACT-1001/1002/1003；其他合同须看范围，不能全部当订单权限 |
+| S18 | [历史记录接口 ZIP](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/api_contract.zip) | `record_contract_notes.md` 为 2026-06-12 的 Care Record 合同；金额精度等语义有用，字段及 REST 路径不能覆盖教学 API |
+| S19 | [商品修改帮助](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/screenshot_16.png) | 具体 item 与完整规格选择，不能按名称相似替换 |
+| S20 | [退货帮助](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/screenshot_46.png) | 退货整单提交一次、不能随后追加，使用原订单成交信息 |
+| S21 | [换货帮助](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/screenshot_54.png) | 同产品可用规格、选中具体组合并核实 |
+| S22 | [选购约束帮助](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/screenshot_57.png) | 硬约束、偏好和回退需区分；规格价格不能混用 |
 | S23 | [教学说明](E:/Retail-Agent/materials/CLASSROOM.md) / [教学 OpenAPI](E:/Retail-Agent/materials/client_api/openapi.yaml) | 真实调用字段、已开放能力、状态码与响应行为；适配器以此为准 |
 | S24 | [工具/API 契约](E:/Retail-Agent/materials/framework/client_api_contract.md) / [Agent 契约](E:/Retail-Agent/materials/framework/agent_contract.md) | 重放、重试、会话上下文、轮次协议和模型能力 |
-| S25 | [公开案例](E:/enterprise-ai-materials/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md) | 134 个客户需求，尤其“业务要求”里的后续改口和追加；不包含可编码的后台参考答案 |
+| S25 | [公开案例](E:/enterprise-ai-materials/retail_plus/test-cases-5147314e-f2da-4bac-924a-e2ad95e647e4-zh.md) | 134 个客户需求，尤其“业务要求”里的后续改口和追加；不包含可编码的后台参考答案 |
 
 ## 2. 规则登记
 
