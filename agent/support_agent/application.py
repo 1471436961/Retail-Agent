@@ -1,58 +1,40 @@
-"""Turn orchestration; business rules and API transport remain separate."""
+"""Thin tau2 adapter around the platform-independent turn reducer."""
 
-from support_agent.domain.customer import customer_reply, find_customer_id, find_email
-from support_agent.config import DOMAIN
+from support_agent.protocol import ToolOutcome, TurnInput
 from support_agent.state import initial_state
+from support_agent.turns import advance
 from tau2.data_model.message import AssistantMessage, MultiToolMessage, ToolCall
 
 
 class CustomerAgent:
     """Deterministic t1 lookup example, not a complete p1/t2 business solution."""
 
+    def __init__(self, context=None):
+        # Runtime capabilities are instance-local, never persisted in JSON state.
+        self.context = context
+
     def get_init_state(self, message_history=None):
-        """Start an independent session. This example does not replay history."""
-        return initial_state()
+        return initial_state(message_history)
 
     def generate_next_message(self, message, state):
-        """Consume a user/tool message and return a reply plus serializable state."""
-        next_state = {**state, "turn": state["turn"] + 1}
+        """Convert one platform message and return exactly text or tool calls."""
         if isinstance(message, MultiToolMessage):
-            pending = state["pending_call_id"]
-            result = (
-                next(
-                    (item for item in message.tool_messages if item.id == pending),
-                    None,
-                )
-                if pending
-                else None
+            turn = TurnInput(
+                kind="tools",
+                outcomes=tuple(
+                    ToolOutcome(id=item.id, content=item.content, error=bool(item.error))
+                    for item in message.tool_messages
+                ),
             )
-            next_state["pending_call_id"] = None
-            text = (
-                customer_reply(result.content, result.error)
-                if result
-                else "No matching customer lookup result was received. Please try again."
-            )
-            return AssistantMessage(role="assistant", content=text), next_state
-        customer_id = find_customer_id(message.content or "") or state["customer_id"]
-        email = find_email(message.content or "")
-        next_state["customer_id"] = customer_id
-        if DOMAIN == "retail_plus" and not email:
-            return AssistantMessage(role="assistant", content="Please provide your email to verify your identity before I access your profile. A customer ID alone is not verification."), next_state
-        if not customer_id and DOMAIN != "retail_plus":
-            return AssistantMessage(
-                role="assistant",
-                content="This example supports customer lookup. Please provide your customer ID.",
-            ), next_state
-        call_id = f"lookup-{next_state['turn']}"
-        next_state.update(customer_id=customer_id, pending_call_id=call_id)
-        return AssistantMessage(
-            role="assistant",
-            tool_calls=[
-                ToolCall(
-                    id=call_id,
-                    name="lookup_customer",
-                    arguments={"customer_id": customer_id or "", "email": email or ""},
-                    requestor="assistant",
-                )
-            ],
-        ), next_state
+        else:
+            if getattr(message, "role", None) != "user":
+                raise ValueError("Unsupported platform message: expected user or multi-tool results")
+            turn = TurnInput(kind="user", content=message.content or "")
+        decision, next_state = advance(turn, state)
+        if decision.calls:
+            calls = [
+                ToolCall(id=call.id, name=call.name, arguments=call.arguments, requestor="assistant")
+                for call in decision.calls
+            ]
+            return AssistantMessage(role="assistant", tool_calls=calls), next_state
+        return AssistantMessage(role="assistant", content=decision.text), next_state
