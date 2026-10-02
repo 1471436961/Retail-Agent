@@ -9,11 +9,16 @@ agent/
   agent.json                # 协议、语言、场景
   support_agent/            # 可安装的本地 Python package
     application.py          # 决定下一轮回答或工具调用
+    turns.py                # 不依赖 tau2 的轮次决策
+    protocol.py             # 内部消息、动作和候选校验
     state.py                # 每个会话独立的 JSON 状态
     domain/customer.py      # 不依赖运行环境的业务规则
+    domain/money.py         # U6 顺序 float 差价与余额舍入基线
+    adapters/client_api.py      # 公共响应校验、错误分类与未知写结果
     adapters/customer_api.py    # 业务 API 传输与错误处理
     adapters/customer_tools.py  # 工具声明与注册
 tests/test_customer.py      # 无网络、无模型的单元测试
+tests/test_money.py         # 公开金额算法的离线边界测试
 pyproject.toml             # 本地 package 元数据
 ```
 
@@ -46,4 +51,4 @@ pyproject.toml             # 本地 package 元数据
 - 示例无模型调用，也没有真实客户凭证。本地测试使用合成数据；真正的 t1 通过环境 API 查询，而不是返回写死的客户信息。
 - README 和本文件随所选中文/英文版本切换。代码标识符、测试断言及业务 API 不随阅读语言变化。
 
-M0 交付证据见 [M0-DELIVERY](docs/M0-DELIVERY.md)，SDK 来源与接口核查见 [M0-SDK-CHECK](docs/M0-SDK-CHECK.md)。完整工作区 43 项测试的基础规则映射保留在本地待随 M1 提交的 `docs/FOUNDATION-TEST-MAP.md`。本地 `.venv` 已安装官方 hyper-tau-bench 固定提交 6e9f34c685d4 的 tau2 1.0.1（Python 3.12.13），真实 SDK 最小接口/查询/恢复验证通过。课堂镜像版本一致性和真实网关验证仍保留；生产写入、确认流程和完整业务 AT 尚未实施。直接使用 `.venv\Scripts\python.exe` 运行本地测试，不需要修改执行策略或全局 Python。
+M0 交付证据见 [M0-DELIVERY](docs/M0-DELIVERY.md)，SDK 来源与接口核查见 [M0-SDK-CHECK](docs/M0-SDK-CHECK.md)。当前源码独立提交快照 **51 项测试通过**，含新增 8 项 U6 算术兼容测试，基础规则映射见 [FOUNDATION-TEST-MAP](docs/FOUNDATION-TEST-MAP.md)。`domain/money.py` 只按已解析价格对做兼容估算、舍入已计算余额，尚未接入业务工具。本地 `.venv` 已安装官方 hyper-tau-bench 固定提交 6e9f34c685d4 的 tau2 1.0.1（Python 3.12.13），真实 SDK 最小接口/查询/恢复验证通过。课堂镜像版本一致性、M2.5 完整 JSON/SDK 转换和真实网关验证仍保留；生产写入、确认流程和完整业务 AT 尚未实施。原始平台返回存档与范围见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M0 文档与三批 M1 源码已分别推送，每批 t1 1/1 通过；最新结果对应 ba53f46，完整报告与阶段边界见 [M1-DELIVERY](docs/M1-DELIVERY.md)。本提交只收尾交付与共享文档，未进入 M2。直接使用 `.venv\Scripts\python.exe` 运行本地测试，不需要修改执行策略或全局 Python。
