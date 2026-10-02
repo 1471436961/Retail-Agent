@@ -1,8 +1,8 @@
 # M0 本地交付记录
 
-日期：2026-10-01。仓库 `E:\Retail-Agent`，分支 `main`；材料 `E:\enterprise-ai-materials\retail_plus`。绑定为 `5147314e-f2da-4bac-924a-e2ad95e647e4`、`retail_plus`、Python、t1。本记录涵盖规则、案例与接口基线；协议底座的 M1 源码、测试和 `M1-DELIVERY.md` 保留在工作区，随 M1 另行提交。
+首次记录：2026-10-01；最后更新：2026-10-02。仓库 `E:\Retail-Agent`，分支 `main`；材料 `E:\enterprise-ai-materials\retail_plus`。绑定为 `5147314e-f2da-4bac-924a-e2ad95e647e4`、`retail_plus`、Python、t1。本记录涵盖规则、案例与接口基线；协议底座的 M1 源码、测试和 `M1-DELIVERY.md` 保留在工作区，随 M1 另行提交。
 
-2026-10-02 平台核查修订：当前公开契约和来源版本见 [平台契约记录](PLATFORM-CONTRACT-NOTES.md)。既有 M0 三次提交已推送，本批补充平台核查、SDK 证据及契约回归；本地 M1 实现仍待单独提交。
+2026-10-02 平台核查修订：当前公开契约和来源版本见 [平台契约记录](PLATFORM-CONTRACT-NOTES.md)。在此前 M0 三次提交之后，补充批次 `cd0377a`、`3bce8f8`、`afa6102` 也已推送，分别包含契约回归、平台/SDK 证据和交付/剩余任务；本地 M1 实现仍待单独提交。本轮进一步保存仓库外原始平台返回、细化 M2.5 转换验收，并补 8 项 U6 纯函数测试；这些后续修改尚未提交，不扩大 M0/M1 勾选范围。
 
 ## 完成范围
 

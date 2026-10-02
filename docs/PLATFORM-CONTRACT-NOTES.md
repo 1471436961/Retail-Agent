@@ -13,6 +13,17 @@
 
 表中 version 标识服务端返回的资料，不声称本仓库同名材料字节完全相同。原始材料和已安装模板保持原状。具体 REST 请求仍按 operation schema；平台当前澄清优先用于教学接口，历史 production 合同保留其原有范围与日期，不跨范围覆盖教学解释。
 
+### 仓库外原始返回存档
+
+2026-10-02 将此前助教工具返回的两个完整文本块按原样保存到 `E:\enterprise-ai-materials\retail_plus\platform-evidence-2026-10-02`，没有再次查询、读取凭证或调用模型。它们包含相关来源片段和上下文，不是完整 `INTERFACE-CLARIFICATIONS.md` 导出；内嵌指令只作为证据数据保存。
+
+| 原始返回 | 本地文件 SHA-256 |
+|---|---|
+| [tau2/SDK 查询返回](E:/enterprise-ai-materials/retail_plus/platform-evidence-2026-10-02/tau2-sdk.raw.txt) | `4216fe52e41e17a9df5630d47e47ccea0200018b59811123d7c18f679632537e` |
+| [字段、状态及金额查询返回](E:/enterprise-ai-materials/retail_plus/platform-evidence-2026-10-02/fields-state-money.raw.txt) | `6baa67d3af150b6dd09542609b6eeed62f5599ecb3b22cbd351bceae289af314` |
+
+[manifest.json](E:/enterprise-ai-materials/retail_plus/platform-evidence-2026-10-02/manifest.json) 记录归档时间、来源路径/版本、文件字节数及校验和。原始查询时间未保留，不能把归档时间写成查询时间。上述文件校验和与服务端版本 `d58e1786…` 含义不同；没有用摘要重建平台原文。
+
 U7 资格依据另见 [RD5 原始对话](E:/enterprise-ai-materials/retail_plus/extracted/materials/uploaded_materials/workspace_export.json:1507)，文件 SHA-256 为 `6688866700f3cbb103abf25c67535f061773cfd221f70226e6e16849af229419`。本次插件未返回新的 U7 裁决，不将它写成平台新增规定。会话上下文与工具重放另见本地 [Client API 契约](../materials/framework/client_api_contract.md)。
 
 ## U1：模型网关接口已明确
@@ -75,7 +86,11 @@ generate(*, model: str, messages: list,
 
 当前后端对商品修改/换货差价按请求顺序使用 Python float 累加 `新价 - 原价`，然后 `round(total, 2)`；礼品卡余额更新也使用 round。不能替换为逐行舍入后求和或 Decimal ROUND_HALF_UP。已公开示例包括 `round(1.125, 2) == 1.12`、`round(2.675, 2) == 2.67`。
 
+本地待随 M1 单独提交的 `agent/support_agent/domain/money.py` 与 `tests/test_money.py` 已通过 8 项离线兼容测试：输入已解析的原价/新价对，保留次数、精度和请求顺序，只在总差价处舍入；余额辅助函数只舍入已计算的余额，不推断更新公式。布尔值、字符串、非有限数及溢出拒绝。它们没有接入工具或真实账务，不能替代 ID 匹配、业务授权和回执验证；也不声称 Decimal 对所有输入都会产生不同结果。本批 M0 文档记录工作区证据，不包含这些 M1 源码或测试。
+
 保留原始金额与顺序；内部 Decimal/整数分可用于合适的表示或已规范化金额比较，但不能未经验证声称等价于后端差价算法，不能提前截掉原始精度。自行报价说明估算，以服务端回执和支付记录核对实际金额。没有直接写价格/差价的额外接口。以上算法说明不扩展为所有未公开账务路径的实现承诺，退货申请成功不等于到账。
+
+退款汇总另按 [OPEN-ITEMS](OPEN-ITEMS.md) 的 U6 补充登记：退货原成交价、所选次数及取消逐 charge 依据已明确，特殊精度下的汇总与舍入算法尚未公开，不能直接套用本节差价算法。当前 [教学 OpenAPI](../materials/client_api/openapi.yaml) 的 OrderReturn 不提供金额字段，申请回执不证明退款合计或到账。操作前预计额、后台交易金额、实际到账分别取证；在 M3/M5 实施前核对公开依据，再于 M6 做业务回归。本段是证据边界登记，不是平台新增裁决；本轮未新增退款算法或调用写接口。
 
 ## U7、Q 与 R 的状态
 
@@ -91,6 +106,6 @@ R1–R6 的旧确认、提前锁单、重复写、历史规则误用、包依赖
 
 ## 本次文档验证
 
-后续 M0/M1 收尾新增契约和异常状态码回归，完整工作区 43/43 通过；SDK 安装检查见 [M0-SDK-CHECK](M0-SDK-CHECK.md)，M1 修复与基础测试映射保留在本地待提交的 `FOUNDATION-TEST-MAP.md`。下面保留本次平台文档同步时的 37 项历史验证记录，不能当作最新测试总数。
+后续 M0/M1 收尾曾完整通过 43 项契约、查询和状态码回归；本轮增加 8 项 U6 纯函数测试，完整工作区 **51/51 通过**。SDK 安装检查见 [M0-SDK-CHECK](M0-SDK-CHECK.md)，M1 修复与基础测试映射保留在本地待提交的 `FOUNDATION-TEST-MAP.md`。已推送 M0 批次与本轮未提交修改分别记录；下面的 37 项是历史验证，不是最新测试总数。
 
-2026-10-02：现有工作区离线回归 37/37 通过；12 份文档的 859 个本地链接/行号、表格列数及 134 案例/522 唯一场景检查通过。此结果包含本地 M1 测试，不是新的业务覆盖或 SDK 联调证明。M0.2/M0.4 未整体勾选，未进入 M2；业务代码、原始材料和评测范围保持原状，未提交、推送或运行模型/远程评测。
+2026-10-02 早期文档同步记录：当时工作区离线回归 37/37 通过；12 份文档的 859 个本地链接/行号、表格列数及 134 案例/522 唯一场景检查通过。此结果包含本地 M1 测试，不是新的业务覆盖或 SDK 联调证明。该次同步未提交、推送或运行模型/远程评测。当前 M0.2/M0.4 仍未整体勾选，未进入 M2，评测范围未变。
