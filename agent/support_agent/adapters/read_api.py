@@ -6,8 +6,8 @@ from urllib.parse import quote
 
 from support_agent.adapters.client_api import request_object
 from support_agent.domain.identity import matches_customer, search_body, verification_inputs
+from support_agent.domain.orders import ORDER_STATUSES
 
-ORDER_STATUSES = {"pending", "pending (items modified)", "processed", "delivered", "cancelled", "exchange requested", "return requested"}
 MAX_ORDERS_PER_LIST = 32  # Project safeguard, not a platform limit.
 
 

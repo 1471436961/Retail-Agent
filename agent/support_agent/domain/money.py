@@ -23,6 +23,19 @@ def _finite_float(value: int | float) -> float:
     return result
 
 
+def finite_number(value: int | float) -> int | float:
+    """Validate finite JSON numbers while retaining their original precision."""
+    _finite_float(value)
+    return value
+
+
+def finite_amount(value: int | float) -> int | float:
+    """Validate a nonnegative source price/balance/payment without rounding it."""
+    if _finite_float(value) < 0:
+        raise ValueError("Amount must be nonnegative")
+    return value
+
+
 def price_difference(replacements: Iterable[tuple[int | float, int | float]]) -> float:
     """Sum ``new_price - old_price`` in request order; round only the total.
 
