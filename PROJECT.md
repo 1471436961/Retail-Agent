@@ -14,6 +14,7 @@ agent/
     protocol.py             # 内部消息、动作和候选校验
     state.py                # 每个会话独立的 JSON 状态
     proposals.py            # M3.2/M3.3 完整提案、局部确认和原 user 来源链
+    tasks.py                # M3.4 内部请求计划、恢复与逐记录候选诊断
     domain/customer.py      # 不依赖运行环境的业务规则
     domain/identity.py      # 独立验证输入与用户来源核验
     domain/money.py         # U6 顺序 float 差价与余额舍入基线
@@ -21,6 +22,7 @@ agent/
     domain/orders.py        # 精确状态与能力准入
     domain/catalog.py       # 选中规格、次数、原价与差价解析
     domain/policies.py      # 支付、退款去向及取消原因规则
+    domain/task_graph.py    # 同单依赖与对称冲突，独立记录无隐式依赖
     adapters/client_api.py      # 公共响应校验、错误分类与未知写结果
     adapters/customer_api.py    # 业务 API 传输与错误处理
     adapters/customer_tools.py  # 工具声明与注册
@@ -33,6 +35,7 @@ tests/test_m2_*.py          # 只读 API、会话与真实 SDK 子进程检查
 tests/test_m3_rules.py      # M3.1 状态、规格、金额与支付规则
 tests/test_m3_proposals.py  # M3.2 完整确认、迁移、恢复和真实 SDK 检查
 tests/test_m3_scoped_consent.py # M3.3 独立范围、追加/条件/撤回与旧确认保留
+tests/test_m3_tasks.py      # M3.4 请求图、多订单候选、迁移与来源校验
 pyproject.toml             # 本地 package 元数据
 ```
 
@@ -51,6 +54,8 @@ pyproject.toml             # 本地 package 元数据
 5. 运行本地测试，然后提交整个 `agent/`。先做 t1 接入，再做公开练习或所选正式案例。查看实际结果与期望结果的差异。
 
 ## 依赖与运行边界
+
+Windows 本地离线测试可使用 `pwsh -NoProfile -File .\scripts\test-local.ps1`：使用项目解释器，临时目录限定在仓库内，原生退出码保留，调用方环境不变。两个测试文件的四处临时目录调用已通过共享 helper 避开 Windows 0o700 的特殊 ACL 设置，直接运行 unittest 也生效；其他系统保持标准临时目录行为。评审会话现已报告原命令在受限模式实跑 266/266、零跳过、退出码 0，无提权、无重定向或注入；本会话此前的启动失败和非受限通过保留来源区分，见 [本地测试入口](docs/LOCAL-TEST-RUNNER.md)。脚本是可选便利入口。
 
 退款依据的后续取证见 [退款源码证据](docs/REFUND-IMPLEMENTATION-EVIDENCE.md)：固定上游退货仅登记申请，取消无统一合计且未过滤历史交易类型。适用版本的实现代码可以作为计算依据，但尚未核实课堂 REST 对应关系；本项目保留原价/次数与逐 charge 来源，不从余额舍入推导合计，不照搬全历史退款循环。
 
@@ -71,4 +76,6 @@ M0 交付证据见 [M0-DELIVERY](docs/M0-DELIVERY.md)，SDK 来源见 [M0-SDK-CH
 
 随后实施 M3.2 内部提案版本、完整确认与来源恢复，该批历史离线回归 **176/176**，零跳过、原生退出码 0，见 [M3.2-DELIVERY](docs/M3.2-DELIVERY.md)。真实 SDK 的 M2 子检查及新增 M3 集成检查均已包含在主包装测试内，不重复相加；网关为 fake、拒绝网络。默认只读路由不自动构造业务提案，尚无业务写工具；局部/条件确认、任务依赖、写前刷新与报价生产器仍待后续阶段。M3.2 源码 610f488、文档 769bcee 均已提交推送；对应工作流成功，正文案例计数未单独核实，回执见 M3.2 交付记录。本地仍为官方固定提交 6e9f34c685d4 的 tau2 1.0.1、Python 3.12.13；课堂镜像一致性和真实网关联调保留，默认真实模型关闭。money.py 已被规格规则复用，完整业务 AT 未验收。原始平台存档仍在仓库外，见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M0/M1 已分批推送，历史 t1 报告见 [M1-DELIVERY](docs/M1-DELIVERY.md)；M2 三个源码批次各自 t1 1/1 通过，SHA 与回执见 M2 交付记录。这些结果只证明接入兼容，不覆盖完整业务或真实模型效果。直接使用 `.venv\Scripts\python.exe -m unittest discover -s tests -q` 运行本地测试，不需要修改执行策略或全局 Python。
 
-2026-10-03 随后按授权完成 M3.3 内部完整操作集合的局部确认、追加/缩减/撤回/条件与支付/报价失效，当前源码实跑 **221/221**、零跳过、原生退出码 0；schema 3 保留可核验的原 user 范围同意与旧版本来源，见 [M3.3-DELIVERY](docs/M3.3-DELIVERY.md)。条件待核实并重新完整提案，业务报价生产器、任务依赖与写前刷新仍待 M3.4–M5；默认路由不自动生成提案，八 READ、零 WRITE。源码 abac040 已推送，自动工作流成功，报告正文案例计数未单独核实；无真实模型调用。
+2026-10-03 随后按授权完成 M3.3 内部完整操作集合的局部确认、追加/缩减/撤回/条件与支付/报价失效，该批源码实跑 **221/221**、零跳过、原生退出码 0；schema 3 保留可核验的原 user 范围同意与旧版本来源，见 [M3.3-DELIVERY](docs/M3.3-DELIVERY.md)。源码 abac040、文档 3460329 已推送，自动工作流成功，报告正文案例计数未单独核实；无真实模型调用。
+
+随后按用户授权实现 M3.4 内部同单依赖/冲突及独立记录候选诊断，源码提交后实跑 **266/266**、零跳过、原生退出码 0，新主测试 45 项，见 [M3.4-DELIVERY](docs/M3.4-DELIVERY.md)。schema 4 的任务计划来源复用严格身份与原 proposals 台账；同单地址/支付须先于商品锁单，取消/退换冲突先澄清。候选不是写入授权，前置任务确认不等于完成；实际结果 reducer、依赖释放、业务报价生产器和写前刷新仍待 M3.5/M4/M5。默认只读路由不自动创建业务任务，八 READ、零 WRITE；测试环境 53ee070、源码 2413049 已逐批推送，t1 接入回执见交付记录。没有真实模型或另行 evaluate。
