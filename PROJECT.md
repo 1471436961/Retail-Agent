@@ -16,6 +16,10 @@ agent/
     domain/customer.py      # 不依赖运行环境的业务规则
     domain/identity.py      # 独立验证输入与用户来源核验
     domain/money.py         # U6 顺序 float 差价与余额舍入基线
+    domain/rules.py         # 可解释 JSON 规则结果，非写入授权
+    domain/orders.py        # 精确状态与能力准入
+    domain/catalog.py       # 选中规格、次数、原价与差价解析
+    domain/policies.py      # 支付、退款去向及取消原因规则
     adapters/client_api.py      # 公共响应校验、错误分类与未知写结果
     adapters/customer_api.py    # 业务 API 传输与错误处理
     adapters/customer_tools.py  # 工具声明与注册
@@ -25,6 +29,7 @@ agent/
 tests/test_customer.py      # 无网络、无模型的单元测试
 tests/test_money.py         # 公开金额算法的离线边界测试
 tests/test_m2_*.py          # 只读 API、会话与真实 SDK 子进程检查
+tests/test_m3_rules.py      # M3.1 状态、规格、金额与支付规则
 pyproject.toml             # 本地 package 元数据
 ```
 
@@ -44,6 +49,8 @@ pyproject.toml             # 本地 package 元数据
 
 ## 依赖与运行边界
 
+退款依据的后续取证见 [退款源码证据](docs/REFUND-IMPLEMENTATION-EVIDENCE.md)：固定上游退货仅登记申请，取消无统一合计且未过滤历史交易类型。适用版本的实现代码可以作为计算依据，但尚未核实课堂 REST 对应关系；本项目保留原价/次数与逐 charge 来源，不从余额舍入推导合计，不照搬全历史退款循环。
+
 文档链接约定：仓库内文档和教学契约使用相对于当前文档的路径；仓库外业务材料使用本机绝对路径作来源追溯。引用外部原文时可保留行号，内部文档链接直接指向文件，避免绑定开发机盘符。
 
 工具名称、参数、说明和返回结构，以及内部候选、任务、确认与提示词，由项目自行设计。平台驱动工厂、轮次和工具执行，Agent 负责模型调用、业务校验和执行控制。Python generate 签名、tau2 messages/actions、消息返回及 TypeScript tools 对照已核查，见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M2 已实现可显式注入的模型适配层并用真实 SDK＋fake 网关验证；默认工厂不启用真实模型，真实网关联调尚未完成。JSON-only state 是项目工程约束，平台定义为不透明对象；消息恢复和网关转换位于薄适配层，状态见 [实施事项寄存器](docs/OPEN-ITEMS.md)。
@@ -57,4 +64,4 @@ pyproject.toml             # 本地 package 元数据
 - 示例无模型调用，也没有真实客户凭证。本地测试使用合成数据；真正的 t1 通过环境 API 查询，而不是返回写死的客户信息。
 - README 和本文件随所选中文/英文版本切换。代码标识符、测试断言及业务 API 不随阅读语言变化。
 
-M0 交付证据见 [M0-DELIVERY](docs/M0-DELIVERY.md)，SDK 来源见 [M0-SDK-CHECK](docs/M0-SDK-CHECK.md)。M1 独立提交快照历史基线为 **51/51**，基础规则见 [FOUNDATION-TEST-MAP](docs/FOUNDATION-TEST-MAP.md)；当前 M2 工作区离线回归 **91/91**，含一个真实 SDK 子进程包装测试，其内部 **13/13** 不重复计数。实现了跨轮身份、六只读端点与模型适配往返，详见 [M2-DELIVERY](docs/M2-DELIVERY.md)。本地为官方固定提交 6e9f34c685d4 的 tau2 1.0.1、Python 3.12.13；课堂镜像一致性和真实网关联调仍保留，默认真实模型关闭。`domain/money.py` 尚未接入业务工具；生产写入、确认与完整业务 AT 未实施。原始平台存档仍在仓库外，见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M0/M1 已分批推送，历史 t1 报告见 [M1-DELIVERY](docs/M1-DELIVERY.md)；2026-10-03 M2 源码与测试分三批提交推送，各自对应 t1 1/1 通过；SHA 与回执见 M2 交付记录。这些结果只证明接入兼容，不覆盖 M2 只读业务场景或真实模型效果。直接使用 `.venv\Scripts\python.exe -m unittest discover -s tests -q` 运行本地测试，不需要修改执行策略或全局 Python。
+M0 交付证据见 [M0-DELIVERY](docs/M0-DELIVERY.md)，SDK 来源见 [M0-SDK-CHECK](docs/M0-SDK-CHECK.md)。M1 独立提交快照历史基线为 **51/51**，基础规则见 [FOUNDATION-TEST-MAP](docs/FOUNDATION-TEST-MAP.md)；M2 源码提交快照为 **91/91**，实现了跨轮身份、六只读端点与模型适配往返，详见 [M2-DELIVERY](docs/M2-DELIVERY.md)。2026-10-03 用户明确开始 M3，首批 M3.1 增加 39 项规则测试，当前工作区完整离线回归 **130/130**，零跳过、原生退出码 0；含一个真实 SDK 子进程包装测试，其内部 **13/13** 不重复计数。状态、规格、差价、支付与退款依据的离线范围见 [M3.1-DELIVERY](docs/M3.1-DELIVERY.md)；退款合计特殊精度尚缺依据，M3.1 保持未整体勾选，确认与业务写工具未实施。本地为官方固定提交 6e9f34c685d4 的 tau2 1.0.1、Python 3.12.13；课堂镜像一致性和真实网关联调仍保留，默认真实模型关闭。money.py 已被规格规则复用，尚未接入业务工具；完整业务 AT 未验收。原始平台存档仍在仓库外，见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M0/M1 已分批推送，历史 t1 报告见 [M1-DELIVERY](docs/M1-DELIVERY.md)；M2 三个源码批次各自 t1 1/1 通过，SHA 与回执见 M2 交付记录。这些结果只证明接入兼容，不覆盖完整业务或真实模型效果。M3.1 源码与测试已由 cd71a21 提交推送，对应 t1 工作流成功；报告正文计数尚未单独核实，详见 M3.1 交付记录。本次证据与共享文档另作独立提交。直接使用 `.venv\Scripts\python.exe -m unittest discover -s tests -q` 运行本地测试，不需要修改执行策略或全局 Python。
