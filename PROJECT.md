@@ -9,16 +9,22 @@ agent/
   agent.json                # 协议、语言、场景
   support_agent/            # 可安装的本地 Python package
     application.py          # 决定下一轮回答或工具调用
-    turns.py                # 不依赖 tau2 的轮次决策
+    turns.py                # 轮次入口，转交只读会话逻辑
+    read_session.py         # 身份范围、只读路由与完整结果批次
     protocol.py             # 内部消息、动作和候选校验
     state.py                # 每个会话独立的 JSON 状态
     domain/customer.py      # 不依赖运行环境的业务规则
+    domain/identity.py      # 独立验证输入与用户来源核验
     domain/money.py         # U6 顺序 float 差价与余额舍入基线
     adapters/client_api.py      # 公共响应校验、错误分类与未知写结果
     adapters/customer_api.py    # 业务 API 传输与错误处理
     adapters/customer_tools.py  # 工具声明与注册
+    adapters/read_api.py        # 六只读端点、归属与事实校验
+    adapters/read_tools.py      # 带验证依据的可重放只读工具
+    adapters/model_gateway.py   # JSON/SDK 转换与模型候选门控
 tests/test_customer.py      # 无网络、无模型的单元测试
 tests/test_money.py         # 公开金额算法的离线边界测试
+tests/test_m2_*.py          # 只读 API、会话与真实 SDK 子进程检查
 pyproject.toml             # 本地 package 元数据
 ```
 
@@ -40,7 +46,7 @@ pyproject.toml             # 本地 package 元数据
 
 文档链接约定：仓库内文档和教学契约使用相对于当前文档的路径；仓库外业务材料使用本机绝对路径作来源追溯。引用外部原文时可保留行号，内部文档链接直接指向文件，避免绑定开发机盘符。
 
-工具名称、参数、说明和返回结构，以及内部候选、任务、确认与提示词，由项目自行设计。平台驱动工厂、轮次和工具执行，Agent 负责模型调用、业务校验和执行控制。Python generate 签名、tau2 messages/actions、消息返回及 TypeScript tools 对照已核查，见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。当前模型仍未接入，fake 不替代真实 SDK 验证。JSON-only state 是项目工程约束，平台定义为不透明对象；消息恢复和网关转换在薄适配层实现，状态见 [实施事项寄存器](docs/OPEN-ITEMS.md)。
+工具名称、参数、说明和返回结构，以及内部候选、任务、确认与提示词，由项目自行设计。平台驱动工厂、轮次和工具执行，Agent 负责模型调用、业务校验和执行控制。Python generate 签名、tau2 messages/actions、消息返回及 TypeScript tools 对照已核查，见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M2 已实现可显式注入的模型适配层并用真实 SDK＋fake 网关验证；默认工厂不启用真实模型，真实网关联调尚未完成。JSON-only state 是项目工程约束，平台定义为不透明对象；消息恢复和网关转换位于薄适配层，状态见 [实施事项寄存器](docs/OPEN-ITEMS.md)。
 
 验证后可查与当前请求相关的公共目录，不限历史订单商品，仍不访问他人账户。重复 item 保留次数和请求顺序，按 ID 匹配的实例限制如实说明；修改/换货差价遵循 float 累加后 round，以回执核实，不用逐行舍入或 ROUND_HALF_UP 覆盖后端。实际模型使用运行时允许列表，固定参数省略且不可覆盖，费用仍需授权。
 
@@ -51,4 +57,4 @@ pyproject.toml             # 本地 package 元数据
 - 示例无模型调用，也没有真实客户凭证。本地测试使用合成数据；真正的 t1 通过环境 API 查询，而不是返回写死的客户信息。
 - README 和本文件随所选中文/英文版本切换。代码标识符、测试断言及业务 API 不随阅读语言变化。
 
-M0 交付证据见 [M0-DELIVERY](docs/M0-DELIVERY.md)，SDK 来源与接口核查见 [M0-SDK-CHECK](docs/M0-SDK-CHECK.md)。当前源码独立提交快照 **51 项测试通过**，含新增 8 项 U6 算术兼容测试，基础规则映射见 [FOUNDATION-TEST-MAP](docs/FOUNDATION-TEST-MAP.md)。`domain/money.py` 只按已解析价格对做兼容估算、舍入已计算余额，尚未接入业务工具。本地 `.venv` 已安装官方 hyper-tau-bench 固定提交 6e9f34c685d4 的 tau2 1.0.1（Python 3.12.13），真实 SDK 最小接口/查询/恢复验证通过。课堂镜像版本一致性、M2.5 完整 JSON/SDK 转换和真实网关验证仍保留；生产写入、确认流程和完整业务 AT 尚未实施。原始平台返回存档与范围见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M0 文档与三批 M1 源码已分别推送，每批 t1 1/1 通过；最新结果对应 ba53f46，完整报告与阶段边界见 [M1-DELIVERY](docs/M1-DELIVERY.md)。本提交只收尾交付与共享文档，未进入 M2。直接使用 `.venv\Scripts\python.exe` 运行本地测试，不需要修改执行策略或全局 Python。
+M0 交付证据见 [M0-DELIVERY](docs/M0-DELIVERY.md)，SDK 来源见 [M0-SDK-CHECK](docs/M0-SDK-CHECK.md)。M1 独立提交快照历史基线为 **51/51**，基础规则见 [FOUNDATION-TEST-MAP](docs/FOUNDATION-TEST-MAP.md)；当前 M2 工作区离线回归 **91/91**，含一个真实 SDK 子进程包装测试，其内部 **13/13** 不重复计数。实现了跨轮身份、六只读端点与模型适配往返，详见 [M2-DELIVERY](docs/M2-DELIVERY.md)。本地为官方固定提交 6e9f34c685d4 的 tau2 1.0.1、Python 3.12.13；课堂镜像一致性和真实网关联调仍保留，默认真实模型关闭。`domain/money.py` 尚未接入业务工具；生产写入、确认与完整业务 AT 未实施。原始平台存档仍在仓库外，见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M0/M1 已分批推送，历史 t1 报告见 [M1-DELIVERY](docs/M1-DELIVERY.md)；2026-10-03 M2 源码与测试分三批提交推送，各自对应 t1 1/1 通过；SHA 与回执见 M2 交付记录。这些结果只证明接入兼容，不覆盖 M2 只读业务场景或真实模型效果。直接使用 `.venv\Scripts\python.exe -m unittest discover -s tests -q` 运行本地测试，不需要修改执行策略或全局 Python。

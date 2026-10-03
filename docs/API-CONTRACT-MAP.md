@@ -49,7 +49,7 @@
 
 已在 M1 入口保留 context，但 t1 仍不调用模型。当前公开 Python 签名为 `generate(*, model: str, messages: list, actions=None, tool_choice=None, call_name=None, **kwargs)`。messages 为 tau2 消息对象列表，actions 为 Tool 对象序列；工具来自 action_interface.available 或 select(["工具名"])，正常返回 AssistantMessage。TypeScript 对照已取得，使用 tools 函数 schemas，不能混用为 Python actions。适配层恢复 SDK 消息、保留多个工具调用与 ID/批次关系；内部候选不是网关响应格式。JSON-only state 是本项目工程约束，平台定义为不透明对象。
 
-usage 可为空；prompt_tokens 与 completion_tokens 都存在才相加，total_tokens 不保证存在。cost 为 0 不证明免费，credit_usage 依赖 rate card。上游固定版本 SDK 的消息、查询恢复和 Client API 异常 response 属性已本地验证，课堂镜像一致性、完整网关转换/异常仍待完成；tool_choice 的完整合法值、call_name 语义及网关异常本次未完整验证。详见 [U1 核查依据](PLATFORM-CONTRACT-NOTES.md)及 [SDK 安装记录](M0-SDK-CHECK.md)。
+usage 可为空；prompt_tokens 与 completion_tokens 都存在才相加，total_tokens 不保证存在。cost 为 0 不证明免费，credit_usage 依赖 rate card。上游固定 SDK 的消息、查询恢复和 Client API 异常 response 已本地验证；M2 追加真实 SDK＋fake 网关的 JSON/消息/Tool 往返与失败输出测试，当前 SDK 的 usage 为可选 dict，适配器同时兼容属性读取。课堂镜像一致性与真实网关联调仍待完成；tool_choice 的完整合法值、call_name 语义与 provider 具体异常尚未完整验证，适配器省略这些可选参数。详见 [U1 核查依据](PLATFORM-CONTRACT-NOTES.md)、[SDK 安装记录](M0-SDK-CHECK.md)及 [M2 交付记录](M2-DELIVERY.md)。
 
 运行时 available_models 是实际允许列表；manifest 的 enterprise-haiku/max_tokens=1024 是配置快照，可用于合成测试，后续配置可能不同。固定参数应省略，由网关注入，不得自行覆盖或改小；one_of 每次必须明确选合法值。0.32 credits 不是允许列表、美元额度或费用授权，课堂未注入上游 credit rate card。联调核对实际配置与回执，收费调用仍需授权。
 
@@ -64,7 +64,7 @@ usage 可为空；prompt_tokens 与 completion_tokens 都存在才相加，total
 - **业务基线可做**：U3 正常字段与异常兼容策略、U4 当前请求相关公共目录、U5 数量/ID 匹配、U6 状态与已公开金额算法、U7 起点方式快照。M5 实施退货资格，M6 做组合回归。
 - **具体边界保留**：U5 同 ID 不同价格/属性无法精确指定，U6 未知/矛盾状态及异常回执，U7 无法证明历史资格的并发新增；U1 可选参数/异常细节和 Q3 真实 SDK 验证。目录计数、常规同 ID 换不同目标和已公开半分算法不再整体列为未知。
 - **M4 转接适配器**：公共 `request_object()` 已支持 `expected_status`，转接调用必须显式传 `expected_status=201, mutates=True`；默认 200 留给普通端点。显式 201 已有本地回归测试，但生产转接工具尚未接入。
-- **首次多步工作流/写工具**：接入实际跨工具轮次预算及确认门控；当前仅有单 pending 查询与离线候选重试，不能用单条消息的调用数上限代替多步预算。
+- **多步工作流/写工具**：M2 已实现多 pending 完整批次及累计读取预算；模型当前每请求最多一次，常量 2 为未来多步保留，耗尽分支尚不可达。t1 共用严格验证，未接纳正文不能进入模型。未来累计模型预算通过统一入口验收；确认门控、未知写结果与重放随首个写工具验收，见 [M2 交付记录](M2-DELIVERY.md)。
 - **真实模型/远程评测前**：完成 Python 网关与真实 SDK 联调，检查已发布允许模型及约束，确认实际调用配置和费用授权，并按用户明确授权的任务与案例范围运行。
 
 本表没有修改网站绑定或评测范围，也不代表任何新的业务端点已接入 Agent。
