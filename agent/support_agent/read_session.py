@@ -223,6 +223,8 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     text = turn.content if isinstance(turn.content, str) else ""
     finish_pending(state, "unknown")
     state["history"].append({"role": "user", "content": text})
+    from support_agent.proposals import observe_user
+    proposal_reply = observe_user(state, len(state["history"]) - 1)
     state["user_request"] = text
     state["tool_calls_since_user"] = 0
     state["model_calls_since_user"] = 0
@@ -251,6 +253,11 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         return emit(state, name, args)
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
+    if proposal_reply is not None:
+        if proposal_reply["kind"] == "ack":
+            from support_agent.proposals import record_ack
+            return record_ack(state, proposal_reply["text"])
+        return reply(state, proposal_reply["text"])
     intent = read_intent(text)
     if intent:
         try:

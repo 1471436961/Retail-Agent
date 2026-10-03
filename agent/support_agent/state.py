@@ -7,11 +7,25 @@ from support_agent.domain.customer import find_customer_id
 from support_agent.protocol import Decision, InvalidAction, ToolAction, ToolOutcome, validate_tool_action
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 class InvalidState(ValueError):
     """Reject incomplete or inconsistent state at the session boundary."""
+
+
+def quarantine_state(evidence, code):
+    """Terminal platform envelope, never an alternate identity/session state.
+
+    Retain serializable damaged evidence without repairing or granting access.
+    Non-JSON evidence cannot be persisted; report that explicitly in the guard.
+    """
+    try:
+        snapshot = json.loads(json.dumps(evidence, allow_nan=False))
+        retained = True
+    except (TypeError, ValueError):
+        snapshot, retained = None, False
+    return {"session_block": {"code": code, "evidence_retained": retained}, "quarantined_state": snapshot}
 
 
 def finish_pending(state: dict, status: str) -> None:
@@ -57,6 +71,10 @@ def _history_entry(message):
     if role == "tool":
         return _tool_entry(message)
     if role == "assistant":
+        if isinstance(message, dict):
+            for key in ("proposal", "proposal_ack"):
+                if key in message:
+                    entry[key] = message[key]
         calls = message.get("tool_calls") if isinstance(message, dict) else getattr(message, "tool_calls", None)
         if calls:
             entry["tool_call_ids"] = [
@@ -116,6 +134,8 @@ def initial_state(message_history=None) -> dict:
             state["tool_calls_since_user"] = 0
             state["model_calls_since_user"] = 0
             state["user_request"] = entry["content"]
+            from support_agent.proposals import observe_user
+            observe_user(state, len(state["history"]) - 1)
             from support_agent.domain.identity import fields_from_text
             fields = fields_from_text(entry["content"])
             if not state["identity"]["verified"] and fields:
@@ -127,6 +147,12 @@ def initial_state(message_history=None) -> dict:
             if not state["identity"]["verified"]:
                 state["customer_id"] = find_customer_id(entry["content"]) or state["customer_id"]
         elif entry["role"] == "assistant":
+            if "proposal" in entry:
+                from support_agent.proposals import restore_presentation
+                restore_presentation(state, len(state["history"]) - 1)
+            elif "proposal_ack" in entry:
+                from support_agent.proposals import restore_ack
+                restore_ack(state, len(state["history"]) - 1)
             calls = entry.get("tool_calls", ())
             if "tool_call_ids" in entry:
                 try:
@@ -163,12 +189,17 @@ def initial_state(message_history=None) -> dict:
 
 def clone_state(state: dict) -> dict:
     """Round-trip the state to reject non-JSON values and avoid aliasing."""
-    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] != SCHEMA_VERSION:
+    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, SCHEMA_VERSION}:
         raise InvalidState("Unsupported session state version")
     try:
         copied = json.loads(json.dumps(state, allow_nan=False))
     except (TypeError, ValueError) as exc:
         raise InvalidState("Session state must be JSON serializable") from exc
+    if copied["schema_version"] == 1:
+        if (copied.get("proposals") != [] or not isinstance(copied.get("history"), list)
+                or any(isinstance(e, dict) and ({"proposal", "proposal_ack"} & set(e)) for e in copied["history"])):
+            raise InvalidState("Legacy state has no supported proposal evidence schema")
+        copied["schema_version"] = SCHEMA_VERSION
     # M1 states remain readable; missing evidence does not grant private reads.
     for key, default in (("model_calls_since_user", 0), ("identity_evidence", None), ("customer_record", None), ("user_request", ""), ("model_usage", []), ("verification_draft", {})):
         copied.setdefault(key, default)
@@ -244,4 +275,9 @@ def clone_state(state: dict) -> dict:
         operation = next(operation for operation in copied["operations"] if operation["call_id"] == pending_id)
         if operation["name"] != item["name"] or operation["mutates"] != item["mutates"]:
             raise InvalidState("Pending lookup must match its operation")
+    from support_agent.proposals import validate_ledger
+    try:
+        validate_ledger(copied)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise InvalidState("Invalid proposal or confirmation evidence") from exc
     return copied

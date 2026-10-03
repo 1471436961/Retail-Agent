@@ -1,7 +1,8 @@
 """Thin tau2 adapter around the platform-independent turn reducer."""
 
 from support_agent.protocol import ToolOutcome, TurnInput
-from support_agent.state import initial_state
+from support_agent.state import InvalidState, clone_state, initial_state, quarantine_state
+from support_agent.proposals import InvalidProposal
 from support_agent.turns import advance
 from tau2.data_model.message import AssistantMessage, MultiToolMessage, ToolCall
 
@@ -16,10 +17,38 @@ class CustomerAgent:
         self.model_adapter = model_adapter
 
     def get_init_state(self, message_history=None):
-        return initial_state(message_history)
+        try:
+            return initial_state(message_history)
+        except (InvalidState, InvalidProposal):
+            return quarantine_state({"unrestored_history": message_history}, "invalid_history")
+
+    def _blocked_reply(self, state):
+        # Every subsequent platform operation remains blocked. No automatic
+        # reset, history repair, API/model call or pending-operation replay.
+        return AssistantMessage(role="assistant", content="Session evidence is inconsistent. Processing is stopped; the original conversation must be reviewed before continuing."), state
+
+    def present_proposal(self, state, specification):
+        """Internal workflow presentation; never a model tool or a business write."""
+        from support_agent.proposals import present_proposal
+        if isinstance(state, dict) and "session_block" in state:
+            return self._blocked_reply(state)
+        try:
+            decision, next_state = present_proposal(state, specification)
+        except InvalidState:
+            return self._blocked_reply(quarantine_state(state, "invalid_state"))
+        except InvalidProposal:
+            # Invalid workflow construction may be repaired; keep the valid
+            # session evidence and do not render internal exception details.
+            next_state = clone_state(state)
+            text = "A complete proposal could not be prepared. Its parameters and accepted evidence need review before confirmation."
+            next_state["history"].append({"role": "assistant", "content": text})
+            return AssistantMessage(role="assistant", content=text), next_state
+        return AssistantMessage(role="assistant", content=decision.text), next_state
 
     def generate_next_message(self, message, state):
         """Convert one platform message and return exactly text or tool calls."""
+        if isinstance(state, dict) and "session_block" in state:
+            return self._blocked_reply(state)
         if isinstance(message, MultiToolMessage):
             turn = TurnInput(
                 kind="tools",
@@ -32,7 +61,10 @@ class CustomerAgent:
             if getattr(message, "role", None) != "user":
                 raise ValueError("Unsupported platform message: expected user or multi-tool results")
             turn = TurnInput(kind="user", content=message.content or "")
-        decision, next_state = advance(turn, state, model_adapter=self.model_adapter)
+        try:
+            decision, next_state = advance(turn, state, model_adapter=self.model_adapter)
+        except (InvalidState, InvalidProposal):
+            return self._blocked_reply(quarantine_state(state, "invalid_state"))
         if decision.calls:
             calls = [
                 ToolCall(id=call.id, name=call.name, arguments=call.arguments, requestor="assistant")
