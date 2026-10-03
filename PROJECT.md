@@ -13,7 +13,7 @@ agent/
     read_session.py         # 身份范围、只读路由与完整结果批次
     protocol.py             # 内部消息、动作和候选校验
     state.py                # 每个会话独立的 JSON 状态
-    proposals.py            # M3.2 完整提案、版本和真实 user 确认
+    proposals.py            # M3.2/M3.3 完整提案、局部确认和原 user 来源链
     domain/customer.py      # 不依赖运行环境的业务规则
     domain/identity.py      # 独立验证输入与用户来源核验
     domain/money.py         # U6 顺序 float 差价与余额舍入基线
@@ -32,6 +32,7 @@ tests/test_money.py         # 公开金额算法的离线边界测试
 tests/test_m2_*.py          # 只读 API、会话与真实 SDK 子进程检查
 tests/test_m3_rules.py      # M3.1 状态、规格、金额与支付规则
 tests/test_m3_proposals.py  # M3.2 完整确认、迁移、恢复和真实 SDK 检查
+tests/test_m3_scoped_consent.py # M3.3 独立范围、追加/条件/撤回与旧确认保留
 pyproject.toml             # 本地 package 元数据
 ```
 
@@ -68,4 +69,6 @@ pyproject.toml             # 本地 package 元数据
 
 M0 交付证据见 [M0-DELIVERY](docs/M0-DELIVERY.md)，SDK 来源见 [M0-SDK-CHECK](docs/M0-SDK-CHECK.md)。M1 独立提交快照历史基线为 **51/51**，基础规则见 [FOUNDATION-TEST-MAP](docs/FOUNDATION-TEST-MAP.md)；M2 源码提交快照为 **91/91**，实现了跨轮身份、六只读端点与模型适配往返，详见 [M2-DELIVERY](docs/M2-DELIVERY.md)。2026-10-03 用户明确开始 M3，首批 M3.1 增加 39 项规则测试，完整离线回归 **130/130**；状态、规格、差价、支付与退款依据见 [M3.1-DELIVERY](docs/M3.1-DELIVERY.md)。源码与测试由 cd71a21 推送，对应 t1 工作流成功，报告正文计数尚未单独核实；交付文档随后由 9b323d3 推送。退款合计特殊精度仍缺适用依据，M3.1 保持未整体勾选。
 
-随后实施 M3.2 内部提案版本、完整确认与来源恢复，当前源码工作区完整离线回归 **176/176**，零跳过、原生退出码 0，见 [M3.2-DELIVERY](docs/M3.2-DELIVERY.md)。真实 SDK 的 M2 子检查及新增 M3 集成检查均已包含在主包装测试内，不重复相加；网关为 fake、拒绝网络。默认只读路由不自动构造业务提案，尚无业务写工具；局部/条件确认、任务依赖、写前刷新与报价生产器仍待后续阶段。M3.2 源码与测试已由 610f488 提交推送，交付与共享文档作为第二批独立提交，回执见 M3.2 交付记录。本地仍为官方固定提交 6e9f34c685d4 的 tau2 1.0.1、Python 3.12.13；课堂镜像一致性和真实网关联调保留，默认真实模型关闭。money.py 已被规格规则复用，完整业务 AT 未验收。原始平台存档仍在仓库外，见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M0/M1 已分批推送，历史 t1 报告见 [M1-DELIVERY](docs/M1-DELIVERY.md)；M2 三个源码批次各自 t1 1/1 通过，SHA 与回执见 M2 交付记录。这些结果只证明接入兼容，不覆盖完整业务或真实模型效果。直接使用 `.venv\Scripts\python.exe -m unittest discover -s tests -q` 运行本地测试，不需要修改执行策略或全局 Python。
+随后实施 M3.2 内部提案版本、完整确认与来源恢复，该批历史离线回归 **176/176**，零跳过、原生退出码 0，见 [M3.2-DELIVERY](docs/M3.2-DELIVERY.md)。真实 SDK 的 M2 子检查及新增 M3 集成检查均已包含在主包装测试内，不重复相加；网关为 fake、拒绝网络。默认只读路由不自动构造业务提案，尚无业务写工具；局部/条件确认、任务依赖、写前刷新与报价生产器仍待后续阶段。M3.2 源码 610f488、文档 769bcee 均已提交推送；对应工作流成功，正文案例计数未单独核实，回执见 M3.2 交付记录。本地仍为官方固定提交 6e9f34c685d4 的 tau2 1.0.1、Python 3.12.13；课堂镜像一致性和真实网关联调保留，默认真实模型关闭。money.py 已被规格规则复用，完整业务 AT 未验收。原始平台存档仍在仓库外，见 [平台契约记录](docs/PLATFORM-CONTRACT-NOTES.md)。M0/M1 已分批推送，历史 t1 报告见 [M1-DELIVERY](docs/M1-DELIVERY.md)；M2 三个源码批次各自 t1 1/1 通过，SHA 与回执见 M2 交付记录。这些结果只证明接入兼容，不覆盖完整业务或真实模型效果。直接使用 `.venv\Scripts\python.exe -m unittest discover -s tests -q` 运行本地测试，不需要修改执行策略或全局 Python。
+
+2026-10-03 随后按授权完成 M3.3 内部完整操作集合的局部确认、追加/缩减/撤回/条件与支付/报价失效，当前源码实跑 **221/221**、零跳过、原生退出码 0；schema 3 保留可核验的原 user 范围同意与旧版本来源，见 [M3.3-DELIVERY](docs/M3.3-DELIVERY.md)。条件待核实并重新完整提案，业务报价生产器、任务依赖与写前刷新仍待 M3.4–M5；默认路由不自动生成提案，八 READ、零 WRITE。源码 abac040 已推送，自动工作流成功，报告正文案例计数未单独核实；无真实模型调用。
