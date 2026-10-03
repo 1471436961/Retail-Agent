@@ -5,12 +5,13 @@ import json
 import os
 import subprocess
 import sys
-import tempfile
 import types
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
+
+from temp_dirs import temporary_directory
 
 ROOT = Path(__file__).resolve().parents[1]
 AGENT = ROOT / "agent"
@@ -128,7 +129,7 @@ class AdapterTests(unittest.TestCase):
         self.assertLessEqual(len(json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")), 2 * 1024 * 1024)
         env = os.environ.copy()
         env["PYTHONPATH"] = str(AGENT)
-        with tempfile.TemporaryDirectory() as folder:
+        with temporary_directory() as folder:
             result = subprocess.run(
                 [sys.executable, "-c", "from support_agent.state import initial_state; from support_agent.turns import advance; from support_agent.protocol import TurnInput; s=initial_state(); d,s=advance(TurnInput(kind='user',content='customer_a a@example.test'),s); assert d.calls[0].name == 'lookup_customer'"],
                 cwd=folder,

@@ -1,5 +1,6 @@
 .env*
 .venv/
+.test-tmp/
 __pycache__/
 *.pyc
 evaluation-results/

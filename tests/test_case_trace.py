@@ -1,9 +1,10 @@
 """Exercise indexing with synthetic case text, without external materials."""
 
 import runpy
-import tempfile
 import unittest
 from pathlib import Path
+
+from temp_dirs import temporary_directory
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -23,7 +24,7 @@ class CaseTraceTests(unittest.TestCase):
         return "\n".join(lines) + "\n"
 
     def test_reordering_categories_does_not_change_generated_trace(self):
-        with tempfile.TemporaryDirectory() as folder:
+        with temporary_directory() as folder:
             cases, changed = Path(folder) / "cases.md", Path(folder) / "coverage.md"
             cases.write_text(self.synthetic_cases(), encoding="utf-8")
             original = TRACE["build"](cases, COVERAGE)
@@ -39,7 +40,7 @@ class CaseTraceTests(unittest.TestCase):
 
     def test_unknown_and_duplicate_category_names_fail_closed(self):
         text = COVERAGE.read_text(encoding="utf-8")
-        with tempfile.TemporaryDirectory() as folder:
+        with temporary_directory() as folder:
             changed = Path(folder) / "coverage.md"
             for replacement in ("Unknown category", "已送达商品退货"):
                 with self.subTest(replacement=replacement):
@@ -48,7 +49,7 @@ class CaseTraceTests(unittest.TestCase):
                         TRACE["coverage_groups"](changed)
 
     def test_business_requirement_count_is_pinned_to_materials_version(self):
-        with tempfile.TemporaryDirectory() as folder:
+        with temporary_directory() as folder:
             cases = Path(folder) / "cases.md"
             cases.write_text(self.synthetic_cases().replace("- Synthetic business requirement\n", "", 1), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "Coverage totals changed"):
