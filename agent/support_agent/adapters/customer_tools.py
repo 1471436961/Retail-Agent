@@ -1,12 +1,12 @@
 """Tool registration translates the model-facing contract into API calls."""
 
 from support_agent.adapters.customer_api import read_customer, verify_and_read_customer
+from support_agent.adapters.read_tools import ReadTools
 from support_agent.config import DOMAIN
 from tau2.environment.toolkit import ToolType, is_tool
-from tau2.hyper.client_api import ClientAPIToolKitBase
 
 
-class CustomerTools(ClientAPIToolKitBase):
+class CustomerTools(ReadTools):
     """Add reviewed read/write tools here as you implement business workflows."""
 
     @is_tool(ToolType.READ)

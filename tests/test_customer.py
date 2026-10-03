@@ -16,7 +16,7 @@ class CustomerTests(unittest.TestCase):
     def test_verification_precedes_details_and_rejects_mismatch(self):
         api = Mock()
         search = SimpleNamespace(body={"customer_id": "customer_a"}, raise_for_status=Mock())
-        details = SimpleNamespace(body={"email": "a@example.test"}, raise_for_status=Mock())
+        details = SimpleNamespace(body={"customer_id": "customer_a", "email": "a@example.test"}, raise_for_status=Mock())
         api.request.side_effect = [search, details]
         self.assertEqual(verify_and_read_customer(api, "customer_a", "a@example.test"), details.body)
         self.assertEqual([call.args[:2] for call in api.request.call_args_list], [("POST", "/v1/customers/search"), ("GET", "/v1/customers/customer_a")])
@@ -26,7 +26,7 @@ class CustomerTests(unittest.TestCase):
             verify_and_read_customer(api, "customer_b", "a@example.test")
         self.assertEqual(api.request.call_count, 1)
         api.reset_mock()
-        with self.assertRaisesRegex(ValueError, "Provide your email"):
+        with self.assertRaisesRegex(ValueError, "Provide email"):
             verify_and_read_customer(api, "customer_a", "")
         api.request.assert_not_called()
 
