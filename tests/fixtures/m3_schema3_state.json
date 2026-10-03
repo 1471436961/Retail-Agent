@@ -1,0 +1,629 @@
+{
+  "source_commit": "3460329e24c69e6c7648c2702a5c834347ac05e4",
+  "description": "Original schema 3 functions, synthetic accepted reads and partial user consent; captured before M3.4 edits.",
+  "state": {
+    "schema_version": 3,
+    "turn": 6,
+    "pending_call_id": null,
+    "pending_calls": {},
+    "customer_id": "customer_a",
+    "identity": {
+      "verified": true,
+      "customer_id": "customer_a"
+    },
+    "history": [
+      {
+        "role": "user",
+        "content": "customer_a a@example.test"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "lookup-1"
+        ],
+        "tool_calls": [
+          {
+            "id": "lookup-1",
+            "name": "lookup_customer",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "lookup-1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"last_four\": \"0001\", \"brand\": \"visa\"}, {\"id\": \"card_other\", \"source\": \"credit_card\", \"brand\": \"visa\", \"last_four\": \"0002\"}], \"order_ids\": [\"#TEST1\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "The customer email is a@example.test."
+      },
+      {
+        "role": "user",
+        "content": "Read order #TEST1"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "read-3"
+        ],
+        "tool_calls": [
+          {
+            "id": "read-3",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "read-3",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Example mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [{\"transaction_type\": \"payment\", \"amount\": 12.5, \"payment_method_id\": \"card_a\"}, {\"transaction_type\": \"payment\", \"amount\": 2, \"payment_method_id\": \"card_a\"}], \"shipping_address\": {\"address_line_1\": \"2 Test St\", \"address_line_2\": null, \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90002\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Owned order records: [{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Example mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [{\"transaction_type\": \"payment\", \"amount\": 12.5, \"payment_method_id\": \"card_a\"}, {\"transaction_type\": \"payment\", \"amount\": 2, \"payment_method_id\": \"card_a\"}], \"shipping_address\": {\"address_line_1\": \"2 Test St\", \"address_line_2\": null, \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90002\"}, \"fulfillments\": []}]\nOriginal item prices are recorded separately from catalog prices. Order dates and delivery estimates are unknown unless explicitly provided; processed does not prove a shipment date, and a tracking ID alone is not a shipment event."
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "catalog-fixture"
+        ],
+        "tool_calls": [
+          {
+            "id": "catalog-fixture",
+            "name": "get_product",
+            "arguments": {
+              "product_id": "product_mug",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "catalog-fixture",
+        "content": "{\"product_id\": \"product_mug\", \"name\": \"Example mug\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"options\": {\"color\": \"blue\"}, \"price\": 12.5, \"available\": true}, {\"item_id\": \"item_red\", \"options\": {\"color\": \"red\"}, \"price\": 11.375, \"available\": true}, {\"item_id\": \"item_green\", \"options\": {\"color\": \"green\"}, \"price\": 11.375, \"available\": true}]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Variants: 3; available variants: 3. Current catalog prices/options: {\"product_id\": \"product_mug\", \"name\": \"Example mug\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"options\": {\"color\": \"blue\"}, \"price\": 12.5, \"available\": true}, {\"item_id\": \"item_red\", \"options\": {\"color\": \"red\"}, \"price\": 11.375, \"available\": true}, {\"item_id\": \"item_green\", \"options\": {\"color\": \"green\"}, \"price\": 11.375, \"available\": true}]}"
+      },
+      {
+        "role": "assistant",
+        "content": "Operation 1:\nUpdate this order's shipping address.\nCustomer: customer_a\nOrder: #TEST1\nAddress line 1: \"2 Test St\"\nAddress line 2: null\nCity: \"Testville\"\nRegion: \"CA\"\nCountry: \"US\"\nPostal code: \"90002\"\nThis is a proposal only; no change, charge or refund has been made.\n\nOperation 2:\nSwitch this order's payment method.\nCustomer: customer_a\nOrder: #TEST1\nPayment method: card_other\nFull order charge: 14.5\nOriginal payment refund basis: 12.5 to card_a\nOriginal payment refund basis: 2 to card_a\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+        "proposal_set": [
+          {
+            "version": 1,
+            "spec": {
+              "action": "shipping_address",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              },
+              "parameters": {
+                "address_line_1": "2 Test St",
+                "address_line_2": null,
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90002"
+              },
+              "amount": {
+                "kind": "not_applicable"
+              }
+            },
+            "request_index": 4,
+            "facts": {
+              "customer": {
+                "customer_id": "customer_a",
+                "email": "a@example.test",
+                "name": {
+                  "first_name": "Ada",
+                  "last_name": "Example"
+                },
+                "default_shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "payment_methods": [
+                  {
+                    "id": "card_a",
+                    "source": "credit_card",
+                    "last_four": "0001",
+                    "brand": "visa"
+                  },
+                  {
+                    "id": "card_other",
+                    "source": "credit_card",
+                    "brand": "visa",
+                    "last_four": "0002"
+                  }
+                ],
+                "order_ids": [
+                  "#TEST1"
+                ]
+              },
+              "order": {
+                "order_id": "#TEST1",
+                "customer_id": "customer_a",
+                "status": "pending",
+                "items": [
+                  {
+                    "item_id": "item_blue",
+                    "product_id": "product_mug",
+                    "price": 12.5,
+                    "name": "Example mug",
+                    "options": {
+                      "color": "blue"
+                    }
+                  }
+                ],
+                "payments": [
+                  {
+                    "transaction_type": "payment",
+                    "amount": 12.5,
+                    "payment_method_id": "card_a"
+                  },
+                  {
+                    "transaction_type": "payment",
+                    "amount": 2,
+                    "payment_method_id": "card_a"
+                  }
+                ],
+                "shipping_address": {
+                  "address_line_1": "2 Test St",
+                  "address_line_2": null,
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90002"
+                },
+                "fulfillments": []
+              },
+              "catalog": []
+            },
+            "fingerprint": "e32ede6027b216887652593da5894a0558bf13eac3488a8292a92d98639a8e9a",
+            "reuse_version": null
+          },
+          {
+            "version": 2,
+            "spec": {
+              "action": "payment_method",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              },
+              "parameters": {
+                "payment_method_id": "card_other"
+              },
+              "amount": {
+                "kind": "order_total",
+                "value": 14.5,
+                "refund_rows": [
+                  {
+                    "transaction_type": "payment",
+                    "amount": 12.5,
+                    "payment_method_id": "card_a"
+                  },
+                  {
+                    "transaction_type": "payment",
+                    "amount": 2,
+                    "payment_method_id": "card_a"
+                  }
+                ]
+              }
+            },
+            "request_index": 4,
+            "facts": {
+              "customer": {
+                "customer_id": "customer_a",
+                "email": "a@example.test",
+                "name": {
+                  "first_name": "Ada",
+                  "last_name": "Example"
+                },
+                "default_shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "payment_methods": [
+                  {
+                    "id": "card_a",
+                    "source": "credit_card",
+                    "last_four": "0001",
+                    "brand": "visa"
+                  },
+                  {
+                    "id": "card_other",
+                    "source": "credit_card",
+                    "brand": "visa",
+                    "last_four": "0002"
+                  }
+                ],
+                "order_ids": [
+                  "#TEST1"
+                ]
+              },
+              "order": {
+                "order_id": "#TEST1",
+                "customer_id": "customer_a",
+                "status": "pending",
+                "items": [
+                  {
+                    "item_id": "item_blue",
+                    "product_id": "product_mug",
+                    "price": 12.5,
+                    "name": "Example mug",
+                    "options": {
+                      "color": "blue"
+                    }
+                  }
+                ],
+                "payments": [
+                  {
+                    "transaction_type": "payment",
+                    "amount": 12.5,
+                    "payment_method_id": "card_a"
+                  },
+                  {
+                    "transaction_type": "payment",
+                    "amount": 2,
+                    "payment_method_id": "card_a"
+                  }
+                ],
+                "shipping_address": {
+                  "address_line_1": "2 Test St",
+                  "address_line_2": null,
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90002"
+                },
+                "fulfillments": []
+              },
+              "catalog": []
+            },
+            "fingerprint": "793147fba63112bf4bdd78216442a1065f971e91e8b6135695eab8c7a7c94c7d",
+            "reuse_version": null
+          }
+        ]
+      },
+      {
+        "role": "user",
+        "content": "confirm only operation 1"
+      },
+      {
+        "role": "assistant",
+        "content": "Confirmation recorded only for operation(s) 1. Other operations are not confirmed. No business write has been executed.",
+        "proposal_set_ack": [
+          {
+            "version": 1,
+            "fingerprint": "e32ede6027b216887652593da5894a0558bf13eac3488a8292a92d98639a8e9a",
+            "confirmation_index": 12
+          }
+        ]
+      }
+    ],
+    "tasks": [],
+    "proposals": [
+      {
+        "version": 1,
+        "spec": {
+          "action": "shipping_address",
+          "target": {
+            "customer_id": "customer_a",
+            "order_id": "#TEST1"
+          },
+          "parameters": {
+            "address_line_1": "2 Test St",
+            "address_line_2": null,
+            "city": "Testville",
+            "region": "CA",
+            "country": "US",
+            "postal_code": "90002"
+          },
+          "amount": {
+            "kind": "not_applicable"
+          }
+        },
+        "request_index": 4,
+        "facts": {
+          "customer": {
+            "customer_id": "customer_a",
+            "email": "a@example.test",
+            "name": {
+              "first_name": "Ada",
+              "last_name": "Example"
+            },
+            "default_shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "payment_methods": [
+              {
+                "id": "card_a",
+                "source": "credit_card",
+                "last_four": "0001",
+                "brand": "visa"
+              },
+              {
+                "id": "card_other",
+                "source": "credit_card",
+                "brand": "visa",
+                "last_four": "0002"
+              }
+            ],
+            "order_ids": [
+              "#TEST1"
+            ]
+          },
+          "order": {
+            "order_id": "#TEST1",
+            "customer_id": "customer_a",
+            "status": "pending",
+            "items": [
+              {
+                "item_id": "item_blue",
+                "product_id": "product_mug",
+                "price": 12.5,
+                "name": "Example mug",
+                "options": {
+                  "color": "blue"
+                }
+              }
+            ],
+            "payments": [
+              {
+                "transaction_type": "payment",
+                "amount": 12.5,
+                "payment_method_id": "card_a"
+              },
+              {
+                "transaction_type": "payment",
+                "amount": 2,
+                "payment_method_id": "card_a"
+              }
+            ],
+            "shipping_address": {
+              "address_line_1": "2 Test St",
+              "address_line_2": null,
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90002"
+            },
+            "fulfillments": []
+          },
+          "catalog": []
+        },
+        "fingerprint": "e32ede6027b216887652593da5894a0558bf13eac3488a8292a92d98639a8e9a",
+        "reuse_version": null,
+        "presentation_index": 11,
+        "set_index": 11,
+        "status": "confirmed",
+        "confirmation": {
+          "history_index": 12,
+          "fingerprint": "e32ede6027b216887652593da5894a0558bf13eac3488a8292a92d98639a8e9a"
+        },
+        "response": {
+          "kind": "confirm",
+          "history_index": 12
+        }
+      },
+      {
+        "version": 2,
+        "spec": {
+          "action": "payment_method",
+          "target": {
+            "customer_id": "customer_a",
+            "order_id": "#TEST1"
+          },
+          "parameters": {
+            "payment_method_id": "card_other"
+          },
+          "amount": {
+            "kind": "order_total",
+            "value": 14.5,
+            "refund_rows": [
+              {
+                "transaction_type": "payment",
+                "amount": 12.5,
+                "payment_method_id": "card_a"
+              },
+              {
+                "transaction_type": "payment",
+                "amount": 2,
+                "payment_method_id": "card_a"
+              }
+            ]
+          }
+        },
+        "request_index": 4,
+        "facts": {
+          "customer": {
+            "customer_id": "customer_a",
+            "email": "a@example.test",
+            "name": {
+              "first_name": "Ada",
+              "last_name": "Example"
+            },
+            "default_shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "payment_methods": [
+              {
+                "id": "card_a",
+                "source": "credit_card",
+                "last_four": "0001",
+                "brand": "visa"
+              },
+              {
+                "id": "card_other",
+                "source": "credit_card",
+                "brand": "visa",
+                "last_four": "0002"
+              }
+            ],
+            "order_ids": [
+              "#TEST1"
+            ]
+          },
+          "order": {
+            "order_id": "#TEST1",
+            "customer_id": "customer_a",
+            "status": "pending",
+            "items": [
+              {
+                "item_id": "item_blue",
+                "product_id": "product_mug",
+                "price": 12.5,
+                "name": "Example mug",
+                "options": {
+                  "color": "blue"
+                }
+              }
+            ],
+            "payments": [
+              {
+                "transaction_type": "payment",
+                "amount": 12.5,
+                "payment_method_id": "card_a"
+              },
+              {
+                "transaction_type": "payment",
+                "amount": 2,
+                "payment_method_id": "card_a"
+              }
+            ],
+            "shipping_address": {
+              "address_line_1": "2 Test St",
+              "address_line_2": null,
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90002"
+            },
+            "fulfillments": []
+          },
+          "catalog": []
+        },
+        "fingerprint": "793147fba63112bf4bdd78216442a1065f971e91e8b6135695eab8c7a7c94c7d",
+        "reuse_version": null,
+        "presentation_index": 11,
+        "set_index": 11,
+        "status": "needs_review",
+        "confirmation": null,
+        "response": {
+          "kind": "deferred",
+          "history_index": 12
+        }
+      }
+    ],
+    "operations": [
+      {
+        "call_id": "lookup-1",
+        "name": "lookup_customer",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "read-3",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "catalog-fixture",
+        "name": "get_product",
+        "mutates": false,
+        "status": "succeeded"
+      }
+    ],
+    "handoff": {
+      "status": "not_requested"
+    },
+    "tool_calls_since_user": 0,
+    "model_calls_since_user": 0,
+    "identity_evidence": {
+      "inputs": {
+        "email": "a@example.test",
+        "first_name": "",
+        "last_name": "",
+        "postal_code": ""
+      },
+      "verified_at_turn": 2,
+      "source": "user_input_and_matched_search_profile"
+    },
+    "customer_record": {
+      "customer_id": "customer_a",
+      "email": "a@example.test",
+      "name": {
+        "first_name": "Ada",
+        "last_name": "Example"
+      },
+      "default_shipping_address": {
+        "address_line_1": "1 Test St",
+        "city": "Testville",
+        "region": "CA",
+        "country": "US",
+        "postal_code": "90001"
+      },
+      "payment_methods": [
+        {
+          "id": "card_a",
+          "source": "credit_card",
+          "last_four": "0001",
+          "brand": "visa"
+        },
+        {
+          "id": "card_other",
+          "source": "credit_card",
+          "brand": "visa",
+          "last_four": "0002"
+        }
+      ],
+      "order_ids": [
+        "#TEST1"
+      ]
+    },
+    "user_request": "confirm only operation 1",
+    "model_usage": [],
+    "verification_draft": {
+      "email": "a@example.test"
+    }
+  }
+}

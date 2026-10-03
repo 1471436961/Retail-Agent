@@ -117,10 +117,10 @@ def normalize_spec(spec):
 
 
 def _clean_read_history(history):
-    return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack", "proposal_set", "proposal_set_ack"}} for entry in history]
+    return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan"}} for entry in history]
 
 
-def _scope_facts(history, spec):
+def _scope_facts(history, spec, *, state_only=False):
     """Replay M2's accepted prefix, never HTTP, to establish original scope."""
     from support_agent.state import initial_state
     from support_agent.adapters.read_api import customer_order_ids
@@ -170,6 +170,10 @@ def _scope_facts(history, spec):
                     order = record
     if order is None:
         raise InvalidProposal("An accepted owned order read is required")
+    if state_only:
+        # Task planning needs exact accepted state before there is a quote.
+        # This returns facts only; the task caller must apply order_state_rule.
+        return {"customer": prefix["customer_record"], "order": order, "catalog": []}
     if order_state_rule(order, spec["action"])["decision"] != "allow":
         raise InvalidProposal("Order state does not permit this proposal")
     dependencies = []

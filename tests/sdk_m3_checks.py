@@ -3,11 +3,27 @@ import sys
 from pathlib import Path
 
 network_attempts = []
+guard_probe_events = []
+guard_probe_active = True
 def audit(event, args):
     if event in {"socket.connect", "socket.getaddrinfo"}:
-        network_attempts.append(event)
+        (guard_probe_events if guard_probe_active else network_attempts).append(event)
         raise RuntimeError("Network is forbidden in offline M3 SDK check")
 sys.addaudithook(audit)
+# Prove the guard can fail, without contacting a service: literal loopback
+# address resolution and a synthetic connect audit event. Keep these controls
+# separate from attempts made by the actual SDK/planning/recovery paths.
+import socket
+for probe in (lambda: socket.getaddrinfo("127.0.0.1", 0),
+              lambda: sys.audit("socket.connect", None, ("127.0.0.1", 0))):
+    try:
+        probe()
+    except RuntimeError as exc:
+        assert str(exc) == "Network is forbidden in offline M3 SDK check"
+    else:
+        raise AssertionError("Network audit guard did not reject its positive control")
+assert guard_probe_events == ["socket.getaddrinfo", "socket.connect"]
+guard_probe_active = False
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "agent"))
 
 import json
@@ -99,4 +115,36 @@ assert not reply.tool_calls and blocked["quarantined_state"] == damaged
 reply, still_blocked = guarded_agent.present_proposals(blocked, specs)
 assert not reply.tool_calls and still_blocked == blocked
 assert len(api.calls) == reads_before and not network_attempts
+
+# M3.4 task planning uses the same SDK wrapper; it never adds a write tool.
+from support_agent.tasks import inspect_task_plan
+from support_agent.state import clone_state
+from test_m3_tasks import request
+plan_message, planned = agent.plan_tasks(state, [request("modify_items"), request()])
+assert isinstance(plan_message, AssistantMessage) and not plan_message.tool_calls
+assert not planned["proposals"] and len(planned["tasks"]) == 2
+assert agent.get_init_state(planned["history"])["tasks"] == planned["tasks"]
+presentation, proposed = agent.present_proposals(planned, [specification("modify_items"), specification()])
+reply, confirmed_tasks = agent.generate_next_message(UserMessage(role="user", content="yes"), proposed)
+task_view = inspect_task_plan(confirmed_tasks)
+assert [n["assessment"]["code"] for n in task_view["details"]["tasks"]] == ["dependency_result_required", "preflight_candidate"]
+assert not task_view["details"]["write_authorized"]
+recovered_tasks = agent.get_init_state(confirmed_tasks["history"])
+cloned_tasks = clone_state(json.loads(json.dumps(confirmed_tasks)))
+assert recovered_tasks["tasks"] == cloned_tasks["tasks"] == confirmed_tasks["tasks"]
+assert inspect_task_plan(recovered_tasks) == inspect_task_plan(cloned_tasks) == task_view
+adapter.decide(confirmed_tasks)
+serialized = json.dumps([m.model_dump() for m in gateway.calls[-1]["messages"]])
+assert plan_message.content in [m.content for m in gateway.calls[-1]["messages"] if isinstance(m, AssistantMessage)]
+assert '"task_plan"' not in serialized and '"depends_on"' not in serialized
+damaged = deepcopy(confirmed_tasks); damaged["tasks"][0]["depends_on"] = []
+reply, blocked = guarded_agent.plan_tasks(damaged, [request()])
+assert not reply.tool_calls and blocked["quarantined_state"] == damaged
+reply, still_blocked = guarded_agent.plan_tasks(blocked, [request()])
+assert not reply.tool_calls and still_blocked == blocked
+invalid, valid_state = agent.plan_tasks(state, [request("cancel", "#TEST2")])
+assert not invalid.tool_calls and not valid_state["tasks"]
+assert valid_state["identity_evidence"] == state["identity_evidence"]
+assert len(api.calls) == reads_before and not network_attempts
+print("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0")
 print("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake")

@@ -658,6 +658,7 @@ class ProposalRecoveryTests(unittest.TestCase):
         result = subprocess.run([str(interpreter), str(root / "tests/sdk_m3_checks.py")], cwd=root, env=env,
                                 capture_output=True, text=True, timeout=90)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0", result.stdout)
         self.assertIn("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake", result.stdout)
 
 

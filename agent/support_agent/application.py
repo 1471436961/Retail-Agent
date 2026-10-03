@@ -3,6 +3,7 @@
 from support_agent.protocol import ToolOutcome, TurnInput
 from support_agent.state import InvalidState, clone_state, initial_state, quarantine_state
 from support_agent.proposals import InvalidProposal
+from support_agent.domain.task_graph import InvalidTaskPlan
 from support_agent.turns import advance
 from tau2.data_model.message import AssistantMessage, MultiToolMessage, ToolCall
 
@@ -19,7 +20,7 @@ class CustomerAgent:
     def get_init_state(self, message_history=None):
         try:
             return initial_state(message_history)
-        except (InvalidState, InvalidProposal):
+        except (InvalidState, InvalidProposal, InvalidTaskPlan):
             return quarantine_state({"unrestored_history": message_history}, "invalid_history")
 
     def _blocked_reply(self, state):
@@ -37,6 +38,11 @@ class CustomerAgent:
         from support_agent.proposals import present_proposals
         return self._present(state, specifications, present_proposals)
 
+    def plan_tasks(self, state, requests):
+        """Internal M3.4 request plan, never a confirmation or execution."""
+        from support_agent.tasks import present_task_plan
+        return self._present(state, requests, present_task_plan)
+
     def _present(self, state, specification, presenter):
         if isinstance(state, dict) and "session_block" in state:
             return self._blocked_reply(state)
@@ -44,11 +50,13 @@ class CustomerAgent:
             decision, next_state = presenter(state, specification)
         except InvalidState:
             return self._blocked_reply(quarantine_state(state, "invalid_state"))
-        except InvalidProposal:
+        except (InvalidProposal, InvalidTaskPlan):
             # Invalid workflow construction may be repaired; keep the valid
             # session evidence and do not render internal exception details.
             next_state = clone_state(state)
             text = "A complete proposal could not be prepared. Its parameters and accepted evidence need review before confirmation."
+            if presenter.__name__ == "present_task_plan":
+                text = "The requested operation plan needs review of its targets and accepted evidence before proceeding."
             next_state["history"].append({"role": "assistant", "content": text})
             return AssistantMessage(role="assistant", content=text), next_state
         return AssistantMessage(role="assistant", content=decision.text), next_state
@@ -71,7 +79,7 @@ class CustomerAgent:
             turn = TurnInput(kind="user", content=message.content or "")
         try:
             decision, next_state = advance(turn, state, model_adapter=self.model_adapter)
-        except (InvalidState, InvalidProposal):
+        except (InvalidState, InvalidProposal, InvalidTaskPlan):
             return self._blocked_reply(quarantine_state(state, "invalid_state"))
         if decision.calls:
             calls = [

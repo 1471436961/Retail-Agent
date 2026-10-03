@@ -558,7 +558,7 @@ class ScopedRecoveryTests(unittest.TestCase):
 
     def test_legacy_schema_cannot_smuggle_new_scoped_evidence(self):
         _, state, _, _ = scoped()
-        for version in (1, 2, True, 0, 4):
+        for version in (1, 2, True, 0, SCHEMA_VERSION + 1):
             damaged = deepcopy(state); damaged["schema_version"] = version
             with self.subTest(version=version), self.assertRaises(InvalidState): clone_state(damaged)
 
