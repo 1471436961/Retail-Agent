@@ -3,8 +3,8 @@
 import json
 import re
 
-from support_agent.domain.customer import find_customer_id, verified_lookup_result
-from support_agent.protocol import InvalidAction, ToolAction, ToolOutcome, validate_tool_action
+from support_agent.domain.customer import find_customer_id
+from support_agent.protocol import Decision, InvalidAction, ToolAction, ToolOutcome, validate_tool_action
 
 
 SCHEMA_VERSION = 1
@@ -15,61 +15,26 @@ class InvalidState(ValueError):
 
 
 def finish_pending(state: dict, status: str) -> None:
-    call_id = state["pending_call_id"]
-    if call_id is not None:
-        state["pending_calls"].pop(call_id, None)
-        for operation in reversed(state["operations"]):
-            if operation["call_id"] == call_id and operation["status"] == "sent":
-                operation["status"] = status
-                break
+    ids = set(state["pending_calls"])
+    for operation in state["operations"]:
+        if operation["call_id"] in ids and operation["status"] == "sent":
+            operation["status"] = status
+    state["pending_calls"].clear()
     state["pending_call_id"] = None
 
 
-def record_lookup_call(state: dict, action: ToolAction) -> None:
-    """The t1 workflow supports one outstanding read, never a tool chain."""
-    validate_tool_action(action)
-    if any(operation["call_id"] == action.id for operation in state["operations"]):
-        raise InvalidAction("Reused tool call ID")
-    finish_pending(state, "unknown")
-    state["identity"] = {"verified": False, "customer_id": None}
-    state["pending_call_id"] = action.id
-    state["pending_calls"][action.id] = {"name": action.name, "arguments": dict(action.arguments), "mutates": False}
-    state["operations"].append({"call_id": action.id, "name": action.name, "mutates": False, "status": "sent"})
-    state["tool_calls_since_user"] += 1
+def result_history(outcomes, *, status="succeeded") -> dict:
+    """Keep accepted facts; rejected batches retain only IDs and bounded status.
 
-
-def consume_lookup_results(state: dict, outcomes) -> tuple[str, str]:
-    """Apply complete-batch checks in live turns and restoration.
-
-    Return (status, content). ``none`` has no pending lookup; ``unknown``
-    has no uniquely associated result. Both return empty content.
-    ``failed`` and ``mismatch`` retain the associated raw result for
-    diagnostics; it is unverified and must not be presented as customer
-    facts. Only ``succeeded`` returns verified content for the reply.
+    Mismatch keeps error=False so replay still classifies it as unknown rather
+    than a transport failure. Rejected batches retain no partial facts.
     """
-    call_id = state["pending_call_id"]
-    if call_id is None:
-        return "none", ""
-    pending = state["pending_calls"].get(call_id)
-    if len(outcomes) != 1 or outcomes[0].id != call_id or not isinstance(pending, dict):
-        finish_pending(state, "unknown")
-        return "unknown", ""
-    result = outcomes[0]
-    if result.error:
-        finish_pending(state, "failed")
-        return "failed", result.content
-    verified_id = verified_lookup_result(result.content, pending["arguments"])
-    if verified_id is None:
-        finish_pending(state, "unknown")
-        return "mismatch", result.content
-    state["identity"] = {"verified": True, "customer_id": verified_id}
-    state["customer_id"] = verified_id
-    finish_pending(state, "succeeded")
-    return "succeeded", result.content
-
-
-def result_history(outcomes) -> dict:
-    entries = [{"role": "tool", "id": result.id, "content": result.content, "error": result.error} for result in outcomes]
+    if status not in {"succeeded", "failed", "mismatch", "unknown", "none"}:
+        raise ValueError("Unknown read result status")
+    safe_content = json.dumps({"read_result_status": status})
+    entries = [{"role": "tool", "id": result.id,
+                "content": result.content if status == "succeeded" and not result.error else safe_content,
+                "error": True if status == "failed" else result.error} for result in outcomes]
     # Keep empty and multiple results together; flattening loses ambiguity.
     return entries[0] if len(entries) == 1 else {"role": "tools", "tool_messages": entries}
 
@@ -122,38 +87,57 @@ def initial_state(message_history=None) -> dict:
     state = {
         "schema_version": SCHEMA_VERSION,
         "turn": 0,
-        "pending_call_id": None,  # Active t1 lookup ID; must match the sole pending_calls entry.
+        "pending_call_id": None,  # Sole pending read ID; None for empty or multi-call batches.
         "pending_calls": {},
         "customer_id": None,  # A user-supplied claim until a lookup succeeds.
         "identity": {"verified": False, "customer_id": None},
-        "history": history,
+        "history": [],  # Only preceding messages may authorize a restored call.
         "tasks": [],
         "proposals": [],
         "operations": [],
         "handoff": {"status": "not_requested"},
         "tool_calls_since_user": 0,
+        "model_calls_since_user": 0,
+        "identity_evidence": None,
+        "customer_record": None,
+        "user_request": "",
+        "model_usage": [],
+        "verification_draft": {},
     }
     index = 0
     while index < len(history):
         entry = history[index]
         index += 1
+        if entry["role"] not in {"tool", "tools"}:
+            state["history"].append(entry)
         if entry["role"] == "user":
             state["turn"] += 1
             finish_pending(state, "unknown")
             state["tool_calls_since_user"] = 0
-            state["identity"] = {"verified": False, "customer_id": None}
-            state["customer_id"] = find_customer_id(entry["content"]) or state["customer_id"]
+            state["model_calls_since_user"] = 0
+            state["user_request"] = entry["content"]
+            from support_agent.domain.identity import fields_from_text
+            fields = fields_from_text(entry["content"])
+            if not state["identity"]["verified"] and fields:
+                if "email" in fields:
+                    state["verification_draft"] = {"email": fields["email"]}
+                else:
+                    state["verification_draft"].pop("email", None)
+                    state["verification_draft"].update(fields)
+            if not state["identity"]["verified"]:
+                state["customer_id"] = find_customer_id(entry["content"]) or state["customer_id"]
         elif entry["role"] == "assistant":
             calls = entry.get("tool_calls", ())
             if "tool_call_ids" in entry:
                 try:
-                    if len(calls) != 1 or len(entry["tool_call_ids"]) != 1:
-                        raise InvalidAction("Only one lookup may be outstanding")
-                    call = calls[0]
-                    record_lookup_call(state, ToolAction(id=call["id"], name=call["name"], arguments=call["arguments"]))
-                except InvalidAction:
+                    from support_agent.read_session import record_calls
+                    actions = tuple(ToolAction(id=c["id"], name=c["name"], arguments=c["arguments"]) for c in calls)
+                    if len(calls) != len(entry["tool_call_ids"]):
+                        raise InvalidAction("Incomplete historical calls")
+                    Decision(calls=actions)
+                    record_calls(state, actions)
+                except (InvalidAction, ValueError):
                     finish_pending(state, "unknown")
-                    state["identity"] = {"verified": False, "customer_id": None}
         elif entry["role"] in {"tool", "tools"}:
             # Plain ToolMessages may describe one MultiToolMessage. Consecutive
             # results without an intervening assistant call are one batch.
@@ -164,12 +148,14 @@ def initial_state(message_history=None) -> dict:
                 index += 1
             state["turn"] += 1
             outcomes = tuple(ToolOutcome(id=item["id"], content=item["content"], error=item["error"]) for item in entries)
-            consume_lookup_results(state, outcomes)
+            from support_agent.read_session import consume_results
+            status, _ = consume_results(state, outcomes)
+            state["history"].append(result_history(outcomes, status=status))
     for entry in history:
         ids = entry.get("tool_call_ids", ()) if entry["role"] == "assistant" else (
             [item["id"] for item in entry["tool_messages"]] if entry["role"] == "tools" else (entry.get("id", ""),))
         for call_id in ids:
-            match = re.fullmatch(r"lookup-(\d+)", call_id) if isinstance(call_id, str) else None
+            match = re.fullmatch(r"(?:lookup|read)-(\d+)", call_id) if isinstance(call_id, str) else None
             if match:
                 state["turn"] = max(state["turn"], int(match.group(1)))
     return clone_state(state)
@@ -183,9 +169,21 @@ def clone_state(state: dict) -> dict:
         copied = json.loads(json.dumps(state, allow_nan=False))
     except (TypeError, ValueError) as exc:
         raise InvalidState("Session state must be JSON serializable") from exc
+    # M1 states remain readable; missing evidence does not grant private reads.
+    for key, default in (("model_calls_since_user", 0), ("identity_evidence", None), ("customer_record", None), ("user_request", ""), ("model_usage", []), ("verification_draft", {})):
+        copied.setdefault(key, default)
     if any(not isinstance(copied.get(key), list) for key in ("history", "tasks", "proposals", "operations")):
         raise InvalidState("Malformed session lists")
-    if any(type(copied.get(key)) is not int or copied[key] < 0 for key in ("turn", "tool_calls_since_user")):
+    for entry in copied["history"]:
+        if not isinstance(entry, dict) or entry.get("role") not in {"user", "assistant", "tool", "tools"}:
+            raise InvalidState("Malformed session history")
+        if entry["role"] != "tools" and not isinstance(entry.get("content"), str):
+            raise InvalidState("History content must be text")
+        if entry["role"] == "tools":
+            batch = entry.get("tool_messages")
+            if not isinstance(batch, list) or any(not isinstance(r, dict) or not isinstance(r.get("content"), str) for r in batch):
+                raise InvalidState("Malformed history result batch")
+    if any(type(copied.get(key)) is not int or copied[key] < 0 for key in ("turn", "tool_calls_since_user", "model_calls_since_user")):
         raise InvalidState("Malformed session counters")
     identity, handoff = copied.get("identity"), copied.get("handoff")
     if not isinstance(identity, dict) or type(identity.get("verified")) is not bool or "customer_id" not in identity:
@@ -203,7 +201,7 @@ def clone_state(state: dict) -> dict:
         raise InvalidState("Malformed pending calls")
     if pending_id is not None and (not isinstance(pending_id, str) or not pending_id):
         raise InvalidState("Pending call ID must be nonempty")
-    if set(pending) != ({pending_id} if pending_id is not None else set()):
+    if len(pending) > 8 or pending_id != (next(iter(pending)) if len(pending) == 1 else None):
         raise InvalidState("Inconsistent pending call slot")
     ids = set()
     for operation in copied["operations"]:
@@ -215,12 +213,32 @@ def clone_state(state: dict) -> dict:
     sent_ids = {operation["call_id"] for operation in copied["operations"] if operation["status"] == "sent"}
     if sent_ids != set(pending):
         raise InvalidState("Pending calls must match sent operations")
-    if pending_id is not None:
-        item = pending[pending_id]
+    if not isinstance(copied["user_request"], str):
+        raise InvalidState("Invalid current request")
+    if not isinstance(copied["model_usage"], list):
+        raise InvalidState("Invalid model usage records")
+    draft = copied["verification_draft"]
+    if not isinstance(draft, dict) or set(draft) - {"email", "first_name", "last_name", "postal_code"} or any(not isinstance(v, str) for v in draft.values()):
+        raise InvalidState("Invalid independent verification draft")
+    evidence, record = copied["identity_evidence"], copied["customer_record"]
+    if evidence is not None:
+        from support_agent.domain.identity import PROOF_FIELDS, matches_customer, supplied_by_user
+        if (not isinstance(evidence, dict) or set(evidence) != {"inputs", "verified_at_turn", "source"}
+                or not isinstance(evidence["inputs"], dict) or set(evidence["inputs"]) != set(PROOF_FIELDS)
+                or type(evidence["verified_at_turn"]) is not int or not 0 <= evidence["verified_at_turn"] <= copied["turn"]
+                or evidence["source"] != "user_input_and_matched_search_profile"
+                or not identity["verified"] or not supplied_by_user(evidence["inputs"], copied["history"])
+                or not matches_customer(record, evidence["inputs"], identity["customer_id"])):
+            raise InvalidState("Invalid independent identity evidence")
+    elif record is not None:
+        raise InvalidState("Customer record requires identity evidence")
+    for pending_id, item in pending.items():
         if not isinstance(item, dict) or item.get("mutates") is not False:
             raise InvalidState("Malformed lookup descriptor")
         try:
             validate_tool_action(ToolAction(id=pending_id, name=item.get("name"), arguments=item.get("arguments")))
+            from support_agent.read_session import bind_arguments
+            bind_arguments(item["name"], item["arguments"], copied)
         except InvalidAction as exc:
             raise InvalidState("Invalid pending lookup") from exc
         operation = next(operation for operation in copied["operations"] if operation["call_id"] == pending_id)

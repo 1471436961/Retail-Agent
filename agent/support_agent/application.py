@@ -9,9 +9,11 @@ from tau2.data_model.message import AssistantMessage, MultiToolMessage, ToolCall
 class CustomerAgent:
     """Deterministic t1 lookup example, not a complete p1/t2 business solution."""
 
-    def __init__(self, context=None):
+    def __init__(self, context=None, model_adapter=None):
         # Runtime capabilities are instance-local, never persisted in JSON state.
         self.context = context
+        # Explicit injection is required; factory defaults never call a model.
+        self.model_adapter = model_adapter
 
     def get_init_state(self, message_history=None):
         return initial_state(message_history)
@@ -30,7 +32,7 @@ class CustomerAgent:
             if getattr(message, "role", None) != "user":
                 raise ValueError("Unsupported platform message: expected user or multi-tool results")
             turn = TurnInput(kind="user", content=message.content or "")
-        decision, next_state = advance(turn, state)
+        decision, next_state = advance(turn, state, model_adapter=self.model_adapter)
         if decision.calls:
             calls = [
                 ToolCall(id=call.id, name=call.name, arguments=call.arguments, requestor="assistant")

@@ -6,11 +6,22 @@ from dataclasses import dataclass, field
 from typing import Callable, Literal
 
 from support_agent.config import DOMAIN
-from support_agent.domain.customer import find_email
+from support_agent.domain.identity import PROOF_FIELDS, verification_inputs
 
 
 MAX_TOOL_CALLS_PER_MESSAGE = 8
 MAX_CANDIDATE_ATTEMPTS = 8
+VERIFICATION_FIELDS = {"customer_id", *PROOF_FIELDS}
+READ_TOOL_FIELDS = {
+    "lookup_customer": {"customer_id", "email"},
+    "verify_customer": VERIFICATION_FIELDS,
+    "read_customer_profile": VERIFICATION_FIELDS,
+    "get_order": VERIFICATION_FIELDS | {"order_id"},
+    "list_customer_orders": VERIFICATION_FIELDS | {"status"},
+    "list_products": VERIFICATION_FIELDS,
+    "get_product": VERIFICATION_FIELDS | {"product_id"},
+    "get_item": VERIFICATION_FIELDS | {"item_id"},
+}
 
 
 class InvalidAction(ValueError):
@@ -48,16 +59,22 @@ class ToolAction:
 
 def validate_tool_action(action: ToolAction) -> None:
     """Reject unknown actions and arguments before creating a platform call."""
-    if action.name != "lookup_customer":
+    if action.name not in READ_TOOL_FIELDS:
         raise InvalidAction("Unsupported tool")
     if not isinstance(action.id, str) or not action.id:
         raise InvalidAction("Tool call ID is required")
-    if not isinstance(action.arguments, dict) or set(action.arguments) != {"customer_id", "email"}:
-        raise InvalidAction("Invalid lookup arguments")
+    if not isinstance(action.arguments, dict) or set(action.arguments) != READ_TOOL_FIELDS[action.name]:
+        raise InvalidAction("Invalid read arguments")
     if any(not isinstance(value, str) for value in action.arguments.values()):
         raise InvalidAction("Lookup arguments must be strings")
-    if DOMAIN == "retail_plus" and find_email(action.arguments["email"]) != action.arguments["email"]:
-        raise InvalidAction("Retail lookup requires an independently supplied email")
+    if DOMAIN == "retail_plus":
+        try:
+            verification_inputs(**{k: action.arguments.get(k, "") for k in PROOF_FIELDS})
+        except ValueError as exc:
+            raise InvalidAction("Retail read requires independent verification") from exc
+    for key in ("order_id", "product_id", "item_id"):
+        if key in action.arguments and not action.arguments[key].strip():
+            raise InvalidAction("Read target ID is required")
 
 
 @dataclass(frozen=True)
