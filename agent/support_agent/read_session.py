@@ -254,6 +254,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
     if proposal_reply is not None:
+        if proposal_reply["kind"] == "set_ack":
+            from support_agent.proposals import record_set_ack
+            return record_set_ack(state)
         if proposal_reply["kind"] == "ack":
             from support_agent.proposals import record_ack
             return record_ack(state, proposal_reply["text"])

@@ -30,10 +30,18 @@ class CustomerAgent:
     def present_proposal(self, state, specification):
         """Internal workflow presentation; never a model tool or a business write."""
         from support_agent.proposals import present_proposal
+        return self._present(state, specification, present_proposal)
+
+    def present_proposals(self, state, specifications):
+        """Internal M3.3 entry: separately selectable complete operations."""
+        from support_agent.proposals import present_proposals
+        return self._present(state, specifications, present_proposals)
+
+    def _present(self, state, specification, presenter):
         if isinstance(state, dict) and "session_block" in state:
             return self._blocked_reply(state)
         try:
-            decision, next_state = present_proposal(state, specification)
+            decision, next_state = presenter(state, specification)
         except InvalidState:
             return self._blocked_reply(quarantine_state(state, "invalid_state"))
         except InvalidProposal:

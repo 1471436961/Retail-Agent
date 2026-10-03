@@ -1,4 +1,4 @@
-"""Versioned whole-proposal consent. No API calls or business-write authority.
+"""Versioned complete-operation consent. No API or business-write authority.
 
 Only trusted workflow code may present a structured proposal. Model candidates
 have no proposal/confirmed surface. Raw user messages provide consent evidence;
@@ -117,7 +117,7 @@ def normalize_spec(spec):
 
 
 def _clean_read_history(history):
-    return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack"}} for entry in history]
+    return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack", "proposal_set", "proposal_set_ack"}} for entry in history]
 
 
 def _scope_facts(history, spec):
@@ -257,7 +257,7 @@ ACK = "Your confirmation of the complete proposal is recorded. No business write
 
 def record_ack(state, text=ACK):
     proposal = state["proposals"][-1]
-    if proposal["status"] != "confirmed" or proposal["confirmation"] is None:
+    if "set_index" in proposal or proposal["status"] != "confirmed" or proposal["confirmation"] is None:
         raise InvalidProposal("Acknowledgement requires existing user consent")
     state["history"].append({"role": "assistant", "content": text, "proposal_ack": {
         "version": proposal["version"], "fingerprint": proposal["fingerprint"],
@@ -273,7 +273,7 @@ def restore_ack(state, index):
         raise InvalidProposal("Invalid acknowledgement context")
     event, proposal = entry["proposal_ack"], state["proposals"][-1]
     _keys(event, {"version", "fingerprint", "confirmation_index"})
-    if (proposal["status"] != "confirmed" or proposal["confirmation"] is None
+    if ("set_index" in proposal or proposal["status"] != "confirmed" or proposal["confirmation"] is None
             or type(event["version"]) is not int or event["version"] != proposal["version"]
             or type(event["confirmation_index"]) is not int
             or event["confirmation_index"] != proposal["confirmation"]["history_index"]
@@ -293,6 +293,8 @@ def observe_user(state, index):
     """Observe a recorded actual user message; never execute a business action."""
     if not state["proposals"]:
         return None
+    if "set_index" in state["proposals"][-1]:
+        return _observe_set_user(state, index)
     proposal = state["proposals"][-1]
     entry = state["history"][index]
     if entry["role"] != "user":
@@ -332,9 +334,7 @@ def restore_presentation(state, index):
     if (json.dumps(event["facts"], sort_keys=True, allow_nan=False) != json.dumps(facts, sort_keys=True, allow_nan=False)
             or event["fingerprint"] != digest):
         raise InvalidProposal("Proposal facts or semantic fingerprint differ")
-    if state["proposals"]:
-        state["proposals"][-1]["status"] = "superseded"
-        state["proposals"][-1]["confirmation"] = None
+    _supersede_current(state)
     state["proposals"].append({**_copy(event), "presentation_index": index, "status": "proposed", "confirmation": None})
 
 
@@ -346,6 +346,10 @@ def validate_ledger(state):
             if entry["role"] != "assistant":
                 raise InvalidProposal("Only the recorded assistant presentation carries proposal metadata")
             restore_presentation(replay, index)
+        elif "proposal_set" in entry:
+            restore_proposal_set(replay, index)
+        elif "proposal_set_ack" in entry:
+            restore_set_ack(replay, index)
         elif "proposal_ack" in entry:
             restore_ack(replay, index)
         elif entry["role"] == "user":
@@ -367,7 +371,8 @@ def present_proposal(state, spec):
         facts = _scope_facts(state["history"], spec)
         request_index = next(i for i in range(len(state["history"]) - 1, -1, -1) if state["history"][i]["role"] == "user")
         digest = fingerprint(spec, facts)
-        if state["proposals"] and state["proposals"][-1]["status"] == "confirmed" and state["proposals"][-1]["fingerprint"] == digest:
+        if (state["proposals"] and "set_index" not in state["proposals"][-1]
+                and state["proposals"][-1]["status"] == "confirmed" and state["proposals"][-1]["fingerprint"] == digest):
             decision, state = record_ack(state)
             return decision, clone_state(state)
         event = {"version": len(state["proposals"]) + 1, "spec": spec, "request_index": request_index, "facts": facts, "fingerprint": digest}
@@ -401,11 +406,23 @@ def check_confirmation(state, version, spec):
         return outcome(deny, "invalid_specification", "The proposal specification is incomplete or invalid.")
     if not state["proposals"]:
         return outcome(need, "proposal_required", "A complete proposal must be presented first.")
-    proposal = state["proposals"][-1]
-    if proposal["version"] != version:
+    current = _current_records(state)
+    proposal = next((p for p in current if p["version"] == version), None)
+    if proposal is None:
         return outcome(deny, "version_mismatch", "Consent belongs to a different proposal version.")
     if _semantic_json(proposal["spec"]) != _semantic_json(spec):
         return outcome(deny, "specification_mismatch", "The requested operation differs from the presented proposal.")
+    if "set_index" in proposal:
+        if proposal["status"] == "withdrawn":
+            return outcome(deny, "proposal_withdrawn", "The user withdrew this complete operation.")
+        reason = proposal["response"]["kind"] if proposal["response"] else None
+        if reason in {"condition", "amend", "deferred", "unresolved"}:
+            code, message = {
+                "condition": ("condition_unresolved", "Resolve the user's condition and recap the selected complete operation."),
+                "amend": ("proposal_amended", "The affected list, method or quote needs a new complete recap."),
+                "deferred": ("scope_not_confirmed", "The user did not confirm this operation in the displayed set."),
+                "unresolved": ("response_unresolved", "The reply does not unambiguously confirm this displayed operation.")}[reason]
+            return outcome(need, code, message)
     if proposal["status"] != "confirmed" or proposal["confirmation"] is None:
         return outcome(need, "confirmation_required", "The current complete proposal lacks valid user confirmation.")
     if state["handoff"]["status"] != "not_requested":
@@ -426,3 +443,256 @@ def check_confirmation(state, version, spec):
 def confirmation_matches(state, version, spec):
     """Boolean compatibility wrapper; malformed evidence always returns False."""
     return check_confirmation(state, version, spec)["details"]["confirmation_matches"]
+
+
+def _current_records(state):
+    if not state["proposals"]:
+        return []
+    last = state["proposals"][-1]
+    if "set_index" not in last:
+        return [last]
+    return [p for p in state["proposals"] if p.get("set_index") == last["set_index"]]
+
+
+def _supersede_current(state):
+    for record in _current_records(state):
+        record["status"], record["confirmation"] = "superseded", None
+
+
+def _normalize_set(specifications):
+    if not isinstance(specifications, list) or not specifications:
+        raise InvalidProposal("A nonempty list of complete operation specifications is required")
+    specs = [normalize_spec(s) for s in specifications]
+    scopes = [(s["action"], json.dumps(s["target"], sort_keys=True)) for s in specs]
+    if len(set(scopes)) != len(scopes):
+        raise InvalidProposal("Duplicate operation scopes require one complete proposal")
+    # Do not offer cancellation and modifications of that same order as if
+    # both were independently executable. Task conflict planning belongs to M3.4.
+    for spec in specs:
+        if spec["action"] == "cancel" and any(
+                other["target"] == spec["target"] and other["action"] != "cancel" for other in specs):
+            raise InvalidProposal("Resolve cancellation versus other same-order operations first")
+    return specs
+
+
+def render_proposal_set(specifications, retained=()):
+    specs = _normalize_set(specifications)
+    sections = []
+    for number, spec in enumerate(specs, 1):
+        sections.append(f"Operation {number}:\n" + "\n".join(render_proposal(spec).splitlines()[:-1]))
+        if number in retained:
+            sections.append("Existing confirmation for this unchanged complete operation is retained.")
+        if spec["action"] == "modify_items":
+            sections.append("This operation includes the entire modification list, with no other modifications.")
+    if len(retained) == len(specs):
+        sections.append("All these unchanged complete operations retain existing confirmation; no new confirmation is requested.")
+    else:
+        sections.append("Do you confirm the remaining complete operations, or only specific numbered operations? "
+                        "A changed item list, payment method or condition requires a new complete recap.")
+    return "\n\n".join(sections)
+
+
+def restore_proposal_set(state, index):
+    """Validate every scope against its preceding facts before accepting any."""
+    entry = state["history"][index]
+    _keys(entry, {"role", "content", "proposal_set"})
+    if entry["role"] != "assistant":
+        raise InvalidProposal("Only assistant presentations carry operation sets")
+    events = entry["proposal_set"]
+    if not isinstance(events, list) or not events:
+        raise InvalidProposal("Missing complete operation set")
+    specs = _normalize_set([e.get("spec") if isinstance(e, dict) else None for e in events])
+    retained = [i for i, e in enumerate(events, 1) if isinstance(e, dict) and e.get("reuse_version") is not None]
+    if entry["content"] != render_proposal_set(specs, retained):
+        raise InvalidProposal("Operation set differs from the displayed complete recap")
+    request_index = next((i for i in range(index - 1, -1, -1) if state["history"][i]["role"] == "user"), None)
+    staged = []
+    previous = {p["version"]: p for p in _current_records(state)}
+    for offset, (event, spec) in enumerate(zip(events, specs), 1):
+        _keys(event, {"version", "spec", "request_index", "facts", "fingerprint", "reuse_version"})
+        if (type(event["version"]) is not int or event["version"] != len(state["proposals"]) + offset
+                or type(event["request_index"]) is not int or event["request_index"] != request_index
+                or spec != event["spec"]):
+            raise InvalidProposal("Invalid set version, original request or normalized specification")
+        facts = _scope_facts(state["history"][:index], spec)
+        if (json.dumps(facts, sort_keys=True, allow_nan=False) != json.dumps(event["facts"], sort_keys=True, allow_nan=False)
+                or fingerprint(spec, facts) != event["fingerprint"]):
+            raise InvalidProposal("Operation set facts or fingerprint differ")
+        record = {**_copy(event), "presentation_index": index, "set_index": index,
+                  "status": "proposed", "confirmation": None, "response": None}
+        reuse = event["reuse_version"]
+        if reuse is not None:
+            old = previous.get(reuse) if type(reuse) is int else None
+            if (old is None or old["status"] != "confirmed" or old["confirmation"] is None
+                    or old["fingerprint"] != record["fingerprint"]):
+                raise InvalidProposal("Retained consent must match a currently confirmed complete operation")
+            record["status"], record["confirmation"] = "confirmed", _copy(old["confirmation"])
+            record["response"] = {"kind": "retained", "history_index": old["confirmation"]["history_index"]}
+        staged.append(record)
+    _supersede_current(state)
+    state["proposals"].extend(staged)
+
+
+def present_proposals(state, specifications):
+    """M3.3 trusted presentation of independently selectable complete operations.
+
+    This is not a task scheduler or a model tool. New versions supersede prior
+    records, with consent retained only for an unchanged confirmed exact scope
+    and facts. A producer must resolve new quotes before re-presenting them.
+    The legacy single-proposal API retains its schema-2 replay semantics.
+    """
+    from support_agent.state import clone_state
+    state = clone_state(state)
+    try:
+        specs = _normalize_set(specifications)
+        if state["pending_calls"] or state["handoff"]["status"] != "not_requested":
+            raise InvalidProposal("Cannot present during pending reads or handoff")
+        facts = [_scope_facts(state["history"], spec) for spec in specs]
+        current = _current_records(state)
+        if (current and "set_index" in current[0] and len(current) == len(specs)
+                and all(p["status"] == "confirmed" and p["fingerprint"] == fingerprint(s, f)
+                        for p, s, f in zip(current, specs, facts))):
+            decision, state = record_set_ack(state)
+            return decision, clone_state(state)
+        request_index = next(i for i in range(len(state["history"]) - 1, -1, -1) if state["history"][i]["role"] == "user")
+        events = [{"version": len(state["proposals"]) + offset, "spec": spec,
+                   "request_index": request_index, "facts": fact, "fingerprint": fingerprint(spec, fact),
+                   "reuse_version": next((p["version"] for p in current if p["status"] == "confirmed"
+                                          and p["fingerprint"] == fingerprint(spec, fact)), None)}
+                  for offset, (spec, fact) in enumerate(zip(specs, facts), 1)]
+        text = render_proposal_set(specs, [i for i, e in enumerate(events, 1) if e["reuse_version"] is not None])
+        state["history"].append({"role": "assistant", "content": text, "proposal_set": events})
+        restore_proposal_set(state, len(state["history"]) - 1)
+        return Decision(text=text), clone_state(state)
+    except (TypeError, ValueError, KeyError, StopIteration) as exc:
+        raise InvalidProposal(str(exc)) from exc
+
+
+def _scope_selection(text, records):
+    """Resolve entire visible operation labels, never individual item IDs."""
+    # Full matches prevent a suffix like 'if cheap' or 'except item X' from
+    # being lost. Ambiguous action labels across orders are unresolved.
+    if text in {"all", "all operations", "全部", "全部操作"}:
+        return list(range(len(records)))
+    numbered = re.fullmatch(r"operations? ([1-9]\d*(?:(?:, | and )[1-9]\d*)*)", text)
+    chinese = re.fullmatch(r"第[1-9]\d*项(?:(?:、|和)第[1-9]\d*项)*", text)
+    if numbered or chinese:
+        indexes = [int(n) - 1 for n in re.findall(r"\d+", text)]
+        return indexes if len(set(indexes)) == len(indexes) and all(i < len(records) for i in indexes) else None
+    labels = {"the order address": "shipping_address", "order address": "shipping_address", "订单地址": "shipping_address",
+              "the default address": "default_shipping_address", "default address": "default_shipping_address", "默认地址": "default_shipping_address",
+              "the payment method": "payment_method", "payment method": "payment_method", "支付方式": "payment_method",
+              "the item modifications": "modify_items", "item modifications": "modify_items", "商品修改": "modify_items",
+              "the exchange": "exchange", "exchange": "exchange", "换货": "exchange",
+              "the cancellation": "cancel", "cancellation": "cancel", "取消订单": "cancel"}
+    matched = [i for i, p in enumerate(records) if p["spec"]["action"] == labels.get(text)]
+    return matched if len(matched) == 1 else None
+
+
+def _classify_set_reply(text, records):
+    """Bounded offline grammar. Unresolved prose cannot grant any consent."""
+    text = re.sub(r"\s+", " ", text.strip()).casefold().rstrip(".!。！")
+    all_scopes = list(range(len(records)))
+    if _whole_assent(text) or text in {"confirm all", "确认全部", "全部确认"}:
+        return "confirm", [("confirm", all_scopes)]
+    if text in {"no", "do not proceed", "don't proceed", "withdraw all", "cancel these changes",
+                "不", "不同意", "不要执行", "全部撤回", "撤回全部", "什么都不改", "什么都不换"}:
+        return "withdraw", [("withdraw", all_scopes)]
+    # Explicit independent clauses are allowed; every clause must resolve and
+    # their scopes must be disjoint. Never extract a 'yes' out of mixed prose.
+    clauses = re.split(r"\s*;\s*|；", text)
+    assignments, seen = [], set()
+    for clause in clauses:
+        condition = re.fullmatch(r"(?:confirm|change) (operation [1-9]\d*) (?:if|unless|when|after|before) .+|(?:确认|修改)(第[1-9]\d*项)(?:如果|只要|前提是).+", clause)
+        confirm = re.fullmatch(r"(?:i )?confirm (?:only )?(.+)|(?:只|仅)?确认(.+)", clause)
+        withdraw = re.fullmatch(r"withdraw (.+)|撤回(.+)", clause)
+        amend = re.fullmatch(r"change (operation [1-9]\d*) .+|修改(第[1-9]\d*项).+", clause)
+        match = condition or confirm or withdraw or amend
+        if match is None:
+            break
+        selection = _scope_selection(next(v for v in match.groups() if v is not None), records)
+        if selection is None or seen.intersection(selection):
+            break
+        kind = "condition" if condition else "confirm" if confirm else "withdraw" if withdraw else "amend"
+        assignments.append((kind, selection))
+        seen.update(selection)
+    else:
+        return "partial" if seen != set(all_scopes) or len(assignments) > 1 else assignments[0][0], assignments
+    if re.search(r"\b(if|unless|provided|when|after|before)\b|如果|只要|除非|前提|之后|以后|先.*再", text):
+        return "condition", [("condition", all_scopes)]
+    if re.search(r"\b(add|change|instead|but|only|withdraw|cancel|confirm)\b|追加|再加|改为|改成|不过|但是|只|撤回|取消|确认", text):
+        return "amend", [("amend", all_scopes)]
+    return "unresolved", [("unresolved", all_scopes)]
+
+
+def _observe_set_user(state, index):
+    entry = state["history"][index]
+    if entry["role"] != "user":
+        raise InvalidProposal("Operation consent requires original user text")
+    records = _current_records(state)
+    kind, assignments = _classify_set_reply(entry["content"], records)
+    previous = state["history"][index - 1] if index else {}
+    if kind == "confirm" and "proposal_set_ack" in previous:
+        restore_set_ack(state, index - 1)
+        return {"kind": "set_ack"}  # Only the originally confirmed subset.
+    fresh = index == records[0]["presentation_index"] + 1
+    if any(action == "confirm" for action, _ in assignments) and not fresh:
+        kind, assignments = "unresolved", [("unresolved", list(range(len(records))))]
+    affected = set()
+    for action, selection in assignments:
+        for i in selection:
+            p = records[i]
+            affected.add(i)
+            if action == "confirm" and p["status"] == "confirmed":
+                continue  # Preserve the original exact-scope user evidence.
+            p["response"] = {"kind": action, "history_index": index}
+            p["status"] = "confirmed" if action == "confirm" else "withdrawn" if action == "withdraw" else "needs_review"
+            p["confirmation"] = {"history_index": index, "fingerprint": p["fingerprint"]} if action == "confirm" else None
+    if fresh:
+        excludes_others = re.search(r"\bonly\b|只确认|仅确认", entry["content"].casefold()) is not None
+        for i, p in enumerate(records):
+            if i not in affected:
+                if p["status"] == "confirmed" and not excludes_others:
+                    continue
+                p["status"], p["confirmation"] = "needs_review", None
+                p["response"] = {"kind": "deferred", "history_index": index}
+    if any(action == "confirm" for action, _ in assignments):
+        return {"kind": "set_ack"}
+    if kind == "partial":
+        kind = "condition" if any(action == "condition" for action, _ in assignments) else "amend" if any(action == "amend" for action, _ in assignments) else "withdraw"
+    messages = {"withdraw": "The specified proposals are withdrawn. No business write has been executed.",
+                "amend": "The affected proposal needs a new complete list, quote and recap before confirmation.",
+                "condition": "The condition is unresolved. It must be checked and the chosen complete operation recapped before confirmation."}
+    return {"kind": "review", "text": messages[kind]} if kind in messages else None
+
+
+def _set_ack_event(state):
+    return [{"version": p["version"], "fingerprint": p["fingerprint"], "confirmation_index": p["confirmation"]["history_index"]}
+            for p in _current_records(state) if p["status"] == "confirmed" and p["confirmation"] is not None]
+
+
+def record_set_ack(state):
+    records, events = _current_records(state), _set_ack_event(state)
+    if not records or "set_index" not in records[0] or not events:
+        raise InvalidProposal("Scoped acknowledgement requires existing user consent")
+    numbers = [str(i) for i, p in enumerate(records, 1) if p["status"] == "confirmed"]
+    text = "Confirmation recorded only for operation(s) " + ", ".join(numbers) + ". Other operations are not confirmed. No business write has been executed."
+    state["history"].append({"role": "assistant", "content": text, "proposal_set_ack": events})
+    restore_set_ack(state, len(state["history"]) - 1)
+    return Decision(text=text), state
+
+
+def restore_set_ack(state, index):
+    entry = state["history"][index]
+    _keys(entry, {"role", "content", "proposal_set_ack"})
+    events = entry["proposal_set_ack"]
+    records = _current_records(state)
+    if (entry["role"] != "assistant" or not isinstance(entry["content"], str) or not entry["content"]
+            or not records or "set_index" not in records[0] or not isinstance(events, list) or not events):
+        raise InvalidProposal("Invalid scoped acknowledgement")
+    for event in events:
+        _keys(event, {"version", "fingerprint", "confirmation_index"})
+        if type(event["version"]) is not int or type(event["confirmation_index"]) is not int or not 0 <= event["confirmation_index"] < index:
+            raise InvalidProposal("Invalid scoped acknowledgement reference")
+    if events != _set_ack_event(state):
+        raise InvalidProposal("Scoped acknowledgement differs from original user consent")

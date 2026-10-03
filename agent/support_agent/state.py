@@ -7,7 +7,7 @@ from support_agent.domain.customer import find_customer_id
 from support_agent.protocol import Decision, InvalidAction, ToolAction, ToolOutcome, validate_tool_action
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 
 
 class InvalidState(ValueError):
@@ -72,7 +72,7 @@ def _history_entry(message):
         return _tool_entry(message)
     if role == "assistant":
         if isinstance(message, dict):
-            for key in ("proposal", "proposal_ack"):
+            for key in ("proposal", "proposal_ack", "proposal_set", "proposal_set_ack"):
                 if key in message:
                     entry[key] = message[key]
         calls = message.get("tool_calls") if isinstance(message, dict) else getattr(message, "tool_calls", None)
@@ -153,6 +153,12 @@ def initial_state(message_history=None) -> dict:
             elif "proposal_ack" in entry:
                 from support_agent.proposals import restore_ack
                 restore_ack(state, len(state["history"]) - 1)
+            elif "proposal_set" in entry:
+                from support_agent.proposals import restore_proposal_set
+                restore_proposal_set(state, len(state["history"]) - 1)
+            elif "proposal_set_ack" in entry:
+                from support_agent.proposals import restore_set_ack
+                restore_set_ack(state, len(state["history"]) - 1)
             calls = entry.get("tool_calls", ())
             if "tool_call_ids" in entry:
                 try:
@@ -189,7 +195,7 @@ def initial_state(message_history=None) -> dict:
 
 def clone_state(state: dict) -> dict:
     """Round-trip the state to reject non-JSON values and avoid aliasing."""
-    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, SCHEMA_VERSION}:
+    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, 2, SCHEMA_VERSION}:
         raise InvalidState("Unsupported session state version")
     try:
         copied = json.loads(json.dumps(state, allow_nan=False))
@@ -197,8 +203,13 @@ def clone_state(state: dict) -> dict:
         raise InvalidState("Session state must be JSON serializable") from exc
     if copied["schema_version"] == 1:
         if (copied.get("proposals") != [] or not isinstance(copied.get("history"), list)
-                or any(isinstance(e, dict) and ({"proposal", "proposal_ack"} & set(e)) for e in copied["history"])):
+                or any(isinstance(e, dict) and ({"proposal", "proposal_ack", "proposal_set", "proposal_set_ack"} & set(e)) for e in copied["history"])):
             raise InvalidState("Legacy state has no supported proposal evidence schema")
+        copied["schema_version"] = SCHEMA_VERSION
+    elif copied["schema_version"] == 2:
+        if (not isinstance(copied.get("history"), list)
+                or any(isinstance(e, dict) and ({"proposal_set", "proposal_set_ack"} & set(e)) for e in copied["history"])):
+            raise InvalidState("Schema 2 cannot contain schema 3 scope evidence")
         copied["schema_version"] = SCHEMA_VERSION
     # M1 states remain readable; missing evidence does not grant private reads.
     for key, default in (("model_calls_since_user", 0), ("identity_evidence", None), ("customer_record", None), ("user_request", ""), ("model_usage", []), ("verification_draft", {})):
@@ -214,6 +225,8 @@ def clone_state(state: dict) -> dict:
             batch = entry.get("tool_messages")
             if not isinstance(batch, list) or any(not isinstance(r, dict) or not isinstance(r.get("content"), str) for r in batch):
                 raise InvalidState("Malformed history result batch")
+        if len({"proposal", "proposal_ack", "proposal_set", "proposal_set_ack"} & set(entry)) > 1:
+            raise InvalidState("Mixed presentation/acknowledgement evidence")
     if any(type(copied.get(key)) is not int or copied[key] < 0 for key in ("turn", "tool_calls_since_user", "model_calls_since_user")):
         raise InvalidState("Malformed session counters")
     identity, handoff = copied.get("identity"), copied.get("handoff")

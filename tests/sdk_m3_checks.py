@@ -72,4 +72,31 @@ assert not reply.tool_calls and not unchanged["proposals"]
 assert unchanged["identity_evidence"] == state["identity_evidence"]
 assert unchanged["history"][:-1] == state["history"]
 assert len(api.calls) == reads_before and not network_attempts
+
+# M3.3 uses the same platform boundary and main-suite wrapper. This block is
+# additional integration coverage, not extra main-suite test cases.
+specs = [specification(), specification("payment_method")]
+presentation, proposed = agent.present_proposals(state, specs)
+assert isinstance(presentation, AssistantMessage) and not presentation.tool_calls
+reply, scoped = agent.generate_next_message(UserMessage(role="user", content="confirm only operation 1"), proposed)
+assert not reply.tool_calls and confirmation_matches(scoped, 1, specs[0])
+assert not confirmation_matches(scoped, 2, specs[1])
+reply, scoped = agent.generate_next_message(UserMessage(role="user", content="yes"), scoped)
+assert not confirmation_matches(scoped, 2, specs[1])
+assert agent.get_init_state(scoped["history"])["proposals"] == scoped["proposals"]
+adapter.decide(scoped)
+serialized = json.dumps([m.model_dump() for m in gateway.calls[-1]["messages"]])
+assert "confirm only operation 1" in serialized and "Operation 2:" in serialized
+assert all('"' + field + '"' not in serialized for field in ("proposal_set", "proposal_set_ack", "set_index", "reuse_version"))
+reply, withdrawn = agent.generate_next_message(UserMessage(role="user", content="withdraw operation 1"), scoped)
+assert not reply.tool_calls and not confirmation_matches(withdrawn, 1, specs[0])
+presentation, proposed = agent.present_proposals(withdrawn, specs)
+reply, conditional = agent.generate_next_message(UserMessage(role="user", content="yes if cheaper"), proposed)
+assert not reply.tool_calls and all(p["status"] == "needs_review" for p in conditional["proposals"][-2:])
+damaged = deepcopy(scoped); damaged["proposals"][1]["status"] = "confirmed"
+reply, blocked = guarded_agent.present_proposals(damaged, specs)
+assert not reply.tool_calls and blocked["quarantined_state"] == damaged
+reply, still_blocked = guarded_agent.present_proposals(blocked, specs)
+assert not reply.tool_calls and still_blocked == blocked
+assert len(api.calls) == reads_before and not network_attempts
 print("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake")
