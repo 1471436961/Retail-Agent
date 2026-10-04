@@ -45,6 +45,8 @@
 
 ## 对当前实施的影响
 
+M4.3 的取消显示额与退货预计额有意分开：前者是实际原 charge 的精确十进制合计，保留记录精度而不舍入；后者是所选原商品价格推导的预计值，沿用明确标注的项目 half-up 到分显示选择。材料没有规定该预计值必须分位量化，两者也不向 API 发送金额。差异不是待平台补充公式的开发阻断项，不推导后台结算或到账保证；见 [规则台账](POLICY-REGISTER.md) §4。
+
 已有两类明确依据：退货选中商品的原成交价和重复次数；取消实际 charge 的原金额和原方式。后台结算合计公式仍未取得，“没有计算”不等于金额为零；项目预计额不冒称后台公式，不从差价或余额函数推出结算语义。预计额可以按原成交价和次数计算，并明确项目展示规则，不向退货 API 写金额。
 
 当前 [catalog.py](../agent/support_agent/domain/catalog.py) 已合计所选原价和次数，并按项目 Decimal/half-up 显示到分；返回预计额及 amount_is_estimate，不把该方法登记成后台结算算法。proposals 的完整退货提案绑定方法/数值/去向及真实 user 同意，执行只发送 item_ids/refund_payment_method_id。原路和起点合格礼品卡已验收，未知渠道到账仍不冒称。[policies.py](../agent/support_agent/domain/policies.py) 保留逐 charge 和独立 refund，不净额化。

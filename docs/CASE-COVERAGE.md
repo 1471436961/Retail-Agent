@@ -97,3 +97,8 @@ M0 已在 [CASE-REQUIREMENTS](CASE-REQUIREMENTS.md) 为每项案例拆出原子�
 ## M4.2 支付组件进展
 
 [M4.2 交付](M4.2-DELIVERY.md)的 P 组件使用真实 user 轮次及合成 saved methods/订单/账务，覆盖明确目标、整单足额、不拆分、客户指定回退、重新确认、拒付/Unknown 和强读回。它不等于 ID 40/114/123/129 的整段公开需求全部执行；134/522 库存及 business_ats_executed=0 保持原样。多个订单、取消及转接的完整组合属于后续 M4.3–M4.5。
+
+
+## M4.3 当前取消组件
+
+[M4.3 交付](M4.3-DELIVERY.md)与[取消回归](../tests/test_m4_cancellations.py)覆盖原因澄清、精确 pending、自有事实、完整逐 charge 原路复述/确认、单一 POST/回执强读回、409/422、Unknown、共享认领、跨流程互斥和真实 schema 7→8 恢复。模型仍八 READ，默认库存三个内部 WRITE；取消专项 63 项，完整工作区 544/544。C 类映射引用这些实际执行的方法，完整公开业务 AT 执行数仍 0，不把合成结果或 t1 记成公开取消案例通过。M4.2 的 481/481 保留历史来源；当前报告和追踪通过 run_id/source/specification 同时校验。

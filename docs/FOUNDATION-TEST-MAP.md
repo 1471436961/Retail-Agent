@@ -81,3 +81,8 @@ Q1 身份持久化、Q2 摘要、Q4 多步预算、Q5 生产转接和 Q6 业务�
 目标仓库为 `1471436961/retail-agent`，分支 `main`；绑定 `5147314e-f2da-4bac-924a-e2ad95e647e4`，场景 retail_plus，语言 Python，任务 t1，case_ids=null，保持原绑定范围。权限文件 `E:\Enterprise-AI.json` 和原始业务材料保持仓库外。
 
 第 2–4 批中的 agent 变更命中现有 [hyper-lab.yml](../.github/workflows/hyper-lab.yml) 的 main/agent 路径条件，各自只等待推送产生的同一任务，没有另行提交 evaluate。t1 接入结果与本地 51 项分别记录，不能当完整业务成绩。未来模型调用或收费评测仍先核对配置与费用授权；本轮没有修改绑定、服务开关或生产部署。
+
+
+## M4.3 当前取消组件
+
+[M4.3 交付](M4.3-DELIVERY.md)与[取消回归](../tests/test_m4_cancellations.py)覆盖原因澄清、精确 pending、自有事实、完整逐 charge 原路复述/确认、单一 POST/回执强读回、409/422、Unknown、共享认领、跨流程互斥和真实 schema 7→8 恢复。模型仍八 READ，默认库存三个内部 WRITE；取消专项 63 项，完整工作区 544/544。C 类映射引用这些实际执行的方法，完整公开业务 AT 执行数仍 0，不把合成结果或 t1 记成公开取消案例通过。M4.2 的 481/481 保留历史来源；当前报告和追踪通过 run_id/source/specification 同时校验。

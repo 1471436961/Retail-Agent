@@ -1,6 +1,6 @@
 # 工程结构与开发方式
 
-2026-10-04 当前已实现 M4.1 地址及 M4.2 支付方式切换，完整离线回归 481/481、零跳过、退出码 0，实际运行见 [M4.2 交付](docs/M4.2-DELIVERY.md)及[逐方法报告](docs/FOUNDATION-RUN.json)。默认八 READ＋两个内部 WRITE：真实 user → 严格验证/自有读取 → 完整复述 → 同一提案确认 → 写前刷新 → 契约端点及强读回。支付限单一已有不同方式、整单足额、唯一原 charge；客户指定的礼品卡不足回退先选择再重新完整确认。schema 7 两类工具共用来源、提案、journal、UTF-8 预算及可信认领表；prepare 可恢复，execute Unknown 不重发，模型仍只读。M4.1 的 421/421 为历史阶段运行，M0–M3 已推送基线 353/353 见 [收尾](docs/M0-M3-CLOSEOUT.md)。M4.1 已分源码 b7788e3、文档 2f432c3 两批提交推送；M4.2 源码 1a095ca 已提交推送，交付文档/证据另批提交，不调用真实模型或远程业务；M4.3–M4.5 未开始，完成后等待 review。
+2026-10-04 当前已实现 M4.1 地址、M4.2 已有支付方式切换与 M4.3 取消。最新完整离线运行 544/544，零跳过、退出码 0，见 [M4.3 交付](docs/M4.3-DELIVERY.md)与[逐方法报告](docs/FOUNDATION-RUN.json)。默认八 READ＋三个内部 WRITE，模型候选仍限 READ；三个生产器共用原身份、完整提案确认、schema 8、任务/journal、UTF-8 预算、Unknown 与可信认领表。取消先收集理由、核实 pending、自有订单与 payment 明细，复述逐笔全额原路退款并确认，刷新后仅提交一个取消 POST/强读回；已有退款历史受控审查，不净额或补退。M0–M3 的 353/353、M4.1 的 421/421、M4.2 的 481/481 分别保留历史基线。M4.2 已分源码 1a095ca 与文档 a496182 两批推送；M4.3 源码与测试 ecbc660 已推送，对应自动 t1 工作流 completed/success，报告正文案例计数未单独核实；本轮按用户授权在文档批推送后继续 M4.4/M4.5。134/522 原业务范围不变，完整业务 AT 执行仍 0，M0.2/M4 整体未完成。
 
 ## Python
 
@@ -11,11 +11,12 @@ agent/
   agent.json                # 协议、语言、场景
   support_agent/            # 可安装的本地 Python package
     application.py          # 决定下一轮回答或工具调用
-    turns.py                # 轮次入口，复用身份、读取及地址工作流
-    read_session.py         # 身份范围、读取批次及地址调度入口
+    turns.py                # 轮次入口，复用身份、读取及三类内部工作流
+    read_session.py         # 身份范围、读取批次及地址/支付/取消调度
     address_session.py      # M4.1 地址收集、复述和提交
     payment_session.py      # M4.2 单一已有支付方式的整单切换
-    workflow_boundary.py    # 两类内部批次、诊断、预算及失败恢复
+    cancellation_session.py # M4.3 取消原因、逐 charge 复述与确认提交
+    workflow_boundary.py    # 三类内部批次、诊断、预算及失败恢复
     workflow_limits.py       # 内部工具 UTF-8 参数/结果预算，不裁剪证据
     protocol.py             # 内部消息、动作和候选校验
     state.py                # 每个会话独立的 JSON 状态
@@ -27,6 +28,7 @@ agent/
     domain/identity.py      # 独立验证输入与用户来源核验
     domain/addresses.py     # 有限中英文字段/目标/复制来源解析
     domain/payment_intake.py # 真实 user 的已有方式、条件回退及整单依据
+    domain/cancellation_intake.py # 真实 user 原因/目标与逐 charge 原路显示
     domain/money.py         # U6 顺序 float 差价与余额舍入基线
     domain/rules.py         # 可解释 JSON 规则结果，非写入授权
     domain/orders.py        # 精确状态与能力准入
@@ -41,6 +43,7 @@ agent/
     adapters/read_tools.py      # 带验证依据的可重放只读工具
     adapters/address_tools.py   # 内部地址工具与可信 API/共享认领表
     adapters/payment_tools.py   # 内部支付工具，复用同一 API/认领表
+    adapters/cancellation_tools.py # 内部取消工具，复用原确认/journal
     adapters/model_gateway.py   # JSON/SDK 转换与模型候选门控
     adapters/write_runtime.py   # 显式串行会话认领表与七个契约端点
 tests/test_customer.py      # 无网络、无模型的单元测试
@@ -54,6 +57,7 @@ tests/test_m3_writes.py     # M3.5 fake 发送/持久化协议、强读回、未
 tests/test_m4_addresses.py # M4.1 实际轮次、两类地址、修正、复制、Unknown 与恢复
 tests/test_m4_address_review.py # prepare 恢复、迟到结果、混合结果、异常与预算边界
 tests/test_m4_payments.py  # M4.2 真实轮次、选择/拒付/读回、跨流程及恢复
+tests/test_m4_cancellations.py # M4.3 原因/逐笔原路退款、确认/Unknown/迁移
 pyproject.toml             # 本地 package 元数据
 ```
 
@@ -73,7 +77,7 @@ pyproject.toml             # 本地 package 元数据
 
 ## 依赖与运行边界
 
-M0–M3 内部基础范围完成，353/353 为已推送基础快照；当前 M4.2 运行见交付及逐方法报告。地址和支付已接入默认轮次及工具，取消/转接/商品生产器尚未实施。SessionWriteRuntime 的稳定认领、严格 True、Unknown 不重发、回执＋自有强读回约定不变；地址和支付 toolkit 共用一份可信进程内 SessionClaims，同一 live 后端重建 toolkit 时须显式复用可信 store，不能以新空表配丢失 journal 的旧 state 冒充跨进程去重。SDK 入口返回真实 AssistantMessage 与对应 state。M0.2 的 134/522 完整公开业务 AT 实际执行仍待 M4–M6；本批合成地址/支付流程通过不冒充公开 AT 或远程评测通过。
+M0–M3 内部基础范围完成，353/353 为已推送基础快照；当前 M4.3 运行见交付及逐方法报告。地址、支付和取消已接入默认轮次及工具，转接/商品生产器尚未实施。SessionWriteRuntime 的稳定认领、严格 True、Unknown 不重发、回执＋自有强读回约定不变；地址、支付和取消 toolkit 共用一份可信进程内 SessionClaims，同一 live 后端重建 toolkit 时须显式复用可信 store，不能以新空表配丢失 journal 的旧 state 冒充跨进程去重。SDK 入口返回真实 AssistantMessage 与对应 state。M0.2 的 134/522 完整公开业务 AT 实际执行仍待 M4–M6；本批合成地址/支付/取消流程通过不冒充公开 AT 或远程评测通过。
 
 Windows 本地离线测试可使用 `pwsh -NoProfile -File .\scripts\test-local.ps1`：使用项目解释器，临时目录限定在仓库内，原生退出码保留，调用方环境不变。两个测试文件的四处临时目录调用已通过共享 helper 避开 Windows 0o700 的特殊 ACL 设置，直接运行 unittest 也生效；其他系统保持标准临时目录行为。评审会话现已报告原命令在受限模式实跑 266/266、零跳过、退出码 0，无提权、无重定向或注入；本会话此前的启动失败和非受限通过保留来源区分，见 [本地测试入口](docs/LOCAL-TEST-RUNNER.md)。脚本是可选便利入口。
 

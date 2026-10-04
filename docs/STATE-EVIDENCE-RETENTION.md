@@ -1,5 +1,7 @@
 # Q2 长会话摘要与身份依据保留设计
 
+当前 M4.3 使用 schema 8；cancellation_pending 与 cancellation_dispatch/result/unknown/abandoned/assessment 在原身份、提案、任务、journal 和共享 WorkflowBoundary 中重建。schema 1–7 不允许携带新增取消证据；真实 schema 7 fixture 在 a496182 干净源码、改动前生成，保留已完成支付而不创造取消许可。地址/支付/取消单批次互斥；任意已 abandoned prepare 的晚到结果先忽略，不能污染新的其他类批次。execute 结果丢失保留 Unknown，会话不能用重新验证、其他业务请求、yes 或布尔字段清除。下段 schema 7 是 M4.2 的历史阶段说明，当前见 [M4.3 交付](M4.3-DELIVERY.md)。
+
 2026-10-04 已实现有界模型投影，见 [M0–M3 收尾](M0-M3-CLOSEOUT.md)。当前 M4.2 使用 schema 7，在原身份/提案/任务/journal 上新增支付批次并与地址共用边界，下文 M3/M4.1 段为各阶段历史设计。state 不裁剪，身份/确认/Unknown 来源完整保留，未实施 state 归档或增量回放优化。当前调用方及验收见 [M4.2 交付](M4.2-DELIVERY.md)。
 
 历史日期：2026-10-02。当时摘要/容量控制尚未实现；现已交付下述有界投影。适用于本项目 JSON state，不声称是平台字段或容量限制。

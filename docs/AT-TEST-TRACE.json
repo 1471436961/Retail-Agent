@@ -1,14 +1,14 @@
 {
   "schema_version": 2,
   "status": "valid",
-  "run_id": "b5d534b21759426ab9e63f16099b3967",
+  "run_id": "7458d971c7c54e8d96e2a36518e546cb",
   "scope": "component association, not complete business-AT execution",
   "case_count": 134,
   "at_count": 522,
   "business_ats_executed": 0,
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
-  "run_source_sha256": "40fb2badcfbd845078b5aa70ecac9a0a27e75b70f396570edb14a702c577ed9c",
-  "specification_sha256": "d5af061aa12823577f49fa2339a94ac30d5018a55333153fc7fdf7e06fa917a0",
+  "run_source_sha256": "aedb52bf5f9b81db48e8b2a83f4555444bca4b928836fcea8c1c91fab33bddc7",
+  "specification_sha256": "163fe68de6b76f5c60f43df88432c0da911a083298d155f75514b98db9154573",
   "specification_files": {
     "materials/CLASSROOM.md": "b02f4a2706a1c2c5c1e04d1b4209119c7f061b8a66240d36e17af1614fe62a5c",
     "materials/client_api/openapi.yaml": "d369f3cf5e3f83333d5c4bf0a11b82fb6417a946e16d34b64be614bcd3cadc16",
@@ -16,10 +16,10 @@
     "materials/framework/client_api_contract.md": "beeb01ae3d51d3267ba361fb97e1a47d6a71c719484c0daf02aecc9e2fdeb44e",
     "materials/framework/scenario_contract.md": "1c255ee02db77afecda391d4a8335542065c5faff6f540fc70574ea8be60669e",
     "materials/framework/deployment_manifest.json": "8637b0d5a78610b8b2b480ce3cedc64ee2f1fc792ce9419a92a2e094777040e0",
-    "docs/POLICY-REGISTER.md": "583e85f13d4ac0c6ecd8356216289c94d357a62162d9ec85414b8dc1ed74819c",
-    "docs/API-CONTRACT-MAP.md": "7c5025deec1c11a109d23ca25c294154b97929a198863a234611749fcc89d0d3",
-    "docs/PLATFORM-CONTRACT-NOTES.md": "43ecba887340f764dd8790b6bf3321bc6aafc815fbf7027838e95191b5f11d6e",
-    "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "e670463bc8186366b484e5f84dd78683b8451a11e720712d8250942a768ea954"
+    "docs/POLICY-REGISTER.md": "46bb078a2e9c1be622c69a9a2ded94d4c7688967bdb65122cbee35e5add4f66e",
+    "docs/API-CONTRACT-MAP.md": "c5d08989f21d8768d9dd0889e9e02f31c3dc83a560bd0843ea2a2ba51e8fa04c",
+    "docs/PLATFORM-CONTRACT-NOTES.md": "868821d718f1264601a49b30f9c50be540aabecb22a89067c9ed388c07894e09",
+    "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "e975304219bc0b27548872b79cdafbc0b3e453feb7add6e0a13970ff6ab0059c"
   },
   "groups": {
     "G": {
@@ -83,9 +83,16 @@
     },
     "C": {
       "test_ids": [
-        "test_m3_completion.SessionRuntimeTests.test_cancel_with_existing_refund_is_controlled_but_normal_charges_succeed"
+        "test_m3_completion.SessionRuntimeTests.test_cancel_with_existing_refund_is_controlled_but_normal_charges_succeed",
+        "test_m4_cancellations.CancellationFlowTests.test_full_recap_confirmation_single_post_and_owned_strong_readback",
+        "test_m4_cancellations.CancellationFlowTests.test_multi_charge_duplicates_recap_and_refund_independently_without_netting",
+        "test_m4_cancellations.CancellationFlowTests.test_existing_refund_is_reviewed_and_not_refunded_again",
+        "test_m4_cancellations.CancellationFlowTests.test_successful_payment_switch_then_cancel_reviews_refund_history_without_post",
+        "test_m4_cancellations.CancellationFlowTests.test_correcting_malformed_reason_requires_new_recap_before_any_cancellation",
+        "test_m4_cancellations.CancellationFlowTests.test_fresh_payment_change_stops_old_version_and_requires_new_confirmation",
+        "test_m4_cancellations.CancellationBoundaryTests.test_lost_execute_result_keeps_unknown_and_blocks_other_workflows_and_model"
       ],
-      "limitation": "Explicit cancellation adapter and exception policy; M4 dialogue not implemented."
+      "limitation": "Finite actual-user cancellation dialogue, per-charge refunds and shared lifecycle; not complete public-case execution or all natural language."
     },
     "A": {
       "test_ids": [

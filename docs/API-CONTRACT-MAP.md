@@ -1,6 +1,6 @@
 # M0 教学接口与运行时契约基线
 
-2026-10-04 M4.1/M4.2 已将默认/订单地址及整单支付切换接入真实 user → 复述/同意 → 写前刷新 → PUT/强读回；默认八 READ＋两个内部 address_workflow/payment_workflow WRITE，模型仍限 READ。其余四个业务端点没有默认生产器，转接待 M4.4。支付只发送一个已保存且不同的 payment_method_id，整单金额取唯一原 charge；先扣新款成功再退原款是政策要求，本库通过一个该端点提交，不造 charge/refund API、不传金额、不按净额猜当前方式。OrderPayment 没有执行时间/序号，新增交易数组排列不证明实际处理先后；契约也未声明事务原子性，单个 PUT 不提供原子/回滚保证。部分副作用或结果不明保持未决，不重试或自行补偿退款。成功核对原交易前缀、新全额 payment/原全额 refund 的次数与去向及仍 pending；实际到账不可由回执推断。固定上游单一 charge 兼容范围、有限 fallback 和真实 SDK＋fake transport 见 [M4.2 交付](M4.2-DELIVERY.md)，地址阶段见 [M4.1 交付](M4.1-DELIVERY.md)。工具参数/结果 256 KiB/1 MiB 为项目 UTF-8 预算，超限不裁剪证据；写后交付失败保留 Unknown，不改变教学 REST 契约。
+2026-10-04 当前默认库存八 READ＋三个内部地址/支付/取消 WRITE，模型仍限 READ；schema 8。地址、整单支付切换和单一取消接入真实 user → 完整复述/确认 → 写前刷新 → 契约端点/强读回。其余默认生产器尚未开放，转接待 M4.4。支付先扣后退是政策要求；交易数组顺序不证明处理时序，单个 PUT 也不提供未声明的原子/回滚保证。取消保留逐 charge 原金额/原去向，历史 refund 受控审查，不净额或重复退款。当前有限离线范围见 [M4.3 取消交付](M4.3-DELIVERY.md)，支付语义边界见 [M4.2 交付](M4.2-DELIVERY.md)。共用工具预算 256 KiB/1 MiB 是项目 UTF-8 预算，写后交付失败保留 Unknown，不改变教学 REST 契约。
 
 核对日期：2026-10-02。规范来源：[教学 OpenAPI](../materials/client_api/openapi.yaml)、[课堂覆盖说明](../materials/CLASSROOM.md)、[工具契约](../materials/framework/client_api_contract.md)、[Agent 契约](../materials/framework/agent_contract.md)、[部署 manifest](../materials/framework/deployment_manifest.json)，以及 [平台契约核查记录](PLATFORM-CONTRACT-NOTES.md)中的当前资料 path/version。本表记录 **当前可见契约**，不是声称真实部署所有响应变体均已测试。
 
@@ -70,3 +70,11 @@ usage 可为空；prompt_tokens 与 completion_tokens 都存在才相加，total
 - **真实模型/远程评测前**：完成 Python 网关与真实 SDK 联调，检查已发布允许模型及约束，确认实际调用配置和费用授权，并按用户明确授权的任务与案例范围运行。
 
 本表没有修改网站绑定或评测范围，也不代表任何新的业务端点已接入 Agent。
+
+## 2026-10-04 M4.3 取消默认流程
+
+默认工具库存现为八 READ＋三个内部 WRITE（address_workflow/payment_workflow/cancellation_workflow）。取消工具继承真实 ClientAPIToolKitBase，唯一参数 session_json 受共用 UTF-8 预算约束；模型候选、绑定和投影仍只允许 READ，内部工具形状校验本身不证明宿主来源。
+
+取消默认生产器先核实独立身份、自有订单、精确 pending、原因与 payment 明细，完整复述并绑定真实 user 确认，刷新后仅 POST `/v1/orders/{order_id}/cancellations`，body 恰好 reason。没有金额、退款去向、独立退款、job 或补偿接口。原因归一化使用 cancellation_reason_rule，不把价格、物流或品牌投诉擅自映射。受理回执须匹配 order_id/status/cancellation/payments，自有强读回须核实 cancelled、原因、原交易前缀和每笔原 charge 全额原路 refund 的次数；同方式重复 charge 不折叠。没有约定退款数组先后顺序，按多重集核对新增 refund；这不证明后端内部事务或处理器到账。
+
+S06 当前 CR8 取消流程图与 S11 email_06 支持逐笔原路及取消/退款同一事务的业务要求。只发送一个契约端点并核对可见结果，不能由 fake 或数组推断课堂内部原子性。固定上游全历史循环与 RF-01 的差异仍受控：已有 refund 历史自动阻断并解释审查风险，不净额化、删除历史、重试或独立补退。取消总额仅将原 charge JSON 十进制表示精确求和显示，不舍入、不给后台传合计；与退货预计额和已公开差价/余额算法分别处理。
