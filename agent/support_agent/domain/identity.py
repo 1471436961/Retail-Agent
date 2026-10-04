@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import json
 
 from support_agent.domain.customer import find_email
 
@@ -46,6 +47,47 @@ def matches_customer(record: dict, proof: dict, expected_id: str = "") -> bool:
             and all(isinstance(name.get(k), str) and normalized(name[k]) == normalized(proof[k]) for k in ("first_name", "last_name"))
             and isinstance(address.get("postal_code"), str)
             and normalized(address["postal_code"]) == normalized(proof["postal_code"]))
+
+
+def matches_session_customer(record, proof, expected_id, history):
+    """Preserve a proved identity when mutable default-address postal changes.
+
+    Initial verification still uses matches_customer. A later profile must keep
+    the same ID and name (email proofs remain strict), and an earlier accepted
+    lookup/verify body must match the original independently supplied proof.
+    No assistant summary, future user text or verified flag replaces that body.
+    """
+    if matches_customer(record, proof, expected_id):
+        return True
+    try:
+        checked = verification_inputs(**proof)
+    except (TypeError, ValueError):
+        return False
+    if (checked["email"] or not isinstance(record, dict) or record.get("customer_id") != expected_id
+            or not isinstance(record.get("name"), dict)
+            or any(not isinstance(record["name"].get(k), str) or normalized(record["name"][k]) != normalized(checked[k])
+                   for k in ("first_name", "last_name"))
+            or not isinstance(record.get("default_shipping_address"), dict)
+            or not isinstance(record["default_shipping_address"].get("postal_code"), str)):
+        return False
+    calls = {}
+    for index, entry in enumerate(history):
+        if entry.get("role") == "assistant":
+            for call in entry.get("tool_calls", []):
+                if call.get("name") in {"lookup_customer", "verify_customer"}:
+                    values = {k: call.get("arguments", {}).get(k, "") for k in PROOF_FIELDS}
+                    if values == checked and supplied_by_user(values, history[:index]):
+                        calls[call["id"]] = True
+        results = entry.get("tool_messages", []) if entry.get("role") == "tools" else [entry] if entry.get("role") == "tool" else []
+        for result in results:
+            if result.get("id") in calls and result.get("error") is False:
+                try:
+                    body = json.loads(result["content"])
+                except (TypeError, ValueError, KeyError):
+                    continue
+                if matches_customer(body, checked, expected_id):
+                    return True
+    return False
 
 
 def fields_from_text(text: str) -> dict[str, str]:

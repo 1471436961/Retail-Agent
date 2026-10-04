@@ -46,7 +46,12 @@ def sdk_messages(history: list):
                 raise InvalidAction("Mixed historical text and calls")
             outstanding = set(ids)
             seen.update(ids)
-            messages.append(AssistantMessage(role="assistant", content=None if calls else entry.get("content", ""), tool_calls=calls or None))
+            content = entry.get("content", "")
+            if "write_event" in entry:
+                event = entry["write_event"]
+                status = "succeeded" if event.get("kind") == "verified" else event.get("status", "sent; outcome unresolved")
+                content = f"Recorded operation outcome: {status}. This record does not authorize execution or retry."
+            messages.append(AssistantMessage(role="assistant", content=None if calls else content, tool_calls=calls or None))
         elif role in {"tool", "tools"}:
             raw = entry["tool_messages"] if role == "tools" else [entry]
             ids = [r["id"] for r in raw]
@@ -122,7 +127,8 @@ class ModelAdapter:
         actions = interface.select(names)
         # Revalidate old JSON histories too: states created before this boundary
         # may still contain raw failed or ownership-mismatched result bodies.
-        messages = sdk_messages(initial_state(state["history"])["history"])
+        from support_agent.model_context import project_messages
+        messages = project_messages(initial_state(state["history"]))
         try:
             result = self.context.model_gateway.generate(model=self.model, messages=messages, actions=actions, **self.choices)
         except Exception as exc:

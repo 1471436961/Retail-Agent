@@ -143,6 +143,9 @@ def inspect_task_plan(state):
         proposal = next((p for p in current if p["spec"]["action"] == node["action"] and p["spec"]["target"] == node["target"]), None)
         if node["conflicts"]:
             gate = outcome(need, node["conflicts"][0]["code"], "Resolve mutually exclusive same-order requests before submission.")
+        elif any(o["mutates"] and o["status"] == "succeeded" and not o["persistence_unresolved"] and o["sent_index"] > node["plan_index"]
+                 and o["spec"]["action"] == node["action"] and o["spec"]["target"] == node["target"] for o in state["operations"]):
+            gate = outcome(allow, "task_completed", "A recorded send, matching receipt and owned strong readback prove completion.")
         else:
             try:
                 facts = _scope_facts(state["history"], node, state_only=True)
@@ -165,13 +168,14 @@ def inspect_task_plan(state):
         results.append({**node, "proposal_version": proposal["version"] if proposal else None, "assessment": gate})
     by_id = {r["id"]: r for r in results}
     for node in results:
-        if node["depends_on"] and not node["conflicts"]:
-            blocked = any(by_id[d]["assessment"]["decision"] == "deny" for d in node["depends_on"])
+        unresolved = [d for d in node["depends_on"] if by_id[d]["assessment"]["code"] != "task_completed"]
+        if unresolved and not node["conflicts"]:
+            blocked = any(by_id[d]["assessment"]["decision"] == "deny" for d in unresolved)
             # Preserve the affected task's own denial/condition/fact diagnostics.
-            if node["assessment"]["decision"] == "allow":
+            if node["assessment"]["decision"] == "allow" and node["assessment"]["code"] != "task_completed":
                 node["assessment"] = outcome(need, "dependency_blocked" if blocked else "dependency_result_required",
                     "Same-order prerequisites need verified completion; consent and read receipts do not complete them.",
-                    depends_on=node["depends_on"])
+                    depends_on=unresolved)
     candidates = [r["id"] for r in results if r["assessment"]["code"] == "preflight_candidate"]
     return outcome(allow, "task_plan_assessed", "Each record has its own dependency and confirmation assessment.",
                    tasks=results, preflight_candidates=candidates)

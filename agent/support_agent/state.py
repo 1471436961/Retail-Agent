@@ -7,7 +7,7 @@ from support_agent.domain.customer import find_customer_id
 from support_agent.protocol import Decision, InvalidAction, ToolAction, ToolOutcome, validate_tool_action
 
 
-SCHEMA_VERSION = 4
+SCHEMA_VERSION = 5
 
 
 class InvalidState(ValueError):
@@ -72,7 +72,7 @@ def _history_entry(message):
         return _tool_entry(message)
     if role == "assistant":
         if isinstance(message, dict):
-            for key in ("proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan"):
+            for key in ("proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event"):
                 if key in message:
                     entry[key] = message[key]
         calls = message.get("tool_calls") if isinstance(message, dict) else getattr(message, "tool_calls", None)
@@ -147,7 +147,10 @@ def initial_state(message_history=None) -> dict:
             if not state["identity"]["verified"]:
                 state["customer_id"] = find_customer_id(entry["content"]) or state["customer_id"]
         elif entry["role"] == "assistant":
-            if "task_plan" in entry:
+            if "write_event" in entry:
+                from support_agent.write_session import restore_write_event
+                restore_write_event(state, len(state["history"]) - 1)
+            elif "task_plan" in entry:
                 from support_agent.tasks import restore_task_plan
                 restore_task_plan(state, len(state["history"]) - 1)
             elif "proposal" in entry:
@@ -198,12 +201,19 @@ def initial_state(message_history=None) -> dict:
 
 def clone_state(state: dict) -> dict:
     """Round-trip the state to reject non-JSON values and avoid aliasing."""
-    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, 2, 3, SCHEMA_VERSION}:
+    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, 2, 3, 4, SCHEMA_VERSION}:
         raise InvalidState("Unsupported session state version")
+    if {"write_authorized", "delivery_verified", "confirmed", "condition_verified"} & set(state):
+        raise InvalidState("Authorization flags cannot be added to session state")
     try:
         copied = json.loads(json.dumps(state, allow_nan=False))
     except (TypeError, ValueError) as exc:
         raise InvalidState("Session state must be JSON serializable") from exc
+    if copied["schema_version"] < 5:
+        if (not isinstance(copied.get("history"), list) or not isinstance(copied.get("operations"), list)
+                or any(isinstance(e, dict) and "write_event" in e for e in copied["history"])
+                or any(isinstance(o, dict) and o.get("mutates") is not False for o in copied["operations"])):
+            raise InvalidState("Legacy state cannot contain schema 5 write evidence")
     if copied["schema_version"] < 4:
         if (copied.get("tasks") != [] or not isinstance(copied.get("history"), list)
                 or any(isinstance(e, dict) and "task_plan" in e for e in copied["history"])):
@@ -218,7 +228,7 @@ def clone_state(state: dict) -> dict:
                 or any(isinstance(e, dict) and ({"proposal_set", "proposal_set_ack"} & set(e)) for e in copied["history"])):
             raise InvalidState("Schema 2 cannot contain schema 3 scope evidence")
         copied["schema_version"] = SCHEMA_VERSION
-    elif copied["schema_version"] == 3:
+    elif copied["schema_version"] in {3, 4}:
         copied["schema_version"] = SCHEMA_VERSION
     # M1 states remain readable; missing evidence does not grant private reads.
     for key, default in (("model_calls_since_user", 0), ("identity_evidence", None), ("customer_record", None), ("user_request", ""), ("model_usage", []), ("verification_draft", {})):
@@ -234,7 +244,7 @@ def clone_state(state: dict) -> dict:
             batch = entry.get("tool_messages")
             if not isinstance(batch, list) or any(not isinstance(r, dict) or not isinstance(r.get("content"), str) for r in batch):
                 raise InvalidState("Malformed history result batch")
-        if len({"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan"} & set(entry)) > 1:
+        if len({"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event"} & set(entry)) > 1:
             raise InvalidState("Mixed presentation/acknowledgement evidence")
     if any(type(copied.get(key)) is not int or copied[key] < 0 for key in ("turn", "tool_calls_since_user", "model_calls_since_user")):
         raise InvalidState("Malformed session counters")
@@ -260,10 +270,13 @@ def clone_state(state: dict) -> dict:
     for operation in copied["operations"]:
         if not isinstance(operation, dict) or not isinstance(operation.get("call_id"), str) or not operation["call_id"] or operation["call_id"] in ids:
             raise InvalidState("Invalid or repeated operation ID")
-        if not isinstance(operation.get("name"), str) or type(operation.get("mutates")) is not bool or operation.get("status") not in {"sent", "succeeded", "failed", "unknown"}:
+        statuses = {"sent", "succeeded", "failed", "unknown"} | ({"acknowledged"} if operation.get("mutates") is True else set())
+        if not isinstance(operation.get("name"), str) or type(operation.get("mutates")) is not bool or operation.get("status") not in statuses:
             raise InvalidState("Malformed operation")
+        if not operation["mutates"] and set(operation) != {"call_id", "name", "mutates", "status"}:
+            raise InvalidState("Read operations cannot carry unvalidated receipt or authorization fields")
         ids.add(operation["call_id"])
-    sent_ids = {operation["call_id"] for operation in copied["operations"] if operation["status"] == "sent"}
+    sent_ids = {operation["call_id"] for operation in copied["operations"] if not operation["mutates"] and operation["status"] == "sent"}
     if sent_ids != set(pending):
         raise InvalidState("Pending calls must match sent operations")
     if not isinstance(copied["user_request"], str):
@@ -275,13 +288,13 @@ def clone_state(state: dict) -> dict:
         raise InvalidState("Invalid independent verification draft")
     evidence, record = copied["identity_evidence"], copied["customer_record"]
     if evidence is not None:
-        from support_agent.domain.identity import PROOF_FIELDS, matches_customer, supplied_by_user
+        from support_agent.domain.identity import PROOF_FIELDS, matches_session_customer, supplied_by_user
         if (not isinstance(evidence, dict) or set(evidence) != {"inputs", "verified_at_turn", "source"}
                 or not isinstance(evidence["inputs"], dict) or set(evidence["inputs"]) != set(PROOF_FIELDS)
                 or type(evidence["verified_at_turn"]) is not int or not 0 <= evidence["verified_at_turn"] <= copied["turn"]
                 or evidence["source"] != "user_input_and_matched_search_profile"
                 or not identity["verified"] or not supplied_by_user(evidence["inputs"], copied["history"])
-                or not matches_customer(record, evidence["inputs"], identity["customer_id"])):
+                or not matches_session_customer(record, evidence["inputs"], identity["customer_id"], copied["history"])):
             raise InvalidState("Invalid independent identity evidence")
     elif record is not None:
         raise InvalidState("Customer record requires identity evidence")
@@ -307,4 +320,9 @@ def clone_state(state: dict) -> dict:
         validate_tasks(copied)
     except (TypeError, ValueError, KeyError) as exc:
         raise InvalidState("Invalid task plan evidence") from exc
+    from support_agent.write_session import validate_write_operations
+    try:
+        validate_write_operations(copied)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise InvalidState("Invalid write lifecycle evidence") from exc
     return copied

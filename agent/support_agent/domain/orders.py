@@ -20,7 +20,8 @@ def order_state_rule(order: dict, action: str) -> dict:
 
     Tracking IDs do not supply shipment dates or an undocumented shipped flag.
     This only assesses current state, not freshness, complete parameters or consent.
-    The full fulfillment-conflict guard belongs to M3.5 pre-write refresh checks.
+    M3.5 pre-write refresh applies a separate conservative fulfillment guard;
+    the current API still supplies no authoritative shipped-event field.
     """
     capability = capability_rule(action)
     if capability["decision"] != "allow":

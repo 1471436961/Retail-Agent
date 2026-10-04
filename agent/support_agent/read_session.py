@@ -6,13 +6,13 @@ import re
 
 from support_agent.adapters.read_api import ORDER_STATUSES, customer_order_ids, validate_catalog, validate_order
 from support_agent.domain.customer import customer_reply, find_customer_id
-from support_agent.domain.identity import PROOF_FIELDS, fields_from_text, matches_customer, normalized, proof_from_text, supplied_by_user, verification_inputs
+from support_agent.domain.identity import PROOF_FIELDS, fields_from_text, matches_customer, matches_session_customer, normalized, proof_from_text, supplied_by_user, verification_inputs
 from support_agent.protocol import Decision, InvalidAction, READ_TOOL_FIELDS, ToolAction, TurnInput, validate_tool_action
 
 MAX_READ_CALLS_PER_REQUEST = 12
-# Reserved ceiling for future multi-step generation. The current flow makes
-# at most one adapter call per user request and none on tool-result turns.
-MAX_MODEL_CALLS_PER_REQUEST = 2
+# Enforce the current single-attempt flow. Multi-step business generation is a
+# separate future workflow, with its own reachable budget tests.
+MAX_MODEL_CALLS_PER_REQUEST = 1
 
 
 def reply(state, text):
@@ -119,7 +119,10 @@ def consume_results(state, outcomes):
             name, args = descriptor["name"], descriptor["arguments"]
             proof = {k: args.get(k, "") for k in PROOF_FIELDS}
             if name in {"lookup_customer", "verify_customer", "read_customer_profile"}:
-                if not supplied_by_user(proof, state["history"]) or not matches_customer(body, proof, args["customer_id"]):
+                matches = (matches_session_customer(body, proof, args["customer_id"], state["history"])
+                           if name == "read_customer_profile" and state["identity"]["verified"] and state["identity_evidence"]
+                           else matches_customer(body, proof, args["customer_id"]))
+                if not supplied_by_user(proof, state["history"]) or not matches:
                     raise ValueError("Verification mismatch")
                 if state["identity"]["verified"] and body["customer_id"] != state["identity"]["customer_id"]:
                     raise ValueError("Customer switch")

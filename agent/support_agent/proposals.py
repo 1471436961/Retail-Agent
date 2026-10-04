@@ -12,8 +12,8 @@ import re
 
 from support_agent.domain.money import finite_amount, finite_number
 from support_agent.domain.orders import ORDER_ACTIONS, order_state_rule
-from support_agent.domain.policies import cancellation_refund_basis
-from support_agent.domain.catalog import resolve_return_items
+from support_agent.domain.policies import cancellation_refund_basis, return_destination_rule
+from support_agent.domain.catalog import resolve_return_items, return_refund_basis
 from support_agent.domain.rules import identifier, allow, deny, need
 from support_agent.protocol import Decision
 
@@ -108,16 +108,43 @@ def normalize_spec(spec):
         if basis["decision"] != "allow" or basis["details"]["charges"] != amount["rows"]:
             raise InvalidProposal("Only original charge rows may form the refund basis")
     else:
-        # M3.1 still has no applicable return aggregation evidence. A caller's
-        # numeric estimate or confirmed flag cannot fill that evidence gap.
-        raise InvalidProposal("Return refund aggregation evidence is still unavailable")
+        _keys(params, {"item_ids", "refund_payment_method_id"})
+        if (not isinstance(params["item_ids"], list) or not params["item_ids"]
+                or any(not identifier(i) for i in params["item_ids"])
+                or not identifier(params["refund_payment_method_id"])):
+            raise InvalidProposal("Complete original units and one refund destination are required")
+        _keys(amount, {"kind", "value", "estimate_method"})
+        if amount["kind"] != "estimated_refund" or amount["estimate_method"] != "original_prices_decimal_sum_half_up_cents":
+            raise InvalidProposal("A labelled original-price display estimate is required")
+        _number(amount["value"], nonnegative=True)
     if action in {"payment_method", "modify_items", "exchange"} and not identifier(params["payment_method_id"]):
         raise InvalidProposal("One exact payment method ID is required")
     return spec
 
 
 def _clean_read_history(history):
-    return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan"}} for entry in history]
+    return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event"}} for entry in history]
+
+
+def _return_opening_boundary(history, target):
+    """Freeze at the first relevant explicit return request/presentation.
+
+    The internal structured entry may precede a natural-language workflow; in
+    that case its first presentation is the opening boundary. A later accepted
+    profile cannot backfill it. M5 owns richer request/withdrawal interpretation.
+    """
+    boundary = len(history)
+    for index, entry in enumerate(history):
+        events = [entry["proposal"]] if "proposal" in entry else entry.get("proposal_set", [])
+        if any(event.get("spec", {}).get("action") == "return" and event["spec"]["target"] == target for event in events):
+            boundary = index
+            break
+    for index, entry in enumerate(history[:boundary]):
+        if entry["role"] == "user" and re.search(r"\breturn\b|退货", entry["content"], re.I):
+            explicit_orders = re.findall(r"#[A-Za-z0-9_-]+", entry["content"])
+            if not explicit_orders or target["order_id"] in explicit_orders:
+                return index, boundary
+    return boundary, boundary
 
 
 def _scope_facts(history, spec, *, state_only=False):
@@ -134,18 +161,23 @@ def _scope_facts(history, spec, *, state_only=False):
         return {"customer": prefix["customer_record"], "order": None, "catalog": []}
     if target["order_id"] not in customer_order_ids(prefix["customer_record"]):
         raise InvalidProposal("Proposal target is outside the customer's references")
-    calls, order, catalog, product_members = {}, None, {}, {}
-    for entry in prefix["history"]:
+    calls, order, catalog, product_members, profiles = {}, None, {}, {}, []
+    opening_index, presentation_boundary = _return_opening_boundary(history, target)
+    for index, entry in enumerate(prefix["history"]):
         if entry["role"] == "assistant":
             calls.update({c["id"]: c for c in entry.get("tool_calls", [])})
         results = entry.get("tool_messages", []) if entry["role"] == "tools" else [entry] if entry["role"] == "tool" else []
         for result in results:
             call = calls.get(result["id"], {})
-            if result["error"] or call.get("name") not in {"get_order", "list_customer_orders", "get_product", "get_item"}:
+            if result["error"] or call.get("name") not in {"lookup_customer", "verify_customer", "read_customer_profile", "get_order", "list_customer_orders", "get_product", "get_item"}:
                 continue
             body = json.loads(result["content"])
             if set(body) == {"read_result_status"}:
                 continue  # M2 removed the entire rejected batch's fact bodies.
+            if call["name"] in {"lookup_customer", "verify_customer", "read_customer_profile"}:
+                if body.get("customer_id") == target["customer_id"] and index < presentation_boundary:
+                    profiles.append((index, body["payment_methods"]))
+                continue
             # M2 has validated the whole batch. Sources remain verifiable on
             # replay, while repeated same-value reads do not change consent.
             if call["name"] in {"get_product", "get_item"}:
@@ -197,6 +229,21 @@ def _scope_facts(history, spec, *, state_only=False):
         rows = spec["amount"]["rows" if spec["action"] == "cancel" else "refund_rows"]
         if basis["decision"] != "allow" or basis["details"]["charges"] != rows:
             raise InvalidProposal("Refund rows must match the accepted original charges")
+    if spec["action"] == "return":
+        before_opening = [p for p in profiles if p[0] < opening_index]
+        # If identity was collected after the initial request, opening becomes
+        # the first successfully verified profile, not any later profile refresh.
+        opening = before_opening[-1] if before_opening else profiles[0] if profiles else (None, None)
+        opening_methods = opening[1]
+        estimate = return_refund_basis(order["items"], spec["parameters"]["item_ids"])
+        destination = return_destination_rule(prefix["customer_record"]["payment_methods"], order["payments"],
+                    spec["parameters"]["refund_payment_method_id"], opening_payment_methods=opening_methods)
+        if (estimate["decision"] != "allow" or destination["decision"] != "allow"
+                or estimate["details"]["aggregate_amount"] != spec["amount"]["value"]):
+            raise InvalidProposal("Return units, original-price estimate or destination do not match accepted facts")
+        # Bind historical eligibility as well as current methods and prices.
+        return {"customer": prefix["customer_record"], "order": order, "catalog": [],
+                "opening_payment_methods": opening_methods, "opening_profile_index": opening[0]}
     return {"customer": prefix["customer_record"], "order": order, "catalog": dependencies}
 
 
@@ -229,7 +276,8 @@ def render_proposal(spec):
     action, target, params, amount = (spec[k] for k in ("action", "target", "parameters", "amount"))
     labels = {"default_shipping_address": "Update the customer's default shipping address",
               "shipping_address": "Update this order's shipping address", "payment_method": "Switch this order's payment method",
-              "modify_items": "Modify this order's item variants", "exchange": "Request an exchange", "cancel": "Cancel this entire order"}
+              "modify_items": "Modify this order's item variants", "exchange": "Request an exchange", "cancel": "Cancel this entire order",
+              "return": "Request a return of the complete selected list"}
     lines = [labels[action] + ".", "Customer: " + target["customer_id"]]
     if "order_id" in target:
         lines.append("Order: " + target["order_id"])
@@ -241,6 +289,11 @@ def render_proposal(spec):
         for row in amount["rows"]:
             lines.append("Original charge refund basis: " + str(row["amount"]) + " to " + row["payment_method_id"])
         lines.append("No aggregate refund amount or arrival is verified.")
+    elif action == "return":
+        lines.append("Original units (occurrences preserved): " + json.dumps(params["item_ids"]))
+        lines.append("Refund destination: " + params["refund_payment_method_id"])
+        lines.append(f'Estimated original-price refund: {amount["value"]:.2f} (decimal sum, half-up cents).')
+        lines.append("This estimate is not a settlement guarantee; the API receives no amount and refund arrival is not verified.")
     else:
         for pair in params.get("replacements", []):
             lines.append("Replace " + pair["existing_item_id"] + " with " + pair["replacement_item_id"])

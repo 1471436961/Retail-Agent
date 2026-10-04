@@ -1,6 +1,12 @@
 """One isolated integration check, counted by its main-suite subprocess wrapper."""
 import sys
+import os
 from pathlib import Path
+
+# Standalone invocation has the same offline/no-dotenv boundary as the wrapper.
+os.environ.update(PYTHON_DOTENV_DISABLED="1", HF_HUB_OFFLINE="1",
+                  LITELLM_TELEMETRY="False",
+                  LITELLM_LOCAL_MODEL_COST_MAP="True")
 
 network_attempts = []
 guard_probe_events = []
@@ -146,5 +152,75 @@ invalid, valid_state = agent.plan_tasks(state, [request("cancel", "#TEST2")])
 assert not invalid.tool_calls and not valid_state["tasks"]
 assert valid_state["identity_evidence"] == state["identity_evidence"]
 assert len(api.calls) == reads_before and not network_attempts
+# M3.5 has a disabled default port and a fake-only injected lifecycle. The
+# actual SDK Agent wrapper must preserve the journal, quarantine tampering,
+# and project bounded outcomes without treating journal metadata as tools.
+from test_m3_writes import confirmed as write_confirmed, FakeRuntime, writes
+write_state, write_api, write_spec = write_confirmed()
+result, unchanged = agent.execute_operation(write_state, 1, write_spec)
+assert result["code"] == "write_runtime_required" and unchanged == write_state
+runtime = FakeRuntime(write_api)
+result, written = agent.execute_operation(write_state, 1, write_spec, runtime)
+assert result["code"] == "write_verified" and len(runtime.sends) == 1
+assert agent.get_init_state(written["history"])["operations"] == written["operations"]
+adapter.decide(written)
+serialized = json.dumps([m.model_dump() for m in gateway.calls[-1]["messages"]])
+assert "Recorded operation outcome: succeeded" in serialized
+assert '"write_event"' not in serialized and '"verified_read_ids"' not in serialized
+damaged = deepcopy(written); writes(damaged)[0]["status"] = "unknown"
+result, blocked = agent.execute_operation(damaged, 1, write_spec, runtime)
+assert result["code"] == "invalid_state" and blocked["quarantined_state"] == damaged
+result, still_blocked = agent.reconcile_operation(blocked, writes(written)[0]["call_id"], runtime)
+assert result["code"] == "invalid_state" and still_blocked == blocked
+assert len(runtime.sends) == 1 and not network_attempts
+
+# Concrete sequential session adapter, formal SDK presentation -> real user
+# message -> complete returned text/state. Transport remains a local fake.
+from test_m3_completion import transport, return_spec
+from support_agent.adapters.write_runtime import SessionWriteRuntime, SessionClaims
+return_state, return_api = verified_state(status="delivered")
+recap, return_state = agent.present_proposal(return_state, return_spec())
+assert isinstance(recap, AssistantMessage) and recap.content == return_state["history"][-1]["content"]
+reply, return_state = agent.generate_next_message(UserMessage(role="user", content="yes"), return_state)
+return_sends = transport(return_api)
+reply, returned = agent.submit_operation(return_state, 1, return_spec(), SessionWriteRuntime(return_api, claims=SessionClaims()))
+assert isinstance(reply, AssistantMessage) and not reply.tool_calls
+assert "accepted and verified" in reply.content and "does not confirm refund settlement" in reply.content
+assert reply.content == returned["history"][-1]["content"]
+assert writes(returned)[0]["status"] == "succeeded" and len(return_sends) == 1
+assert agent.get_init_state(returned["history"])["operations"] == returned["operations"]
+
+# Context budget is our engineering limit. A derived model-only summary cannot
+# replace actual user evidence or prune the original state ledger.
+from support_agent.model_context import project_messages
+from support_agent.protocol import InvalidAction
+from support_agent.state import initial_state
+long_history = deepcopy(state["history"])
+for index in range(20):
+    long_history.extend([{"role":"user", "content":f"Historical note {index}: " + "example " * 300},
+                         {"role":"assistant", "content":"This is an earlier conversation note."}])
+long_history.append({"role":"user", "content":"Please explain the available support."})
+long_state = initial_state(long_history)
+before = deepcopy(long_state)
+projected = project_messages(long_state, max_characters=6000)
+assert sum(len(json.dumps(m.model_dump(), ensure_ascii=False, allow_nan=False)) for m in projected) <= 6000
+assert "derived_session_context" in projected[1].content and projected[-1].content == long_history[-1]["content"]
+assert len(projected) < len(long_history) and long_state == before
+assert long_state["identity_evidence"] == state["identity_evidence"]
+assert not initial_state([m.model_dump() for m in projected])["identity"]["verified"]
+too_long = initial_state(long_history + [{"role":"user", "content":"x" * 7000}])
+try:
+    project_messages(too_long, max_characters=6000)
+    raise AssertionError("Oversized current request must not produce a truncated model request")
+except InvalidAction:
+    pass
+pending_state = deepcopy(state)
+decision, pending_state = agent.generate_next_message(UserMessage(role="user", content="Read order #TEST1"), pending_state)
+try:
+    project_messages(pending_state)
+    raise AssertionError("Pending results must prevent projection")
+except InvalidAction:
+    pass
+assert not network_attempts
 print("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0")
 print("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake")
