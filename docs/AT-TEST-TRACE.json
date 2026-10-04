@@ -1,25 +1,25 @@
 {
   "schema_version": 2,
   "status": "valid",
-  "run_id": "8cbe12123adb4790aeb4e6934edf64ee",
+  "run_id": "b5d534b21759426ab9e63f16099b3967",
   "scope": "component association, not complete business-AT execution",
   "case_count": 134,
   "at_count": 522,
   "business_ats_executed": 0,
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
-  "run_source_sha256": "9ea10b8543e7dd06030bbba9363672db9af33c500932b4eb9050a3c28f7ec917",
-  "specification_sha256": "a5b21a31cc964728b182fd4018e4782dce5fe497ccd7fe7401db3d146bb36db4",
+  "run_source_sha256": "40fb2badcfbd845078b5aa70ecac9a0a27e75b70f396570edb14a702c577ed9c",
+  "specification_sha256": "d5af061aa12823577f49fa2339a94ac30d5018a55333153fc7fdf7e06fa917a0",
   "specification_files": {
-    "materials/CLASSROOM.md": "9dfff8b517d3423847f17f98b1f57d27d7c682601d4a75a7926c0099dea8eb2b",
-    "materials/client_api/openapi.yaml": "c7fc5e93a9b13d15de60e44886f3b5b34fca7987892bd06070f4969d02d9e009",
-    "materials/framework/agent_contract.md": "f52f2e0c47ab60623215a9fdb500125920b7bee01d13994a6033532bacab0dea",
-    "materials/framework/client_api_contract.md": "0135e56f64b377d9001a4ad2a6dbc2757cf85ea1f8e04a4b89e490aab9786141",
-    "materials/framework/scenario_contract.md": "dea54ce43cb01906404867a21b14243fbdaf6f5fcf9ebcaf190d288cdfbe70b2",
-    "materials/framework/deployment_manifest.json": "c938a17d291da9de924d5ef28793712e3bad0b326785b74426a874c104fe1211",
-    "docs/POLICY-REGISTER.md": "c034147df6975a8793e5cdb7afbed24e7f8cfc7917306de06378e1bfd7110100",
-    "docs/API-CONTRACT-MAP.md": "f166f356815ec1c2ed0b8a20b3d2ef51235222edb628ed4e4e7708e3b40a181d",
-    "docs/PLATFORM-CONTRACT-NOTES.md": "fcdc15c7b64661773c8f07290d1edc35fa51c6ce3fda3b96c2049f6118d442b9",
-    "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "370fd59a3f19af5b354f571e045c58b1dd0f0f50b2aa6cbde71d9dec1164c85f"
+    "materials/CLASSROOM.md": "b02f4a2706a1c2c5c1e04d1b4209119c7f061b8a66240d36e17af1614fe62a5c",
+    "materials/client_api/openapi.yaml": "d369f3cf5e3f83333d5c4bf0a11b82fb6417a946e16d34b64be614bcd3cadc16",
+    "materials/framework/agent_contract.md": "d00846b6cb781c8d59f7c794e88b81563c955a2991b410a9e0b66323f6481e8c",
+    "materials/framework/client_api_contract.md": "beeb01ae3d51d3267ba361fb97e1a47d6a71c719484c0daf02aecc9e2fdeb44e",
+    "materials/framework/scenario_contract.md": "1c255ee02db77afecda391d4a8335542065c5faff6f540fc70574ea8be60669e",
+    "materials/framework/deployment_manifest.json": "8637b0d5a78610b8b2b480ce3cedc64ee2f1fc792ce9419a92a2e094777040e0",
+    "docs/POLICY-REGISTER.md": "583e85f13d4ac0c6ecd8356216289c94d357a62162d9ec85414b8dc1ed74819c",
+    "docs/API-CONTRACT-MAP.md": "7c5025deec1c11a109d23ca25c294154b97929a198863a234611749fcc89d0d3",
+    "docs/PLATFORM-CONTRACT-NOTES.md": "43ecba887340f764dd8790b6bf3321bc6aafc815fbf7027838e95191b5f11d6e",
+    "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "e670463bc8186366b484e5f84dd78683b8451a11e720712d8250942a768ea954"
   },
   "groups": {
     "G": {
@@ -107,9 +107,17 @@
     },
     "P": {
       "test_ids": [
-        "test_m3_completion.SessionRuntimeTests.test_payment_switch_uses_one_original_charge_and_rechecks_full_balance"
+        "test_m3_completion.SessionRuntimeTests.test_payment_switch_uses_one_original_charge_and_rechecks_full_balance",
+        "test_m4_payments.PaymentFlowTests.test_paypal_recap_charge_refund_pending_and_independent_readback",
+        "test_m4_payments.PaymentFlowTests.test_insufficient_gift_card_has_zero_writes_and_keeps_original_payment",
+        "test_m4_payments.PaymentFlowTests.test_customer_specified_gift_insufficiency_fallback_recap_then_confirmation",
+        "test_m4_payments.PaymentFlowTests.test_rejected_charge_keeps_order_and_has_no_refund_or_auto_retry",
+        "test_m4_payments.PaymentReviewTests.test_reversed_new_rows_with_matching_readback_verify_records_not_processing_order",
+        "test_m4_payments.PaymentReviewTests.test_receipt_order_disagreeing_with_strong_readback_stays_unresolved_without_retry",
+        "test_m4_payments.PaymentReviewTests.test_unknown_journal_blocks_a_new_payment_choice_with_specific_code",
+        "test_m4_payments.PaymentRecoveryTests.test_shared_claims_stop_stale_payment_snapshot_in_new_toolkit_instance"
       ],
-      "limitation": "Supported single-charge adapter; M4 payment dialogue not included in this address release."
+      "limitation": "M4.2 actual-user/saved choice/full-charge recap/consent/readback on synthetic single-original-charge orders; not full public case AT execution or a real payment gateway."
     },
     "H": {
       "test_ids": [

@@ -1,6 +1,6 @@
 # 工程结构与开发方式
 
-2026-10-04 M4.1 地址默认流程已交付并获授权分批提交推送。第一批源码/测试为 b7788e3ea782733e469634b6cdcff69ec746b97c，地址专属快照完整实跑 421/421、零跳过、退出码 0；八 READ＋一个内部地址 WRITE，schema 6。当前提交只含 M4.1，M4.2 支付工作区改动单独保留未纳入。地址收集/完整复述/真实 user 同意/写前刷新/各自 PUT 与强读回及边界见 [M4.1 交付](docs/M4.1-DELIVERY.md)和[当前离线证据](docs/FOUNDATION-RUN.json)。没有部署或调用真实模型；M0.2 的 134/522 完整业务 AT 未执行，M0–M3 的 353/353 为历史基础快照。
+2026-10-04 当前已实现 M4.1 地址及 M4.2 支付方式切换，完整离线回归 481/481、零跳过、退出码 0，实际运行见 [M4.2 交付](docs/M4.2-DELIVERY.md)及[逐方法报告](docs/FOUNDATION-RUN.json)。默认八 READ＋两个内部 WRITE：真实 user → 严格验证/自有读取 → 完整复述 → 同一提案确认 → 写前刷新 → 契约端点及强读回。支付限单一已有不同方式、整单足额、唯一原 charge；客户指定的礼品卡不足回退先选择再重新完整确认。schema 7 两类工具共用来源、提案、journal、UTF-8 预算及可信认领表；prepare 可恢复，execute Unknown 不重发，模型仍只读。M4.1 的 421/421 为历史阶段运行，M0–M3 已推送基线 353/353 见 [收尾](docs/M0-M3-CLOSEOUT.md)。M4.1 已分源码 b7788e3、文档 2f432c3 两批提交推送；M4.2 源码 1a095ca 已提交推送，交付文档/证据另批提交，不调用真实模型或远程业务；M4.3–M4.5 未开始，完成后等待 review。
 
 ## Python
 
@@ -11,11 +11,12 @@ agent/
   agent.json                # 协议、语言、场景
   support_agent/            # 可安装的本地 Python package
     application.py          # 决定下一轮回答或工具调用
-    turns.py                # 轮次入口，转交只读会话逻辑
-    read_session.py         # 身份范围、读取批次和地址调度
-    address_session.py      # 两类地址 intake/prepare/execute 与独立核实
-    workflow_boundary.py    # 地址内部批次、诊断、预算、abandoned/Unknown
-    address_limits.py       # UTF-8 参数包/返回限额，超限不裁剪证据
+    turns.py                # 轮次入口，复用身份、读取及地址工作流
+    read_session.py         # 身份范围、读取批次及地址调度入口
+    address_session.py      # M4.1 地址收集、复述和提交
+    payment_session.py      # M4.2 单一已有支付方式的整单切换
+    workflow_boundary.py    # 两类内部批次、诊断、预算及失败恢复
+    workflow_limits.py       # 内部工具 UTF-8 参数/结果预算，不裁剪证据
     protocol.py             # 内部消息、动作和候选校验
     state.py                # 每个会话独立的 JSON 状态
     proposals.py            # M3.2/M3.3 完整提案、局部确认和原 user 来源链
@@ -24,7 +25,8 @@ agent/
     model_context.py        # 有界模型投影，原始证据与 state 不裁剪
     domain/customer.py      # 不依赖运行环境的业务规则
     domain/identity.py      # 独立验证输入与用户来源核验
-    domain/addresses.py     # 有限中英文字段/目标与自有复制来源
+    domain/addresses.py     # 有限中英文字段/目标/复制来源解析
+    domain/payment_intake.py # 真实 user 的已有方式、条件回退及整单依据
     domain/money.py         # U6 顺序 float 差价与余额舍入基线
     domain/rules.py         # 可解释 JSON 规则结果，非写入授权
     domain/orders.py        # 精确状态与能力准入
@@ -37,7 +39,8 @@ agent/
     adapters/customer_tools.py  # 工具声明与注册
     adapters/read_api.py        # 六只读端点、归属与事实校验
     adapters/read_tools.py      # 带验证依据的可重放只读工具
-    adapters/address_tools.py   # 内部地址 WRITE 与可信共用 SessionClaims
+    adapters/address_tools.py   # 内部地址工具与可信 API/共享认领表
+    adapters/payment_tools.py   # 内部支付工具，复用同一 API/认领表
     adapters/model_gateway.py   # JSON/SDK 转换与模型候选门控
     adapters/write_runtime.py   # 显式串行会话认领表与七个契约端点
 tests/test_customer.py      # 无网络、无模型的单元测试
@@ -48,8 +51,9 @@ tests/test_m3_proposals.py  # M3.2 完整确认、迁移、恢复和真实 SDK �
 tests/test_m3_scoped_consent.py # M3.3 独立范围、追加/条件/撤回与旧确认保留
 tests/test_m3_tasks.py      # M3.4 请求图、多订单候选、迁移与来源校验
 tests/test_m3_writes.py     # M3.5 fake 发送/持久化协议、强读回、未知及恢复
-tests/test_m4_addresses.py # 原 48 项两类地址合成对话
-tests/test_m4_address_review.py # 20 项 prepare 恢复/混合结果/异常/预算
+tests/test_m4_addresses.py # M4.1 实际轮次、两类地址、修正、复制、Unknown 与恢复
+tests/test_m4_address_review.py # prepare 恢复、迟到结果、混合结果、异常与预算边界
+tests/test_m4_payments.py  # M4.2 真实轮次、选择/拒付/读回、跨流程及恢复
 pyproject.toml             # 本地 package 元数据
 ```
 
@@ -69,7 +73,7 @@ pyproject.toml             # 本地 package 元数据
 
 ## 依赖与运行边界
 
-M0–M3 内部基础范围完成，353/353 是已推送历史快照。当前 M4.1 默认八 READ＋一个内部地址 WRITE；显式 SessionWriteRuntime 支持可信串行会话、共享认领表及完整 journal 恢复，默认不注入。claim_identity 绑定版本/记录而非历史位置，只有严格 True 允许发送；Unknown 不重发，匹配回执及自有强读回后才释放依赖。SDK 入口返回真实 AssistantMessage 与对应 state。跨进程崩溃/丢失 state 的去重不在当前保证内，具体业务生产器和工具路由尚未实施。M0.2 完整业务 AT 执行随 M4–M6 补齐，134/522 不变；当前追踪明确区分组件通过与业务未执行。详见 [收尾记录](docs/M0-M3-CLOSEOUT.md)和[逐方法运行报告](docs/FOUNDATION-RUN.json)。
+M0–M3 内部基础范围完成，353/353 为已推送基础快照；当前 M4.2 运行见交付及逐方法报告。地址和支付已接入默认轮次及工具，取消/转接/商品生产器尚未实施。SessionWriteRuntime 的稳定认领、严格 True、Unknown 不重发、回执＋自有强读回约定不变；地址和支付 toolkit 共用一份可信进程内 SessionClaims，同一 live 后端重建 toolkit 时须显式复用可信 store，不能以新空表配丢失 journal 的旧 state 冒充跨进程去重。SDK 入口返回真实 AssistantMessage 与对应 state。M0.2 的 134/522 完整公开业务 AT 实际执行仍待 M4–M6；本批合成地址/支付流程通过不冒充公开 AT 或远程评测通过。
 
 Windows 本地离线测试可使用 `pwsh -NoProfile -File .\scripts\test-local.ps1`：使用项目解释器，临时目录限定在仓库内，原生退出码保留，调用方环境不变。两个测试文件的四处临时目录调用已通过共享 helper 避开 Windows 0o700 的特殊 ACL 设置，直接运行 unittest 也生效；其他系统保持标准临时目录行为。评审会话现已报告原命令在受限模式实跑 266/266、零跳过、退出码 0，无提权、无重定向或注入；本会话此前的启动失败和非受限通过保留来源区分，见 [本地测试入口](docs/LOCAL-TEST-RUNNER.md)。脚本是可选便利入口。
 
@@ -95,5 +99,3 @@ M0 交付证据见 [M0-DELIVERY](docs/M0-DELIVERY.md)，SDK 来源见 [M0-SDK-CH
 2026-10-03 随后按授权完成 M3.3 内部完整操作集合的局部确认、追加/缩减/撤回/条件与支付/报价失效，该批源码实跑 **221/221**、零跳过、原生退出码 0；schema 3 保留可核验的原 user 范围同意与旧版本来源，见 [M3.3-DELIVERY](docs/M3.3-DELIVERY.md)。源码 abac040、文档 3460329 已推送，自动工作流成功，报告正文案例计数未单独核实；无真实模型调用。
 
 随后按用户授权实现 M3.4 内部同单依赖/冲突及独立记录候选诊断，源码提交后实跑 **266/266**、零跳过、原生退出码 0，新主测试 45 项，见 [M3.4-DELIVERY](docs/M3.4-DELIVERY.md)。schema 4 的任务计划来源复用严格身份与原 proposals 台账；同单地址/支付须先于商品锁单，取消/退换冲突先澄清。候选不是写入授权，前置任务确认不等于完成；该批当时的结果 reducer、依赖释放及写前刷新已在 M3.5 内部实现，完整业务报价生产器仍属 M4/M5。默认只读路由不自动创建业务任务，八 READ、零 WRITE；测试环境 53ee070、源码 2413049 已逐批推送，t1 接入回执见交付记录。没有真实模型或另行 evaluate。
-
-本批默认路由只开放地址业务生产器；原显式七端点运行时不等于其他默认业务已启用。同一 live 后端重建 toolkit 须显式共享可信进程内 SessionClaims，完整 journal 恢复阻断重发；state 与 store 同时丢失的分布式防重不在当前保证内。以下 M0–M3 段落的零 WRITE/生产器未实施为对应历史范围，不覆盖当前 M4.1。

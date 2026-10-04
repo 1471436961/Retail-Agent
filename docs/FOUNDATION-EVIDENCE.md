@@ -39,6 +39,10 @@
 
 追踪中 related_components_passed 表示相关方法实际执行通过；business_result=not_executed、business_test_ids=[]、remote_result=not_run 和 business_ats_executed=0 继续保留。改变发布协议不意味着完整业务已验收，也不启用业务写路由。
 
-## 当前 M4.1 地址组件
+## M4.1 地址组件与当前 M4.2 支付证据
 
-[M4.1 交付](M4.1-DELIVERY.md)与 [48 项流程](../tests/test_m4_addresses.py)/[20 项评审回归](../tests/test_m4_address_review.py)对应 A/D 组件的实际执行。默认两类地址完整复述/真实 user 确认/刷新/分别 PUT/强读回，以及 prepare abandoned/恢复、混合结果、Unknown 与 UTF-8 预算已有调用者。一个内部地址 WRITE 已注册，模型仍限八 READ。真实 SDK 子进程使用 native 消息/Tool/ClientAPI 和 fake backend，网络拒绝；主包装内 13 项不重复累加。公开业务 AT 仍 0，不外推真实课堂或到账。
+[M4.1 交付](M4.1-DELIVERY.md)列出已接入默认轮次的两类地址流程、完整复述/确认、各自 PUT/强读回，以及只读 prepare 恢复、execute Unknown、逐记录混合结果与工具预算回归。实际用例见 [地址流程](../tests/test_m4_addresses.py)和[评审回归](../tests/test_m4_address_review.py)。A/D 仅关联这些实际执行的组件；发布器改动本身不开写，但 M4.1 阶段注册一个内部地址 WRITE；当前 M4.2 增至两个内部地址/支付 WRITE，模型仍限八 READ。完整公开业务 AT 执行数仍为 0，不把合成地址流程或 t1 历史绿色当作全部地址案例通过。
+
+[M4.2 交付](M4.2-DELIVERY.md)及[支付回归](../tests/test_m4_payments.py)覆盖默认真实 user、整单原 charge、已有方式/足额/客户指定回退、复述确认、一个 PUT、退款记录及状态强读回，拒付、Unknown、丢失批次、交叉路由、共享认领和旧 schema 恢复。P 映射现关联这些实际方法；真实 SDK 子进程另验收 native 消息/Tool/ClientAPI/fake 支付往返，拒绝网络，子检查不额外累加。M4.1 的 421/421 为历史基线，当前报告/追踪刷新到本批实际执行快照；不将其转为公开业务 AT 或实际渠道到账证明。
+
+M4.2 评审修订增加匹配的逆序交易列表与回执/读回排列不一致两侧、确切状态/读失败 code、原始方式 ID、准备异常恢复、运行时错误金额及未决记录阻断。先扣后退是政策要求；数组排列不是执行时序证据，单个 PUT 也不是原子性证明，详见交付记录。
