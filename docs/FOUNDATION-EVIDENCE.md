@@ -38,3 +38,7 @@
 使用项目解释器运行 `-B scripts/foundation_trace.py`。普通 unittest 命令仍可运行，但不会刷新这两份证据。缺真实 SDK 解释器按原包装测试失败，不静默跳过；SDK 子检查已经包含于主包装测试，不与主计数重复相加。测试使用 fake API/网关，成功路径不调用真实模型或网络。
 
 追踪中 related_components_passed 表示相关方法实际执行通过；business_result=not_executed、business_test_ids=[]、remote_result=not_run 和 business_ats_executed=0 继续保留。改变发布协议不意味着完整业务已验收，也不启用业务写路由。
+
+## 当前 M4.1 地址组件
+
+[M4.1 交付](M4.1-DELIVERY.md)与 [48 项流程](../tests/test_m4_addresses.py)/[20 项评审回归](../tests/test_m4_address_review.py)对应 A/D 组件的实际执行。默认两类地址完整复述/真实 user 确认/刷新/分别 PUT/强读回，以及 prepare abandoned/恢复、混合结果、Unknown 与 UTF-8 预算已有调用者。一个内部地址 WRITE 已注册，模型仍限八 READ。真实 SDK 子进程使用 native 消息/Tool/ClientAPI 和 fake backend，网络拒绝；主包装内 13 项不重复累加。公开业务 AT 仍 0，不外推真实课堂或到账。

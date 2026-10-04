@@ -1,6 +1,6 @@
 # Q2 长会话摘要与身份依据保留设计
 
-2026-10-04 已实现第一阶段有界模型投影，见 [M0–M3 收尾](M0-M3-CLOSEOUT.md)。下文 2026-10-02 约束及 M3 分批补记为历史设计；当前 state 不裁剪，身份/确认/Unknown 来源完整保留，未实施 state 归档或增量回放性能优化。
+2026-10-04 当前 M4.1 为 schema 6，在原身份/完整提案/任务/journal 上增加可恢复地址批次，见 [地址交付](M4.1-DELIVERY.md)。state 不裁剪，模型投影仍有界；以下 M3 段为历史阶段设计。原 user、独立验证、确认、已接纳事实及 Unknown 完整保留，不以助手摘要替代。
 
 历史日期：2026-10-02。当时摘要/容量控制尚未实现；现已交付下述有界投影。适用于本项目 JSON state，不声称是平台字段或容量限制。
 
@@ -76,3 +76,15 @@ M3.4 评审补记：图无跨记录边不等于跨展示确认独立。当前只
 model_context.project_messages 先完整验证 state/history，再投影到 SDK 类型。短历史沿用完整消息；长历史生成带 authorization=none 的派生 SystemMessage，保留身份原 user 来源的说明、当前提案及未决写状态和近期完整消息组。摘要不是 UserMessage，不从中恢复独立身份或确认。工具调用与关联结果按整组保留；当前请求或受保护投影无法纳入预算时返回 InvalidAction，模型零尝试。原 state 不变，完整克隆/历史恢复依然验证全部来源。
 
 实际 SDK 检查覆盖长历史、派生摘要不制造身份、超大当前请求和 pending 阻断；最新实际运行报告见收尾记录。投影节省模型载荷，不等于消除了 H×V 回放成本或解决无界 state；归档/裁剪/缓存是后续项目优化，不以缺平台数值作为外部阻塞。
+
+## 2026-10-04 M4.1 地址批次与复述
+
+schema 6 保留原身份、提案、任务、READ 和 write_event 结构；address_pending 只能由 address_dispatch/address_result/address_unknown/address_abandoned 原历史重建。仅只读 prepare 可 abandoned；execute 未决不能借该事件清除。address_assessment 保存结构化诊断，必须匹配最终文本且 write_authorized=false，不参与同意或权限判断。旧 schema 1–5 不能携带这些新标记或 presentation_note；schema 5 fixture 使用 622091c 原函数生成，迁移不创造 user 同意或发送。
+
+内部地址工具收到完整 snapshot，canonical history 仅保存紧凑 dispatch，不递归保存含全部历史的工具参数。可信 toolkit 返回 reply/state/assessment 必须严格延伸该 prefix，无新增 user，身份来源相同，最终文本和诊断相同；prepare 无写事件，execute 新写只能匹配原已确认地址项。prepare 批次拒绝或实际 user 插入新轮次时记录 abandoned，不接纳其正文；可重新准备或继续其他请求，迟到结果不修改新 prefix。execute 批次拒绝仍记录 unknown reservation，不自动重发；第二项抛异常时保留此前已返回的第一项 journal，并将整个 dispatch 保持未决。恢复/克隆复核同一证据；尚未解决的 pending/execute Unknown 阻断模型投影，已 abandoned 的 prepare 不再阻断。
+
+参数包按紧凑 JSON 的 UTF-8 字节限制为 256 KiB，结果为 1 MiB，属于项目内部工具预算，不是 REST 或模型预算。调度和工具解析前都检查参数，接纳时检查实际结果文本字节。超限不裁剪身份/确认/Unknown 链；只读结果可回退为保留原证据的短诊断，写后结果无法完整交付则保留 Unknown，不能以交付失败推断零写入。
+
+presentation_note 只可附在完整 proposal_set，恢复时严格对照“说明＋原完整复述”文本；它解释被排除的状态或事实变化，不制造确认。真正金额/字段/目标/facts 指纹及 user 邻接同意沿用 proposals.py。SDK 的普通文本历史仍不能重建这些内部元数据；完整 opaque state 或本库 canonical history 的合法恢复是当前范围，整体伪造可信宿主历史仍非本库可独立证明的真实性。
+
+本次发布以 workflow_boundary 的地址专属控制实现同一批次验证，只有 address kind；支付 slot/元数据与默认生产器不在本次提交范围。

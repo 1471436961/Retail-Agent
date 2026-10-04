@@ -1,25 +1,25 @@
 {
   "schema_version": 2,
   "status": "valid",
-  "run_id": "115a62f708b247fc8e39f8d6e01b4e48",
+  "run_id": "8cbe12123adb4790aeb4e6934edf64ee",
   "scope": "component association, not complete business-AT execution",
   "case_count": 134,
   "at_count": 522,
   "business_ats_executed": 0,
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
-  "run_source_sha256": "3ca0a93777cf9f0894f43b5794cbce5056a29410fa039a393f129d08b82d31ce",
-  "specification_sha256": "72e2a7a828c354dad8f9a9dd86a63ee6f5c0615c0a66a5153fe7144ef66dcba2",
+  "run_source_sha256": "9ea10b8543e7dd06030bbba9363672db9af33c500932b4eb9050a3c28f7ec917",
+  "specification_sha256": "a5b21a31cc964728b182fd4018e4782dce5fe497ccd7fe7401db3d146bb36db4",
   "specification_files": {
-    "materials/CLASSROOM.md": "b02f4a2706a1c2c5c1e04d1b4209119c7f061b8a66240d36e17af1614fe62a5c",
-    "materials/client_api/openapi.yaml": "d369f3cf5e3f83333d5c4bf0a11b82fb6417a946e16d34b64be614bcd3cadc16",
-    "materials/framework/agent_contract.md": "d00846b6cb781c8d59f7c794e88b81563c955a2991b410a9e0b66323f6481e8c",
-    "materials/framework/client_api_contract.md": "beeb01ae3d51d3267ba361fb97e1a47d6a71c719484c0daf02aecc9e2fdeb44e",
-    "materials/framework/scenario_contract.md": "1c255ee02db77afecda391d4a8335542065c5faff6f540fc70574ea8be60669e",
-    "materials/framework/deployment_manifest.json": "8637b0d5a78610b8b2b480ce3cedc64ee2f1fc792ce9419a92a2e094777040e0",
-    "docs/POLICY-REGISTER.md": "583e85f13d4ac0c6ecd8356216289c94d357a62162d9ec85414b8dc1ed74819c",
-    "docs/API-CONTRACT-MAP.md": "19f4f8a328540512237e6f2f78549066c608090d14f51434b8b48377a2b392db",
-    "docs/PLATFORM-CONTRACT-NOTES.md": "f64fc3f7f698d358ba831b89fa0b5a76a032b297420440de151122e26360e20e",
-    "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "e670463bc8186366b484e5f84dd78683b8451a11e720712d8250942a768ea954"
+    "materials/CLASSROOM.md": "9dfff8b517d3423847f17f98b1f57d27d7c682601d4a75a7926c0099dea8eb2b",
+    "materials/client_api/openapi.yaml": "c7fc5e93a9b13d15de60e44886f3b5b34fca7987892bd06070f4969d02d9e009",
+    "materials/framework/agent_contract.md": "f52f2e0c47ab60623215a9fdb500125920b7bee01d13994a6033532bacab0dea",
+    "materials/framework/client_api_contract.md": "0135e56f64b377d9001a4ad2a6dbc2757cf85ea1f8e04a4b89e490aab9786141",
+    "materials/framework/scenario_contract.md": "dea54ce43cb01906404867a21b14243fbdaf6f5fcf9ebcaf190d288cdfbe70b2",
+    "materials/framework/deployment_manifest.json": "c938a17d291da9de924d5ef28793712e3bad0b326785b74426a874c104fe1211",
+    "docs/POLICY-REGISTER.md": "c034147df6975a8793e5cdb7afbed24e7f8cfc7917306de06378e1bfd7110100",
+    "docs/API-CONTRACT-MAP.md": "f166f356815ec1c2ed0b8a20b3d2ef51235222edb628ed4e4e7708e3b40a181d",
+    "docs/PLATFORM-CONTRACT-NOTES.md": "fcdc15c7b64661773c8f07290d1edc35fa51c6ce3fda3b96c2049f6118d442b9",
+    "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "370fd59a3f19af5b354f571e045c58b1dd0f0f50b2aa6cbde71d9dec1164c85f"
   },
   "groups": {
     "G": {
@@ -89,21 +89,27 @@
     },
     "A": {
       "test_ids": [
-        "test_m3_writes.WriteLifecycleTests.test_send_checkpoint_receipt_and_strong_readback_complete_one_operation"
+        "test_m4_addresses.AddressFlowTests.test_order_complete_recap_then_verified_update_changes_only_target",
+        "test_m4_addresses.AddressFlowTests.test_corrected_unit_rereads_whole_address_and_awaits_new_consent",
+        "test_m4_addresses.AddressSafetyTests.test_fresh_backend_change_invalidates_consent_before_any_write",
+        "test_m4_address_review.AddressReviewTests.test_failed_preparation_can_retry_recap_and_only_fresh_consent_sends",
+        "test_m4_address_review.AddressReviewTests.test_order_success_and_default_unknown_have_separate_results"
       ],
-      "limitation": "Explicit address lifecycle; M4 address workflow not implemented."
+      "limitation": "M4.1 actual-user/tool/recap/consent/owned readback on synthetic orders; not the full public case AT dialogue."
     },
     "D": {
       "test_ids": [
-        "test_m3_completion.SessionRuntimeTests.test_default_address_uses_customer_endpoint_and_does_not_change_order_address"
+        "test_m4_addresses.AddressFlowTests.test_default_complete_recap_then_verified_update_leaves_all_orders_unchanged",
+        "test_m4_addresses.AddressFlowTests.test_undo_default_requires_fresh_full_recap_and_does_not_undo_order",
+        "test_m4_address_review.AddressReviewTests.test_order_success_and_default_rejection_have_separate_results"
       ],
-      "limitation": "Explicit default-address lifecycle; M4 address workflow not implemented."
+      "limitation": "M4.1 separate profile address workflow and fresh-confirmation undo; synthetic fixtures, not full public case AT execution."
     },
     "P": {
       "test_ids": [
         "test_m3_completion.SessionRuntimeTests.test_payment_switch_uses_one_original_charge_and_rechecks_full_balance"
       ],
-      "limitation": "Supported single-charge adapter; M4 dialogue not implemented."
+      "limitation": "Supported single-charge adapter; M4 payment dialogue not included in this address release."
     },
     "H": {
       "test_ids": [
