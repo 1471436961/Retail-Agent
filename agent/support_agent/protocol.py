@@ -59,15 +59,15 @@ class ToolAction:
 
 def validate_tool_action(action: ToolAction) -> None:
     """Reject unknown actions and arguments before creating a platform call."""
-    if action.name == "address_workflow":
+    if action.name in {"address_workflow", "payment_workflow"}:
         if (not isinstance(action.id, str) or not action.id or not isinstance(action.arguments, dict)
                 or set(action.arguments) != {"session_json"} or not isinstance(action.arguments["session_json"], str)):
-            raise InvalidAction("Invalid internal address workflow call")
-        from support_agent.address_limits import check_address_argument
+            raise InvalidAction("Invalid internal workflow call")
+        from support_agent.workflow_limits import check_workflow_argument
         try:
-            check_address_argument(action.arguments["session_json"])
+            check_workflow_argument(action.arguments["session_json"])
         except ValueError as exc:
-            raise InvalidAction("Address tool argument budget exceeded") from exc
+            raise InvalidAction("Internal workflow tool argument budget exceeded") from exc
         return
     if action.name not in READ_TOOL_FIELDS:
         raise InvalidAction("Unsupported tool")

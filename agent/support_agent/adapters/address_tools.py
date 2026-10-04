@@ -2,7 +2,7 @@
 import json
 
 from support_agent.address_session import run_address_workflow
-from support_agent.address_limits import check_address_argument
+from support_agent.workflow_limits import check_workflow_argument
 from support_agent.adapters.write_runtime import SessionClaims
 from support_agent.state import clone_state
 from tau2.environment.toolkit import ToolType, is_tool
@@ -27,6 +27,6 @@ class AddressTools(ClientAPIToolKitBase):
         records, sends each at most once and independently reads back results.
         No payment, cancellation, item, return, transfer or arbitrary HTTP path.
         """
-        check_address_argument(session_json)  # Before parsing or any API call.
+        check_workflow_argument(session_json)  # Before parsing or any API call.
         state = clone_state(json.loads(session_json))
         return run_address_workflow(state, self.client_api, self._workflow_claims)

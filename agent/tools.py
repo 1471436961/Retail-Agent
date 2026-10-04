@@ -4,4 +4,4 @@ from support_agent.adapters.customer_tools import CustomerTools
 
 
 class Tools(CustomerTools):
-    """Expose eight reads and internal confirmed-address workflow."""
+    """Expose eight reads and internal confirmed-address/payment workflows."""

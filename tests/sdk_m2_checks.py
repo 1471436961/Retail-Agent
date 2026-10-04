@@ -101,10 +101,10 @@ class RealSDKChecks(unittest.TestCase):
         self.assertTrue(result.error)
         self.assertNotIn("secret-diagnostic-marker",result.content)
 
-    def test_eight_read_tools_and_internal_address_write_have_real_schemas(self):
+    def test_eight_read_tools_and_internal_address_payment_writes_have_real_schemas(self):
         tools = CustomerTools(ReadFake()).get_tools()
         reads = {"lookup_customer", "verify_customer", "read_customer_profile", "get_order", "list_customer_orders", "list_products", "get_product", "get_item"}
-        writes = {"address_workflow"}
+        writes = {"address_workflow", "payment_workflow"}
         self.assertEqual(set(tools), reads | writes)
         for tool in tools.values():
             schema = tool.openai_schema

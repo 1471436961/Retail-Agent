@@ -1,23 +1,23 @@
 """Shared replayable internal-workflow transport; never consent authority.
 
-Address uses the same original identity/proposal/write journal. The
+Address and payment use the same original identity/proposal/write journal. The
 kind is a closed trusted-code selector, never a tool parameter or model choice.
 """
 import json
 from copy import deepcopy
 from support_agent.protocol import Decision, InvalidAction, ToolAction
 from support_agent.domain.rules import result as rule_result
-from support_agent.address_limits import check_address_argument, compact_json
+from support_agent.workflow_limits import check_workflow_argument, compact_json
 
 
 class WorkflowBoundary:
     def __init__(self, kind, result_limit):
-        if kind != "address":
+        if kind not in {"address", "payment"}:
             raise ValueError("Unsupported internal workflow")
         self.kind, self.result_limit = kind, result_limit
         self.tool = kind + "_workflow"
-        self.actions = frozenset({"shipping_address", "default_shipping_address"} if kind == "address" else set())
-        self.rule = "AD-01" if kind == "address" else "AD-01"
+        self.actions = frozenset({"shipping_address", "default_shipping_address"} if kind == "address" else {"payment_method"})
+        self.rule = "AD-01" if kind == "address" else "PY-01"
         self.control_keys = frozenset(kind + "_" + suffix for suffix in ("dispatch", "result", "unknown", "abandoned"))
 
     def validate_assessment(self, entry):
@@ -30,14 +30,14 @@ class WorkflowBoundary:
                 or not isinstance(assessment["rules"], list) or any(not isinstance(r, str) for r in assessment["rules"])
                 or not isinstance(assessment["details"], dict) or assessment["details"].get("write_authorized") is not False
                 or not isinstance(assessment["details"].get("records"), list)):
-            raise ValueError("Malformed address diagnostic; it is never write authority")
+            raise ValueError("Malformed workflow diagnostic; it is never write authority")
         for record in assessment["details"]["records"]:
             if (not isinstance(record, dict) or set(record) - {"action", "target", "decision", "code", "version", "status"}
                     or not {"action", "target", "decision", "code"} <= set(record)
                     or record["action"] not in self.actions or not isinstance(record["target"], dict)
                     or record["decision"] not in {"allow", "deny", "needs_information"}
                     or not isinstance(record["code"], str) or not record["code"]):
-                raise ValueError("Malformed per-record address diagnostic")
+                raise ValueError("Malformed per-record workflow diagnostic")
 
 
     def tag(self, decision, state, code, *, decision_kind="needs_information", records=(), **details):
@@ -49,7 +49,7 @@ class WorkflowBoundary:
 
     def reply(self, state, code, text, **details):
         from support_agent.read_session import reply
-        decision, state = reply(state, text.replace("address", self.kind).replace("Address", self.kind.title()))
+        decision, state = reply(state, text)
         return self.tag(decision, state, code, **details)
 
 
@@ -59,16 +59,16 @@ class WorkflowBoundary:
         if (set(event) != {"role", "content", key} or event["role"] != "assistant"
                 or event["content"] != f"{self.kind.title()} workflow: " + json.dumps(data, sort_keys=True)
                 or not isinstance(data, dict)):
-            raise ValueError("Malformed address workflow evidence")
+            raise ValueError("Malformed workflow evidence")
         pending = state.get(f"{self.kind}_pending")
         if key == f"{self.kind}_dispatch":
-            if (any(state.get(k + "_pending") is not None for k in ("address",)) or set(data) != {"call_id", "mode"} or data["mode"] not in {"prepare", "execute"}
+            if (any(state.get(k + "_pending") is not None for k in ("address", "payment")) or set(data) != {"call_id", "mode"} or data["mode"] not in {"prepare", "execute"}
                     or data["call_id"] != f"{self.kind}:{index}" or index == 0):
-                raise ValueError("Repeated or invalid address dispatch")
+                raise ValueError("Repeated or invalid workflow dispatch")
             state[f"{self.kind}_pending"] = {**data, "index": index, "status": "pending"}
         else:
             if pending is None or set(data) != {"call_id"} or data["call_id"] != pending["call_id"]:
-                raise ValueError("Address outcome lacks its original dispatch")
+                raise ValueError("Workflow outcome lacks its original dispatch")
             if key == f"{self.kind}_abandoned":
                 if pending["mode"] != "prepare":
                     raise ValueError("Only a read-only preparation can be abandoned")
@@ -93,7 +93,7 @@ class WorkflowBoundary:
             if self.control_keys & set(entry):
                 self.control(replay, entry, index)
         if replay[f"{self.kind}_pending"] != state.get(f"{self.kind}_pending"):
-            raise ValueError("Address pending slot differs from history")
+            raise ValueError("Workflow pending slot differs from history")
 
 
     def event(self, state, key, data):
@@ -105,17 +105,17 @@ class WorkflowBoundary:
         from support_agent.state import clone_state
         state = clone_state(state)
         original = deepcopy(state)
-        if any(state.get(k + "_pending") is not None for k in ("address",)) or state["pending_calls"] or state["handoff"]["status"] != "not_requested":
-            raise InvalidAction("An idle address workflow is required")
+        if any(state.get(k + "_pending") is not None for k in ("address", "payment")) or state["pending_calls"] or state["handoff"]["status"] != "not_requested":
+            raise InvalidAction("An idle internal workflow is required")
         if not state["identity"]["verified"] or not state["identity_evidence"]:
-            raise InvalidAction("Address workflow requires original identity evidence")
+            raise InvalidAction("Internal workflow requires original identity evidence")
         call_id = f"{self.kind}:{len(state['history'])}"
         self.event(state, f"{self.kind}_dispatch", {"call_id": call_id, "mode": mode})
         session_json = compact_json(state)
         try:
-            check_address_argument(session_json)
+            check_workflow_argument(session_json)
         except ValueError:
-            return self.reply(original, f"{self.kind}_argument_budget_exceeded", "The complete address evidence exceeds this tool's transport budget. No new address operation was sent; I will not trim identity, consent or unresolved-write evidence.")
+            return self.reply(original, f"{self.kind}_argument_budget_exceeded", f"The complete {self.kind} evidence exceeds this tool's transport budget. No new {self.kind} operation was sent; I will not trim identity, consent or unresolved-write evidence.")
         call = ToolAction(call_id, self.tool, {"session_json": session_json})
         return Decision(calls=(call,)), state
 
@@ -131,15 +131,15 @@ class WorkflowBoundary:
             return Decision(text="An abandoned read-only preparation result was ignored. It cannot replace the current request or proposal."), state
         try:
             if pending is None or pending["status"] != "pending" or len(outcomes) != 1:
-                raise ValueError("Wrong address batch")
+                raise ValueError("Wrong workflow batch")
             outcome = outcomes[0]
             if outcome.id != pending["call_id"] or outcome.error:
-                raise ValueError("Address result missing or failed")
+                raise ValueError("Workflow result missing or failed")
             if len(outcome.content.encode("utf-8")) > self.result_limit:
-                raise ValueError("Address result transport budget exceeded")
+                raise ValueError("Workflow result transport budget exceeded")
             payload = json.loads(outcome.content)
             if not isinstance(payload, dict) or set(payload) != {"reply", "state", "assessment"}:
-                raise ValueError("Invalid address bundle")
+                raise ValueError("Invalid workflow bundle")
             candidate = clone_state(payload["state"])
             prefix = state["history"]
             suffix = candidate["history"][len(prefix):]
@@ -150,15 +150,15 @@ class WorkflowBoundary:
                     or not isinstance(payload["reply"], str) or not payload["reply"]
                     or candidate["history"][-1]["content"] != payload["reply"]
                     or candidate["history"][-1].get(f"{self.kind}_assessment") != payload["assessment"]):
-                raise ValueError("Address bundle does not extend its original trusted prefix")
-            all_controls = {kind + "_" + suffix for kind in ("address",) for suffix in ("dispatch", "result", "unknown", "abandoned")}
+                raise ValueError("Workflow bundle does not extend its original trusted prefix")
+            all_controls = {kind + "_" + suffix for kind in ("address", "payment") for suffix in ("dispatch", "result", "unknown", "abandoned")}
             terminal = [(i, e) for i, e in enumerate(suffix) if all_controls & set(e)]
             if len(terminal) != 1:
-                raise ValueError("Address bundle requires exactly one terminal control event")
+                raise ValueError("Workflow bundle requires exactly one terminal control event")
             position, event = terminal[0]
             if event.get(f"{self.kind}_result") == {"call_id": pending["call_id"]}:
                 if candidate[f"{self.kind}_pending"] is not None or (pending["mode"] == "prepare" and position != 0):
-                    raise ValueError("Address result has invalid lifecycle order")
+                    raise ValueError("Workflow result has invalid lifecycle order")
             elif (pending["mode"] == "execute" and event.get(f"{self.kind}_unknown") == {"call_id": pending["call_id"]}
                   and candidate[f"{self.kind}_pending"] == {**pending, "status": "unknown"}
                   and payload["assessment"]["code"] == f"{self.kind}_execution_uncertain"):
@@ -173,7 +173,7 @@ class WorkflowBoundary:
             selected = {p["version"]: p["spec"] for p in _current_records(state)
                         if p["status"] == "confirmed" and p["spec"]["action"] in self.actions}
             if any(o["version"] not in selected or o["spec"] != selected[o["version"]] for o in new_writes):
-                raise ValueError("Address execution cannot submit unselected operations")
+                raise ValueError("Workflow execution cannot submit unselected operations")
             candidate["turn"] = max(state["turn"], candidate["turn"])
             return Decision(text=payload["reply"]), candidate
         except (TypeError, ValueError, KeyError):
@@ -181,16 +181,16 @@ class WorkflowBoundary:
             # unresolved reservation even when no business journal was returned.
             if pending is not None and pending["mode"] == "prepare":
                 self.event(state, f"{self.kind}_abandoned", {"call_id": pending["call_id"]})
-                return self.reply(state, f"{self.kind}_prepare_abandoned", "The read-only address preparation result was not accepted. No write can be sent by preparation; you can retry preparation or continue with another request.")
+                return self.reply(state, f"{self.kind}_prepare_abandoned", f"The read-only {self.kind} preparation result was not accepted. No write can be sent by preparation; you can retry preparation or continue with another request.")
             if pending is not None and pending["status"] == "pending":
                 self.event(state, f"{self.kind}_unknown", {"call_id": pending["call_id"]})
-            return self.reply(state, f"{self.kind}_workflow_unresolved", "The address workflow result is unresolved. I cannot report success or safely repeat it; the original operation needs review.")
+            return self.reply(state, f"{self.kind}_workflow_unresolved", f"The {self.kind} workflow result is unresolved. I cannot report success or safely repeat it; the original operation needs review.")
 
 
 
 def validate_workflows(state):
-    replay = {"address_pending": None}
-    boundaries = [WorkflowBoundary(kind, 1024 * 1024) for kind in ("address",)]
+    replay = {"address_pending": None, "payment_pending": None}
+    boundaries = [WorkflowBoundary(kind, 1024 * 1024) for kind in ("address", "payment")]
     for index, entry in enumerate(state["history"]):
         for boundary in boundaries:
             if boundary.kind + "_assessment" in entry:

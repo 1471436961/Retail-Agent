@@ -1,6 +1,6 @@
 # M0 教学接口与运行时契约基线
 
-2026-10-04 M4.1 已将默认/订单地址接入正常 user → 工具 → 完整复述/同意 → 写前刷新 → PUT/强读回；默认八 READ＋一个内部 address_workflow WRITE，仅提交两类地址。显式端口其余五业务端点没有因此开放默认生产器，转接属后续 M4。地址按下文封闭契约，不加姓名/备注/金额或新地址簿字段，不自动重试；真实 SDK＋fake transport 见 [M4.1 交付](M4.1-DELIVERY.md)。工具参数包 256 KiB/结果 1 MiB 为项目 UTF-8 预算，不从 REST 限制推断工具契约；超限不裁剪证据，写后交付失败保持 Unknown。
+2026-10-04 M4.1/M4.2 已将默认/订单地址及整单支付切换接入真实 user → 复述/同意 → 写前刷新 → PUT/强读回；默认八 READ＋两个内部 address_workflow/payment_workflow WRITE，模型仍限 READ。其余四个业务端点没有默认生产器，转接待 M4.4。支付只发送一个已保存且不同的 payment_method_id，整单金额取唯一原 charge；先扣新款成功再退原款是政策要求，本库通过一个该端点提交，不造 charge/refund API、不传金额、不按净额猜当前方式。OrderPayment 没有执行时间/序号，新增交易数组排列不证明实际处理先后；契约也未声明事务原子性，单个 PUT 不提供原子/回滚保证。部分副作用或结果不明保持未决，不重试或自行补偿退款。成功核对原交易前缀、新全额 payment/原全额 refund 的次数与去向及仍 pending；实际到账不可由回执推断。固定上游单一 charge 兼容范围、有限 fallback 和真实 SDK＋fake transport 见 [M4.2 交付](M4.2-DELIVERY.md)，地址阶段见 [M4.1 交付](M4.1-DELIVERY.md)。工具参数/结果 256 KiB/1 MiB 为项目 UTF-8 预算，超限不裁剪证据；写后交付失败保留 Unknown，不改变教学 REST 契约。
 
 核对日期：2026-10-02。规范来源：[教学 OpenAPI](../materials/client_api/openapi.yaml)、[课堂覆盖说明](../materials/CLASSROOM.md)、[工具契约](../materials/framework/client_api_contract.md)、[Agent 契约](../materials/framework/agent_contract.md)、[部署 manifest](../materials/framework/deployment_manifest.json)，以及 [平台契约核查记录](PLATFORM-CONTRACT-NOTES.md)中的当前资料 path/version。本表记录 **当前可见契约**，不是声称真实部署所有响应变体均已测试。
 

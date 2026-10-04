@@ -1,6 +1,6 @@
 # Q2 长会话摘要与身份依据保留设计
 
-2026-10-04 当前 M4.1 为 schema 6，在原身份/完整提案/任务/journal 上增加可恢复地址批次，见 [地址交付](M4.1-DELIVERY.md)。state 不裁剪，模型投影仍有界；以下 M3 段为历史阶段设计。原 user、独立验证、确认、已接纳事实及 Unknown 完整保留，不以助手摘要替代。
+2026-10-04 已实现有界模型投影，见 [M0–M3 收尾](M0-M3-CLOSEOUT.md)。当前 M4.2 使用 schema 7，在原身份/提案/任务/journal 上新增支付批次并与地址共用边界，下文 M3/M4.1 段为各阶段历史设计。state 不裁剪，身份/确认/Unknown 来源完整保留，未实施 state 归档或增量回放优化。当前调用方及验收见 [M4.2 交付](M4.2-DELIVERY.md)。
 
 历史日期：2026-10-02。当时摘要/容量控制尚未实现；现已交付下述有界投影。适用于本项目 JSON state，不声称是平台字段或容量限制。
 
@@ -54,7 +54,7 @@ M3.3 交付时 state schema 为 3，M3.2 的 schema 2 是历史基线。新的 p
 
 M3.4 交付时 schema 4 的 task_plan 元数据保存请求 action/target 列表及此前真实 user 索引；tasks 从对应计划原文和此前身份/自有订单引用重建，确定性任务 ID、依赖和冲突随展示索引产生。Q2 须同时迁移原计划、组内顺序、索引、身份来源、提案与确认保留链；不能只保留“任务1已完成”的助手摘要或当前任务图来替代来源。旧 schema 1/2/3 只接受空 tasks 且无新 task_plan 的形状。
 
-## 2026-10-03 M3.5 写入证据与可信提交边界
+## 2026-10-03 M3.5 写入证据与可信提交边界（该批历史设计）
 
 当前 schema 5 沿用 operations，并在原 history 保存 write_event：完整发送 specification / 当前版本 / 刷新 IDs，结果分类及已规范化回执，后续自有强读回 IDs，checkpoint_uncertain / persistence_unresolved。旧 schema 1–4 不接受新元数据或 mutates=true；固定 a9d79a7 原函数生成的 schema 4 fixture 不创造发送或同意。恢复逐事件重放并严格比较，不执行历史 API。
 
@@ -71,12 +71,6 @@ M3.4 评审补记：图无跨记录边不等于跨展示确认独立。当前只
 一个展示可包含多个完整操作，回放成本还随操作总数和保留链增加；此前 H×V 只是重复前缀量级说明，未计每组 scope 和底层成本。本轮没有性能上限验收或摘要实现。发送/状态一致提交约定扩展到完整操作集合，未获得平台送达、签名或消息完整性证据；不能以业务事实重读代替它们。
 
 
-## 2026-10-04 已交付的有界模型投影
-
-model_context.project_messages 先完整验证 state/history，再投影到 SDK 类型。短历史沿用完整消息；长历史生成带 authorization=none 的派生 SystemMessage，保留身份原 user 来源的说明、当前提案及未决写状态和近期完整消息组。摘要不是 UserMessage，不从中恢复独立身份或确认。工具调用与关联结果按整组保留；当前请求或受保护投影无法纳入预算时返回 InvalidAction，模型零尝试。原 state 不变，完整克隆/历史恢复依然验证全部来源。
-
-实际 SDK 检查覆盖长历史、派生摘要不制造身份、超大当前请求和 pending 阻断；最新实际运行报告见收尾记录。投影节省模型载荷，不等于消除了 H×V 回放成本或解决无界 state；归档/裁剪/缓存是后续项目优化，不以缺平台数值作为外部阻塞。
-
 ## 2026-10-04 M4.1 地址批次与复述
 
 schema 6 保留原身份、提案、任务、READ 和 write_event 结构；address_pending 只能由 address_dispatch/address_result/address_unknown/address_abandoned 原历史重建。仅只读 prepare 可 abandoned；execute 未决不能借该事件清除。address_assessment 保存结构化诊断，必须匹配最终文本且 write_authorized=false，不参与同意或权限判断。旧 schema 1–5 不能携带这些新标记或 presentation_note；schema 5 fixture 使用 622091c 原函数生成，迁移不创造 user 同意或发送。
@@ -87,4 +81,16 @@ schema 6 保留原身份、提案、任务、READ 和 write_event 结构；addre
 
 presentation_note 只可附在完整 proposal_set，恢复时严格对照“说明＋原完整复述”文本；它解释被排除的状态或事实变化，不制造确认。真正金额/字段/目标/facts 指纹及 user 邻接同意沿用 proposals.py。SDK 的普通文本历史仍不能重建这些内部元数据；完整 opaque state 或本库 canonical history 的合法恢复是当前范围，整体伪造可信宿主历史仍非本库可独立证明的真实性。
 
-本次发布以 workflow_boundary 的地址专属控制实现同一批次验证，只有 address kind；支付 slot/元数据与默认生产器不在本次提交范围。
+## 2026-10-04 已交付的有界模型投影
+
+model_context.project_messages 先完整验证 state/history，再投影到 SDK 类型。短历史沿用完整消息；长历史生成带 authorization=none 的派生 SystemMessage，保留身份原 user 来源的说明、当前提案及未决写状态和近期完整消息组。摘要不是 UserMessage，不从中恢复独立身份或确认。工具调用与关联结果按整组保留；当前请求或受保护投影无法纳入预算时返回 InvalidAction，模型零尝试。原 state 不变，完整克隆/历史恢复依然验证全部来源。
+
+实际 SDK 检查覆盖长历史、派生摘要不制造身份、超大当前请求和 pending 阻断；最新实际运行报告见收尾记录。投影节省模型载荷，不等于消除了 H×V 回放成本或解决无界 state；归档/裁剪/缓存是后续项目优化，不以缺平台数值作为外部阻塞。
+
+## 2026-10-04 M4.2 支付及共用控制
+
+schema 7 新增 payment_pending、payment_dispatch/result/unknown/abandoned、payment_assessment；旧 schema 1–6 不接受新支付元数据，迁移仅补空 slot，真实 schema 6 fixture 来自修改前未提交的 M4.1 函数并记录原 run_id/源码摘要。workflow_boundary 按原历史时间前缀统一重建两类控制，禁止交叉重叠 dispatch 或混合终结事件；metadata 是诊断/来源，不是签名或用户同意。
+
+支付 choice/有限 fallback 只取真实 user，最近请求索引区分地址与支付 draft，地址字段里的品牌词不扩张意图。选定方式/整单原款/原退款去向纳入原完整 spec/facts/同意指纹；修正或余额/原款变化须重新复述。prepare 可以 abandoned/重试，迟到旧结果无权接纳新 prefix；execute 丢失保留 Unknown，两类路由及模型投影一起阻断。工具完整返回才接纳同一身份、原 prefix、诊断及合法新 journal，不把内部 session_json 递归存进 canonical history。
+
+共享 256 KiB/1 MiB UTF-8 参数/结果预算不裁剪来源；两类工具及新实例须共享可信进程内 SessionClaims。已核实旧业务完成才可替换旧任务，Unknown 或仅读成功不能释放它。没有独立多展示上下文、history 签名或 state/store 同时丢失后的分布式去重保证。当前 P 组件关联有限支付合成对话，完整公开业务 AT 执行数仍 0。

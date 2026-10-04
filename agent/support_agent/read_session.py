@@ -207,10 +207,17 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     state = clone_state(state)
     state["turn"] += 1
     if turn.kind == "tools":
+        payment_abandoned = {e["payment_abandoned"]["call_id"] for e in state["history"] if "payment_abandoned" in e}
+        if turn.outcomes and all(o.id in payment_abandoned for o in turn.outcomes):
+            from support_agent.payment_session import accept_payment_result
+            return accept_payment_result(state, turn.outcomes)
         abandoned = {e["address_abandoned"]["call_id"] for e in state["history"] if "address_abandoned" in e}
         if turn.outcomes and all(o.id in abandoned for o in turn.outcomes):
             from support_agent.address_session import accept_address_result
             return accept_address_result(state, turn.outcomes)
+        if state["payment_pending"] is not None:
+            from support_agent.payment_session import accept_payment_result
+            return accept_payment_result(state, turn.outcomes)
         if state["address_pending"] is not None:
             from support_agent.address_session import accept_address_result
             return accept_address_result(state, turn.outcomes)
@@ -222,6 +229,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                     "mismatch": "The customer lookup/read did not match the verification details or authorized scope."}[status]
             return reply(state, text)
         if len(records) == 1 and records[0][0] in {"lookup_customer", "verify_customer"}:
+            from support_agent.payment_session import route_payment
+            payment = route_payment(state)
+            if payment is not None:
+                return payment
             from support_agent.address_session import route_address
             address = route_address(state)
             if address is not None:
@@ -236,6 +247,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
 
     text = turn.content if isinstance(turn.content, str) else ""
     finish_pending(state, "unknown")
+    if state["payment_pending"] is not None and state["payment_pending"]["mode"] == "prepare":
+        from support_agent.payment_session import _boundary
+        _boundary().event(state, "payment_abandoned", {"call_id":state["payment_pending"]["call_id"]})
     if state["address_pending"] is not None and state["address_pending"]["mode"] == "prepare":
         from support_agent.address_session import _event
         _event(state, "address_abandoned", {"call_id": state["address_pending"]["call_id"]})
@@ -267,12 +281,19 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if state["address_pending"] is not None:
         from support_agent.address_session import route_address
         return route_address(state, text)
+    if state["payment_pending"] is not None:
+        from support_agent.payment_session import route_payment
+        return route_payment(state, text)
     if proof:
         name = "lookup_customer" if proof["email"] else "verify_customer"
         args = {"customer_id": state["customer_id"] or "", "email": proof["email"]} if name == "lookup_customer" else {"customer_id": state["customer_id"] or "", **proof}
         return emit(state, name, args)
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
+    from support_agent.payment_session import route_payment
+    payment = route_payment(state, text)
+    if payment is not None:
+        return payment
     from support_agent.address_session import route_address
     address = route_address(state, text)
     if address is not None:
@@ -307,4 +328,4 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         except Exception:
             # No transport/SDK exception or unverified output is shown to a customer.
             return reply(state, "I cannot safely interpret that request. Please specify a profile, order ID, product ID or item ID to read.")
-    return reply(state, "Please specify your own order ID, a product ID, an item ID, a profile/catalog query, an address change. Other business changes need a separate workflow; I cannot infer missing dates or account facts.")
+    return reply(state, "Please specify your own order ID, a product ID, an item ID, a profile/catalog query, an address change or a saved-method payment switch. Other business changes need a separate workflow; I cannot infer missing dates or account facts.")

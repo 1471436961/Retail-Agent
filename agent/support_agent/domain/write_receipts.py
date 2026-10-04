@@ -125,8 +125,10 @@ def receipt_matches_readback(spec, receipt, facts, before):
         rows = receipt["payments"]
         expected = {"transaction_type": "payment", "amount": spec["amount"]["value"],
                     "payment_method_id": spec["parameters"]["payment_method_id"]}
-        # At least the new complete charge must be observable after the prior
-        # history. Original refund semantics still belong to PY-02/M4 validation.
+        # Require exactly the full new charge and each original charge refund,
+        # preserving multiplicity. The API has no execution timestamps/sequence;
+        # suffix array order is not evidence of actual charge/refund timing.
+        # Receipt and strong readback must still agree on the complete list.
         refunds = [{"transaction_type": "refund", "amount": p["amount"], "payment_method_id": p["payment_method_id"]}
                    for p in spec["amount"]["refund_rows"]]
         keys = lambda data: Counter((p["transaction_type"], p["amount"], p["payment_method_id"]) for p in data)

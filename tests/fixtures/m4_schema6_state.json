@@ -1,0 +1,706 @@
+{
+  "source": "actual uncommitted M4.1 functions before M4.2; no invented Git snapshot",
+  "source_run_id": "b20ec5f7d73941b28ab127d093db2f2f",
+  "source_sha256": "51b40072059ffb7cc83c8ae4affaee44662c3dea01917437071c8231f96c35d8",
+  "state": {
+    "schema_version": 6,
+    "turn": 6,
+    "pending_call_id": null,
+    "pending_calls": {},
+    "customer_id": "customer_a",
+    "identity": {
+      "verified": true,
+      "customer_id": "customer_a"
+    },
+    "history": [
+      {
+        "role": "user",
+        "content": "a@example.test"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "lookup-1"
+        ],
+        "tool_calls": [
+          {
+            "id": "lookup-1",
+            "name": "lookup_customer",
+            "arguments": {
+              "customer_id": "",
+              "email": "a@example.test"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "lookup-1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"last_four\": \"0001\"}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "The customer email is a@example.test."
+      },
+      {
+        "role": "user",
+        "content": "Change order #TEST1 address: {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}"
+      },
+      {
+        "role": "assistant",
+        "content": "Address workflow: {\"call_id\": \"address:5\", \"mode\": \"prepare\"}",
+        "address_dispatch": {
+          "call_id": "address:5",
+          "mode": "prepare"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Address workflow: {\"call_id\": \"address:5\"}",
+        "address_result": {
+          "call_id": "address:5"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "address-intake:1"
+        ],
+        "tool_calls": [
+          {
+            "id": "address-intake:1",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "address-intake:1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"last_four\": \"0001\"}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "address-intake:2"
+        ],
+        "tool_calls": [
+          {
+            "id": "address-intake:2",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "address-intake:2",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [], \"shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Requested operations and dependencies (this is not a confirmation recap):\nTask 1: shipping_address for customer customer_a, order #TEST1\nEach selected operation still requires a complete proposal, user confirmation and pre-write verification. No operation has been executed.",
+        "task_plan": {
+          "requests": [
+            {
+              "action": "shipping_address",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              }
+            }
+          ],
+          "request_index": 4
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Operation 1:\nUpdate this order's shipping address.\nCustomer: customer_a\nOrder: #TEST1\nAddress line 1: \"42 Example Avenue\"\nAddress line 2: \"Suite 2\"\nCity: \"Sample City\"\nRegion: \"WA\"\nCountry: \"US\"\nPostal code: \"00123\"\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+        "proposal_set": [
+          {
+            "version": 1,
+            "spec": {
+              "action": "shipping_address",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              },
+              "parameters": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "amount": {
+                "kind": "not_applicable"
+              }
+            },
+            "request_index": 4,
+            "facts": {
+              "customer": {
+                "customer_id": "customer_a",
+                "email": "a@example.test",
+                "name": {
+                  "first_name": "Ada",
+                  "last_name": "Example"
+                },
+                "default_shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "payment_methods": [
+                  {
+                    "id": "card_a",
+                    "source": "credit_card",
+                    "last_four": "0001"
+                  }
+                ],
+                "order_ids": [
+                  "#TEST1",
+                  "#TEST3"
+                ]
+              },
+              "order": {
+                "order_id": "#TEST1",
+                "customer_id": "customer_a",
+                "status": "pending",
+                "items": [
+                  {
+                    "item_id": "item_blue",
+                    "product_id": "product_mug",
+                    "price": 12.5,
+                    "name": "Synthetic mug",
+                    "options": {
+                      "color": "blue"
+                    }
+                  }
+                ],
+                "payments": [],
+                "shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "fulfillments": []
+              },
+              "catalog": []
+            },
+            "fingerprint": "1e8aa3cce23bb94548e42832591e26b144d2e9de4085dffbd6cba5b43eb3318a",
+            "reuse_version": null
+          }
+        ],
+        "address_assessment": {
+          "decision": "needs_information",
+          "code": "address_confirmation_required",
+          "message": "Operation 1:\nUpdate this order's shipping address.\nCustomer: customer_a\nOrder: #TEST1\nAddress line 1: \"42 Example Avenue\"\nAddress line 2: \"Suite 2\"\nCity: \"Sample City\"\nRegion: \"WA\"\nCountry: \"US\"\nPostal code: \"00123\"\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+          "rules": [
+            "AD-01",
+            "CF-01"
+          ],
+          "details": {
+            "prior_records": [],
+            "records": [
+              {
+                "action": "shipping_address",
+                "target": {
+                  "customer_id": "customer_a",
+                  "order_id": "#TEST1"
+                },
+                "decision": "needs_information",
+                "code": "address_recapped"
+              }
+            ],
+            "write_authorized": false
+          }
+        }
+      },
+      {
+        "role": "user",
+        "content": "yes"
+      },
+      {
+        "role": "assistant",
+        "content": "Address workflow: {\"call_id\": \"address:14\", \"mode\": \"execute\"}",
+        "address_dispatch": {
+          "call_id": "address:14",
+          "mode": "execute"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "refresh:3"
+        ],
+        "tool_calls": [
+          {
+            "id": "refresh:3",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "refresh:3",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"last_four\": \"0001\"}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "refresh:4"
+        ],
+        "tool_calls": [
+          {
+            "id": "refresh:4",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "refresh:4",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [], \"shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Operation journal: {\"call_id\": \"write:19:1\", \"kind\": \"sent\", \"read_ids\": [\"refresh:3\", \"refresh:4\"], \"spec\": {\"action\": \"shipping_address\", \"amount\": {\"kind\": \"not_applicable\"}, \"parameters\": {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"country\": \"US\", \"postal_code\": \"00123\", \"region\": \"WA\"}, \"target\": {\"customer_id\": \"customer_a\", \"order_id\": \"#TEST1\"}}, \"version\": 1}",
+        "write_event": {
+          "kind": "sent",
+          "call_id": "write:19:1",
+          "version": 1,
+          "spec": {
+            "action": "shipping_address",
+            "target": {
+              "customer_id": "customer_a",
+              "order_id": "#TEST1"
+            },
+            "parameters": {
+              "address_line_1": "42 Example Avenue",
+              "address_line_2": "Suite 2",
+              "city": "Sample City",
+              "region": "WA",
+              "country": "US",
+              "postal_code": "00123"
+            },
+            "amount": {
+              "kind": "not_applicable"
+            }
+          },
+          "read_ids": [
+            "refresh:3",
+            "refresh:4"
+          ]
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Operation journal: {\"call_id\": \"write:19:1\", \"code\": \"write_receipt_accepted\", \"kind\": \"result\", \"receipt\": {\"order_id\": \"#TEST1\", \"shipping_address\": {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"country\": \"US\", \"postal_code\": \"00123\", \"region\": \"WA\"}}, \"status\": \"acknowledged\"}",
+        "write_event": {
+          "kind": "result",
+          "call_id": "write:19:1",
+          "status": "acknowledged",
+          "receipt": {
+            "order_id": "#TEST1",
+            "shipping_address": {
+              "address_line_1": "42 Example Avenue",
+              "address_line_2": "Suite 2",
+              "city": "Sample City",
+              "region": "WA",
+              "country": "US",
+              "postal_code": "00123"
+            }
+          },
+          "code": "write_receipt_accepted"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "readback:6"
+        ],
+        "tool_calls": [
+          {
+            "id": "readback:6",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "readback:6",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"last_four\": \"0001\"}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "readback:7"
+        ],
+        "tool_calls": [
+          {
+            "id": "readback:7",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "readback:7",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [], \"shipping_address\": {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Operation journal: {\"call_id\": \"write:19:1\", \"kind\": \"verified\", \"read_ids\": [\"readback:6\", \"readback:7\"]}",
+        "write_event": {
+          "kind": "verified",
+          "call_id": "write:19:1",
+          "read_ids": [
+            "readback:6",
+            "readback:7"
+          ]
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Address workflow: {\"call_id\": \"address:14\"}",
+        "address_result": {
+          "call_id": "address:14"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Order #TEST1: address update accepted and independently verified. {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+        "address_assessment": {
+          "decision": "allow",
+          "code": "address_updates_verified",
+          "message": "Order #TEST1: address update accepted and independently verified. {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+          "rules": [
+            "AD-01",
+            "CF-01"
+          ],
+          "details": {
+            "records": [
+              {
+                "action": "shipping_address",
+                "target": {
+                  "customer_id": "customer_a",
+                  "order_id": "#TEST1"
+                },
+                "version": 1,
+                "decision": "allow",
+                "code": "write_verified"
+              }
+            ],
+            "write_authorized": false
+          }
+        }
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task:11:1",
+        "action": "shipping_address",
+        "target": {
+          "customer_id": "customer_a",
+          "order_id": "#TEST1"
+        },
+        "plan_index": 11,
+        "request_index": 4,
+        "depends_on": [],
+        "conflicts": []
+      }
+    ],
+    "proposals": [
+      {
+        "version": 1,
+        "spec": {
+          "action": "shipping_address",
+          "target": {
+            "customer_id": "customer_a",
+            "order_id": "#TEST1"
+          },
+          "parameters": {
+            "address_line_1": "42 Example Avenue",
+            "address_line_2": "Suite 2",
+            "city": "Sample City",
+            "region": "WA",
+            "country": "US",
+            "postal_code": "00123"
+          },
+          "amount": {
+            "kind": "not_applicable"
+          }
+        },
+        "request_index": 4,
+        "facts": {
+          "customer": {
+            "customer_id": "customer_a",
+            "email": "a@example.test",
+            "name": {
+              "first_name": "Ada",
+              "last_name": "Example"
+            },
+            "default_shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "payment_methods": [
+              {
+                "id": "card_a",
+                "source": "credit_card",
+                "last_four": "0001"
+              }
+            ],
+            "order_ids": [
+              "#TEST1",
+              "#TEST3"
+            ]
+          },
+          "order": {
+            "order_id": "#TEST1",
+            "customer_id": "customer_a",
+            "status": "pending",
+            "items": [
+              {
+                "item_id": "item_blue",
+                "product_id": "product_mug",
+                "price": 12.5,
+                "name": "Synthetic mug",
+                "options": {
+                  "color": "blue"
+                }
+              }
+            ],
+            "payments": [],
+            "shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "fulfillments": []
+          },
+          "catalog": []
+        },
+        "fingerprint": "1e8aa3cce23bb94548e42832591e26b144d2e9de4085dffbd6cba5b43eb3318a",
+        "reuse_version": null,
+        "presentation_index": 12,
+        "set_index": 12,
+        "status": "confirmed",
+        "confirmation": {
+          "history_index": 13,
+          "fingerprint": "1e8aa3cce23bb94548e42832591e26b144d2e9de4085dffbd6cba5b43eb3318a"
+        },
+        "response": {
+          "kind": "confirm",
+          "history_index": 13
+        }
+      }
+    ],
+    "operations": [
+      {
+        "call_id": "lookup-1",
+        "name": "lookup_customer",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "address-intake:1",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "address-intake:2",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "refresh:3",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "refresh:4",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "write:19:1",
+        "name": "shipping_address",
+        "mutates": true,
+        "status": "succeeded",
+        "version": 1,
+        "spec": {
+          "action": "shipping_address",
+          "target": {
+            "customer_id": "customer_a",
+            "order_id": "#TEST1"
+          },
+          "parameters": {
+            "address_line_1": "42 Example Avenue",
+            "address_line_2": "Suite 2",
+            "city": "Sample City",
+            "region": "WA",
+            "country": "US",
+            "postal_code": "00123"
+          },
+          "amount": {
+            "kind": "not_applicable"
+          }
+        },
+        "read_ids": [
+          "refresh:3",
+          "refresh:4"
+        ],
+        "receipt": {
+          "order_id": "#TEST1",
+          "shipping_address": {
+            "address_line_1": "42 Example Avenue",
+            "address_line_2": "Suite 2",
+            "city": "Sample City",
+            "region": "WA",
+            "country": "US",
+            "postal_code": "00123"
+          }
+        },
+        "verified_read_ids": [
+          "readback:6",
+          "readback:7"
+        ],
+        "sent_index": 19,
+        "persistence_unresolved": false,
+        "result_index": 20,
+        "result_code": "write_receipt_accepted"
+      },
+      {
+        "call_id": "readback:6",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "readback:7",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      }
+    ],
+    "handoff": {
+      "status": "not_requested"
+    },
+    "tool_calls_since_user": 4,
+    "model_calls_since_user": 0,
+    "identity_evidence": {
+      "inputs": {
+        "email": "a@example.test",
+        "first_name": "",
+        "last_name": "",
+        "postal_code": ""
+      },
+      "verified_at_turn": 2,
+      "source": "user_input_and_matched_search_profile"
+    },
+    "customer_record": {
+      "customer_id": "customer_a",
+      "email": "a@example.test",
+      "name": {
+        "first_name": "Ada",
+        "last_name": "Example"
+      },
+      "default_shipping_address": {
+        "address_line_1": "1 Test St",
+        "city": "Testville",
+        "region": "CA",
+        "country": "US",
+        "postal_code": "90001"
+      },
+      "payment_methods": [
+        {
+          "id": "card_a",
+          "source": "credit_card",
+          "last_four": "0001"
+        }
+      ],
+      "order_ids": [
+        "#TEST1",
+        "#TEST3"
+      ]
+    },
+    "user_request": "yes",
+    "model_usage": [],
+    "verification_draft": {
+      "email": "a@example.test"
+    },
+    "address_pending": null
+  }
+}

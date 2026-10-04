@@ -5,8 +5,8 @@ from copy import deepcopy
 from unittest.mock import patch
 
 from test_m4_addresses import Conversation, NEW
-from support_agent.address_limits import (MAX_ADDRESS_ARGUMENT_BYTES,
-    AddressResultTooLarge, check_address_argument, json_bytes)
+from support_agent.workflow_limits import (MAX_WORKFLOW_ARGUMENT_BYTES,
+    WorkflowResultTooLarge, check_workflow_argument, json_bytes)
 from support_agent.address_session import dispatch_address
 from support_agent.protocol import ToolOutcome, TurnInput, InvalidAction, ToolAction, validate_tool_action
 from support_agent.state import clone_state, initial_state, InvalidState
@@ -94,9 +94,9 @@ class AddressReviewTests(unittest.TestCase):
 
     def test_argument_budget_measures_exact_envelope_utf8_bytes(self):
         overhead = json_bytes({"session_json":""})
-        exact = "x" * (MAX_ADDRESS_ARGUMENT_BYTES - overhead)
-        check_address_argument(exact)
-        with self.assertRaises(ValueError): check_address_argument(exact + "x")
+        exact = "x" * (MAX_WORKFLOW_ARGUMENT_BYTES - overhead)
+        check_workflow_argument(exact)
+        with self.assertRaises(ValueError): check_workflow_argument(exact + "x")
         self.assertGreater(json_bytes({"session_json":"汉"}), overhead + 1)
         self.assertGreater(json_bytes({"session_json":'"'}), overhead + 1)
 
@@ -104,7 +104,7 @@ class AddressReviewTests(unittest.TestCase):
         flow = Conversation()
         # Existing canonical evidence exceeds the budget; avoid routing a giant
         # synthetic user message through unrelated identity text extraction.
-        flow.state["history"].append({"role":"assistant", "content":"x" * MAX_ADDRESS_ARGUMENT_BYTES})
+        flow.state["history"].append({"role":"assistant", "content":"x" * MAX_WORKFLOW_ARGUMENT_BYTES})
         before = deepcopy(flow.state)
         decision, state = dispatch_address(flow.state, "prepare")
         self.assertFalse(decision.calls)
@@ -116,7 +116,7 @@ class AddressReviewTests(unittest.TestCase):
 
     def test_tool_and_shape_validator_reject_oversize_before_parse_or_api(self):
         flow = Conversation(); calls = deepcopy(flow.api.calls)
-        huge = "x" * MAX_ADDRESS_ARGUMENT_BYTES
+        huge = "x" * MAX_WORKFLOW_ARGUMENT_BYTES
         with self.assertRaises(ValueError): flow.toolkit.address_workflow(huge)
         with self.assertRaises(InvalidAction):
             validate_tool_action(ToolAction("synthetic", "address_workflow", {"session_json":huge}))
@@ -126,7 +126,7 @@ class AddressReviewTests(unittest.TestCase):
         flow = Conversation()
         call = flow.user("Change order #TEST1 address: " + json.dumps({**NEW, "address_line_1":"x" * 4000}), consume=False).calls[0]
         original = deepcopy(flow.state)
-        with patch("support_agent.address_session.MAX_ADDRESS_RESULT_BYTES", json_bytes(original) + 2500):
+        with patch("support_agent.address_session.MAX_WORKFLOW_RESULT_BYTES", json_bytes(original) + 2500):
             payload = flow.toolkit.address_workflow(**call.arguments)
         self.assertEqual(payload["assessment"]["code"], "address_result_budget_exceeded")
         self.assertEqual(payload["state"]["history"][:len(original["history"])], original["history"])
@@ -137,8 +137,8 @@ class AddressReviewTests(unittest.TestCase):
     def test_post_send_result_overflow_is_delivery_unknown_never_rejection(self):
         flow = Conversation(); flow.change()
         call = flow.user("yes", consume=False).calls[0]
-        with patch("support_agent.address_session.MAX_ADDRESS_RESULT_BYTES", json_bytes(flow.state) + 1500):
-            with self.assertRaises(AddressResultTooLarge): flow.toolkit.address_workflow(**call.arguments)
+        with patch("support_agent.address_session.MAX_WORKFLOW_RESULT_BYTES", json_bytes(flow.state) + 1500):
+            with self.assertRaises(WorkflowResultTooLarge): flow.toolkit.address_workflow(**call.arguments)
         deliver(flow, call, error=True)
         self.assertEqual(len(flow.puts()), 1)
         self.assertEqual(flow.state["address_pending"]["status"], "unknown")
@@ -148,7 +148,7 @@ class AddressReviewTests(unittest.TestCase):
     def test_inbound_oversized_body_is_not_retained_or_parsed(self):
         flow = Conversation()
         call = flow.user("Change order #TEST1 address: " + json.dumps(NEW), consume=False).calls[0]
-        with patch("support_agent.address_session.MAX_ADDRESS_RESULT_BYTES", 100):
+        with patch("support_agent.address_session.MAX_WORKFLOW_RESULT_BYTES", 100):
             deliver(flow, call, "private_marker" * 100)
         self.assertEqual(assessment(flow)["code"], "address_prepare_abandoned")
         self.assertNotIn("private_marker", json.dumps(flow.state))

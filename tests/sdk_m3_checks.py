@@ -273,5 +273,38 @@ from support_agent.adapters.model_gateway import READ_POLICY
 assert "deterministic host" in READ_POLICY and "read-only model" in READ_POLICY
 assert not network_attempts
 print("M4_ADDRESS_SDK_CHECK_PASSED; native ClientAPI local fake; 2 independently verified address writes; network attempts 0")
+from test_m4_payments import PaymentBackend
+from support_agent.protocol import READ_TOOL_FIELDS
+payment_backend = PaymentBackend()
+def payment_transport(payload):
+    response = payment_backend.request(payload["method"],payload["path"],body=payload.get("body"))
+    return {"status_code":response.status_code,"body":response.body,"headers":{},"elapsed_seconds":0.0}
+payment_api = ClientAPI(payment_transport,context=ClientAPIContext(conversation_id="offline-payment-sdk"))
+payment_tools, payment_agent = Tools(payment_api), CustomerAgent()
+payment_state = payment_agent.get_init_state([])
+def payment_turn(text):
+    global payment_state
+    outgoing,payment_state = payment_agent.generate_next_message(UserMessage(role="user",content=text),payment_state)
+    for _ in range(3):
+        if not outgoing.tool_calls: return outgoing
+        if outgoing.tool_calls[0].name == "payment_workflow":
+            try:
+                project_messages(payment_state)
+                raise AssertionError("Outstanding payment workflow cannot enter model projection")
+            except InvalidAction: pass
+        messages = [ToolMessage(role="tool",id=c.id,content=json.dumps(getattr(payment_tools,c.name)(**c.arguments)),error=False) for c in outgoing.tool_calls]
+        outgoing,payment_state = payment_agent.generate_next_message(MultiToolMessage(role="tool",tool_messages=messages),payment_state)
+    raise AssertionError("Unexpected repeated internal workflow dispatch")
+payment_turn("a@example.test")
+recap = payment_turn("Switch order #TEST1 payment to PayPal")
+assert not recap.tool_calls and "Full order charge: 12.5" in recap.content
+assert not any(c[0]=="PUT" for c in payment_backend.calls)
+result = payment_turn("yes")
+assert "accepted and independently verified" in result.content and "Order remains pending" in result.content
+assert [c for c in payment_backend.calls if c[0]=="PUT"] == [("PUT","/v1/orders/%23TEST1/payment-method",{"payment_method_id":"paypal_a"})]
+assert payment_agent.get_init_state(payment_state["history"])["operations"] == payment_state["operations"]
+assert set(payment_tools.get_tools()) == set(READ_TOOL_FIELDS) | {"address_workflow","payment_workflow"}
+assert not network_attempts
+print("M4_PAYMENT_SDK_CHECK_PASSED; native ClientAPI local fake; confirmed full charge/refund/readback; network attempts 0")
 print("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0")
 print("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake")

@@ -12,17 +12,16 @@ from support_agent.domain.addresses import (address_fields, complete_address,
                                           request_from_history, starts_address_request)
 from support_agent.domain.orders import order_state_rule
 from support_agent.protocol import InvalidAction
-from support_agent.address_limits import (AddressResultTooLarge, MAX_ADDRESS_RESULT_BYTES,
+from support_agent.workflow_limits import (WorkflowResultTooLarge, MAX_WORKFLOW_RESULT_BYTES,
                                          json_bytes)
 
 ADDRESS_TOOL = "address_workflow"
 ADDRESS_ACTIONS = frozenset({"shipping_address", "default_shipping_address"})
-CONTROL_KEYS = frozenset({"address_dispatch", "address_result", "address_unknown", "address_abandoned"})
 
 
 def _boundary():
     from support_agent.workflow_boundary import WorkflowBoundary
-    return WorkflowBoundary("address", MAX_ADDRESS_RESULT_BYTES)
+    return WorkflowBoundary("address", MAX_WORKFLOW_RESULT_BYTES)
 
 
 def _tag(decision, state, code, **details):
@@ -61,6 +60,10 @@ def route_address(state, text=None):
             return _reply(state, "address_workflow_unresolved", "The address workflow outcome is unresolved. I will not send another address operation or claim completion.")
     request = request_from_history(state["history"])
     if request is None:
+        return None
+    from support_agent.domain.payment_intake import request_from_history as payment_request
+    payment = payment_request(state["history"])
+    if payment is not None and payment["request_index"] > request["request_index"]:
         return None
     current = _current_records(state)
     attempted = {o["version"] for o in state["operations"] if o["mutates"]}
@@ -290,15 +293,15 @@ def run_address_workflow(state, api, claims):
 def _payload(decision, state, original, pending):
     from support_agent.state import clone_state
     payload = {"reply": decision.text, "state": clone_state(state), "assessment": state["history"][-1]["address_assessment"]}
-    if json_bytes(payload) <= MAX_ADDRESS_RESULT_BYTES:
+    if json_bytes(payload) <= MAX_WORKFLOW_RESULT_BYTES:
         return payload
     if pending["mode"] == "prepare":
         state = deepcopy(original)
         _event(state, "address_result", {"call_id": pending["call_id"]})
         decision, state = _reply(state, "address_result_budget_exceeded", "The read-only preparation result exceeds the tool transport budget. No business write was sent; the full identity and prior journal were preserved without trimming.")
         payload = {"reply": decision.text, "state": clone_state(state), "assessment": state["history"][-1]["address_assessment"]}
-        if json_bytes(payload) <= MAX_ADDRESS_RESULT_BYTES:
+        if json_bytes(payload) <= MAX_WORKFLOW_RESULT_BYTES:
             return payload
     # Do not truncate a post-send journal or turn delivery failure into a business
     # rejection. Host result validation reserves execution Unknown and no retry.
-    raise AddressResultTooLarge("Address outcome cannot be delivered within the internal result budget")
+    raise WorkflowResultTooLarge("Address outcome cannot be delivered within the internal result budget")
