@@ -1,6 +1,7 @@
 """Resolve selected original units and exact variants without ranking or I/O."""
 from collections import Counter
 from copy import deepcopy
+from decimal import Decimal, localcontext, ROUND_HALF_UP
 
 from support_agent.domain.money import finite_amount, price_difference
 from support_agent.domain.rules import allow, deny, identifier, input_error, need, options
@@ -49,21 +50,32 @@ def resolve_return_items(order_items, item_ids) -> dict:
 
 
 def return_refund_basis(order_items, item_ids) -> dict:
-    """Expose source prices; require applicable computation evidence for a total.
+    """Project display estimate, not a backend settlement instruction.
 
-    Evidence may be implementation code or a contract. The inspected fixed
-    upstream return function records a request without computing a refund total;
-    it does not establish the classroom REST backend's aggregation behavior.
-    Existing decision/field names are retained for compatibility.
+    Sum original JSON price spellings exactly, preserving selected occurrences,
+    then display cents with half-up rounding. This deliberately does not alter
+    the documented ordered float price-difference calculation. The return API
+    accepts no amount and its receipt cannot prove settlement or arrival.
     """
     selection = resolve_return_items(order_items, item_ids)
     if selection["decision"] != "allow":
         return selection
-    return need("refund_aggregation_contract_required",
-                "Original units are resolved; verify an applicable aggregation implementation or contract before quoting a total.",
+    with localcontext() as context:
+        # JSON finite doubles can span 309 integer and 324 fractional digits.
+        context.prec = 700 + len(str(len(item_ids)))
+        exact = sum((Decimal(str(i["price"])) for i in selection["details"]["items"]), Decimal(0))
+        estimate = float(exact.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP))
+    try:
+        finite_amount(estimate)
+    except (TypeError, ValueError):
+        return need("refund_estimate_unrepresentable", "The selected price total cannot be displayed safely.", "MO-01")
+    return allow("original_price_refund_estimate",
+                "Estimated refund from selected original prices; backend settlement and arrival are not verified.",
                 "RT-01", "MO-01", "U6",
                 details={"items": selection["details"]["items"], "item_ids": selection["details"]["item_ids"],
-                         "aggregate_amount": None, "aggregation_contract_verified": False,
+                         "aggregate_amount": estimate, "exact_price_sum": str(exact),
+                         "estimate_method": "original_prices_decimal_sum_half_up_cents",
+                         "amount_is_estimate": True, "aggregation_contract_verified": False,
                          "settlement_verified": False})
 
 

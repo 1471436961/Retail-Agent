@@ -250,15 +250,16 @@ class SpecificationRuleTests(unittest.TestCase):
         self.assertEqual(items[0]["price"], 12.5)
         self.assertEqual(resolve_return_items(items, ["old_blue"] * 3)["code"], "quantity_exceeds_order")
 
-    def test_return_basis_withholds_total_after_original_unit_selection(self):
+    def test_return_estimate_sums_original_occurrences_without_claiming_settlement(self):
         items = originals() * 2
         for item in items:
             item["price"] = 0.014
         result = return_refund_basis(items, ["old_blue", "old_blue"])
-        self.assertEqual(result["decision"], "needs_information")
-        self.assertEqual(result["code"], "refund_aggregation_contract_required")
+        self.assertEqual(result["decision"], "allow")
+        self.assertEqual(result["code"], "original_price_refund_estimate")
         self.assertEqual([i["price"] for i in result["details"]["items"]], [0.014, 0.014])
-        self.assertIsNone(result["details"]["aggregate_amount"])
+        self.assertEqual(result["details"]["aggregate_amount"], 0.03)
+        self.assertTrue(result["details"]["amount_is_estimate"])
         self.assertFalse(result["details"]["aggregation_contract_verified"])
         self.assertFalse(result["details"]["settlement_verified"])
         result["details"]["items"][0]["price"] = 999
