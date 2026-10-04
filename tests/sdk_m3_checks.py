@@ -222,5 +222,56 @@ try:
 except InvalidAction:
     pass
 assert not network_attempts
+# M4.1's real SDK message/tool surface. Native ClientAPI serializes a local
+# fake transport; both address writes require actual user consent and readback.
+from tau2.hyper.client_api import ClientAPI, ClientAPIContext
+from tau2.data_model.message import MultiToolMessage, ToolMessage
+from test_m4_addresses import AddressBackend, NEW
+from tools import Tools
+backend = AddressBackend()
+def address_transport(payload):
+    response = backend.request(payload["method"], payload["path"], body=payload.get("body"))
+    return {"status_code": response.status_code, "body": response.body, "headers": {}, "elapsed_seconds": 0.0}
+address_api = ClientAPI(address_transport, context=ClientAPIContext(conversation_id="offline-address-sdk"))
+address_tools = Tools(address_api)
+address_agent = CustomerAgent()
+address_state = address_agent.get_init_state([])
+def address_turn(text):
+    global address_state
+    outgoing, address_state = address_agent.generate_next_message(UserMessage(role="user", content=text), address_state)
+    if outgoing.tool_calls:
+        if outgoing.tool_calls[0].name == "address_workflow":
+            try:
+                project_messages(address_state)
+                raise AssertionError("An outstanding address tool cannot enter model projection")
+            except InvalidAction:
+                pass
+        results = [ToolMessage(role="tool", id=c.id, content=json.dumps(getattr(address_tools, c.name)(**c.arguments)), error=False)
+                   for c in outgoing.tool_calls]
+        outgoing, address_state = address_agent.generate_next_message(MultiToolMessage(role="tool", tool_messages=results), address_state)
+    return outgoing
+address_turn("a@example.test")
+recap = address_turn("Change default and order #TEST1 address: " + json.dumps(NEW))
+assert isinstance(recap, AssistantMessage) and not recap.tool_calls
+assert "Order: #TEST1" in recap.content and "Update the customer's default shipping address" in recap.content
+assert not any(c[0] == "PUT" for c in backend.calls)
+result = address_turn("yes")
+assert result.content == address_state["history"][-1]["content"]
+assert result.content.count("accepted and independently verified") == 2
+assert [c[1] for c in backend.calls if c[0] == "PUT"] == ["/v1/orders/%23TEST1/shipping-address", "/v1/customers/customer_a/default-shipping-address"]
+assert backend.orders["#TEST1"]["shipping_address"] == backend.customers["customer_a"]["default_shipping_address"] == NEW
+assert address_agent.get_init_state(address_state["history"])["operations"] == address_state["operations"]
+# A failed read-only preparation must not quarantine model projection. Only
+# actual host messages control this recovery; a later result cannot restore it.
+outgoing, address_state = address_agent.generate_next_message(UserMessage(role="user", content="Change order #TEST1 address; suite: Suite 9"), address_state)
+prepare_call = outgoing.tool_calls[0]
+outgoing, address_state = address_agent.generate_next_message(MultiToolMessage(role="tool", tool_messages=[ToolMessage(role="tool", id=prepare_call.id, content="", error=True)]), address_state)
+assert address_state["address_pending"] is None
+assert address_state["history"][-1]["address_assessment"]["code"] == "address_prepare_abandoned"
+assert project_messages(address_state)
+from support_agent.adapters.model_gateway import READ_POLICY
+assert "deterministic host" in READ_POLICY and "read-only model" in READ_POLICY
+assert not network_attempts
+print("M4_ADDRESS_SDK_CHECK_PASSED; native ClientAPI local fake; 2 independently verified address writes; network attempts 0")
 print("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0")
 print("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake")

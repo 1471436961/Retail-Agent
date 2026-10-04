@@ -123,7 +123,9 @@ def normalize_spec(spec):
 
 
 def _clean_read_history(history):
-    return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event"}} for entry in history]
+    return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event",
+                                                       "presentation_note", "address_dispatch", "address_result", "address_unknown", "address_abandoned", "address_assessment",
+                                                       "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned"}} for entry in history]
 
 
 def _return_opening_boundary(history, target):
@@ -552,7 +554,7 @@ def render_proposal_set(specifications, retained=()):
 def restore_proposal_set(state, index):
     """Validate every scope against its preceding facts before accepting any."""
     entry = state["history"][index]
-    _keys(entry, {"role", "content", "proposal_set"})
+    _keys(entry, {"role", "content", "proposal_set"}, {"presentation_note", "address_assessment"})
     if entry["role"] != "assistant":
         raise InvalidProposal("Only assistant presentations carry operation sets")
     events = entry["proposal_set"]
@@ -560,7 +562,10 @@ def restore_proposal_set(state, index):
         raise InvalidProposal("Missing complete operation set")
     specs = _normalize_set([e.get("spec") if isinstance(e, dict) else None for e in events])
     retained = [i for i, e in enumerate(events, 1) if isinstance(e, dict) and e.get("reuse_version") is not None]
-    if entry["content"] != render_proposal_set(specs, retained):
+    note = entry.get("presentation_note", "")
+    if not isinstance(note, str) or len(note) > 4096:
+        raise InvalidProposal("Invalid presentation note")
+    if entry["content"] != (note + "\n\n" if note else "") + render_proposal_set(specs, retained):
         raise InvalidProposal("Operation set differs from the displayed complete recap")
     request_index = next((i for i in range(index - 1, -1, -1) if state["history"][i]["role"] == "user"), None)
     staged = []
@@ -590,7 +595,7 @@ def restore_proposal_set(state, index):
     state["proposals"].extend(staged)
 
 
-def present_proposals(state, specifications):
+def present_proposals(state, specifications, *, presentation_note=""):
     """M3.3 trusted presentation of independently selectable complete operations.
 
     This is not a task scheduler or a model tool. New versions supersede prior
@@ -601,6 +606,8 @@ def present_proposals(state, specifications):
     from support_agent.state import clone_state
     state = clone_state(state)
     try:
+        if not isinstance(presentation_note, str) or len(presentation_note) > 4096:
+            raise InvalidProposal("Invalid presentation note")
         specs = _normalize_set(specifications)
         if state["pending_calls"] or state["handoff"]["status"] != "not_requested":
             raise InvalidProposal("Cannot present during pending reads or handoff")
@@ -617,8 +624,11 @@ def present_proposals(state, specifications):
                    "reuse_version": next((p["version"] for p in current if p["status"] == "confirmed"
                                           and p["fingerprint"] == fingerprint(spec, fact)), None)}
                   for offset, (spec, fact) in enumerate(zip(specs, facts), 1)]
-        text = render_proposal_set(specs, [i for i, e in enumerate(events, 1) if e["reuse_version"] is not None])
-        state["history"].append({"role": "assistant", "content": text, "proposal_set": events})
+        text = (presentation_note + "\n\n" if presentation_note else "") + render_proposal_set(specs, [i for i, e in enumerate(events, 1) if e["reuse_version"] is not None])
+        entry = {"role": "assistant", "content": text, "proposal_set": events}
+        if presentation_note:
+            entry["presentation_note"] = presentation_note
+        state["history"].append(entry)
         restore_proposal_set(state, len(state["history"]) - 1)
         return Decision(text=text), clone_state(state)
     except (TypeError, ValueError, KeyError, StopIteration) as exc:

@@ -59,6 +59,16 @@ class ToolAction:
 
 def validate_tool_action(action: ToolAction) -> None:
     """Reject unknown actions and arguments before creating a platform call."""
+    if action.name == "address_workflow":
+        if (not isinstance(action.id, str) or not action.id or not isinstance(action.arguments, dict)
+                or set(action.arguments) != {"session_json"} or not isinstance(action.arguments["session_json"], str)):
+            raise InvalidAction("Invalid internal address workflow call")
+        from support_agent.address_limits import check_address_argument
+        try:
+            check_address_argument(action.arguments["session_json"])
+        except ValueError as exc:
+            raise InvalidAction("Address tool argument budget exceeded") from exc
+        return
     if action.name not in READ_TOOL_FIELDS:
         raise InvalidAction("Unsupported tool")
     if not isinstance(action.id, str) or not action.id:
@@ -109,6 +119,8 @@ def decision_from_candidate(candidate: object, *, call_id: str) -> Decision:
     if candidate.get("type") == "reply" and set(candidate) == {"type", "text"}:
         return Decision(text=candidate["text"])
     if candidate.get("type") == "tool" and set(candidate) == {"type", "name", "arguments"}:
+        if candidate["name"] not in READ_TOOL_FIELDS:
+            raise InvalidAction("Model candidates cannot dispatch a business workflow")
         return Decision(calls=(ToolAction(id=call_id, name=candidate["name"], arguments=candidate["arguments"]),))
     raise InvalidAction("Unsupported candidate shape")
 

@@ -21,6 +21,8 @@ def project_messages(state, *, max_characters=MAX_MODEL_CONTEXT_CHARACTERS):
     from support_agent.proposals import _current_records
     from support_agent.state import clone_state
     state = clone_state(state)
+    if state["address_pending"] is not None:
+        raise InvalidAction("An internal workflow result is unresolved")
     if type(max_characters) is not int or max_characters < 1024:
         raise InvalidAction("Invalid model context budget")
     messages = sdk_messages(state["history"])

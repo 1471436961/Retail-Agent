@@ -53,7 +53,7 @@ def platform_modules(context):
     message.ToolCall = FakeToolCall
     message.MultiToolMessage = FakeMultiToolMessage
     toolkit = modules["tau2.environment.toolkit"]
-    toolkit.ToolType = SimpleNamespace(READ="read")
+    toolkit.ToolType = SimpleNamespace(READ="read", WRITE="write")
     toolkit.is_tool = lambda kind: lambda fn: fn
     modules["tau2.hyper.client_api"].ClientAPIToolKitBase = FakeToolkitBase
     modules["tau2.hyper.agent_context"].get_agent_context = lambda: context

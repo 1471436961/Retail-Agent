@@ -660,6 +660,7 @@ class ProposalRecoveryTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0", result.stdout)
         self.assertIn("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake", result.stdout)
+        self.assertIn("M4_ADDRESS_SDK_CHECK_PASSED; native ClientAPI local fake", result.stdout)
 
 
 if __name__ == "__main__":

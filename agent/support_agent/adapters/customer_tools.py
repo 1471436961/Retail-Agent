@@ -2,11 +2,12 @@
 
 from support_agent.adapters.customer_api import read_customer, verify_and_read_customer
 from support_agent.adapters.read_tools import ReadTools
+from support_agent.adapters.address_tools import AddressTools
 from support_agent.config import DOMAIN
 from tau2.environment.toolkit import ToolType, is_tool
 
 
-class CustomerTools(ReadTools):
+class CustomerTools(AddressTools, ReadTools):
     """Add reviewed read/write tools here as you implement business workflows."""
 
     @is_tool(ToolType.READ)

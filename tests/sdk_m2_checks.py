@@ -101,14 +101,21 @@ class RealSDKChecks(unittest.TestCase):
         self.assertTrue(result.error)
         self.assertNotIn("secret-diagnostic-marker",result.content)
 
-    def test_all_eight_tools_have_real_schemas_and_read_only_metadata(self):
+    def test_eight_read_tools_and_internal_address_write_have_real_schemas(self):
         tools = CustomerTools(ReadFake()).get_tools()
-        self.assertEqual(set(tools), {"lookup_customer", "verify_customer", "read_customer_profile", "get_order", "list_customer_orders", "list_products", "get_product", "get_item"})
+        reads = {"lookup_customer", "verify_customer", "read_customer_profile", "get_order", "list_customer_orders", "list_products", "get_product", "get_item"}
+        writes = {"address_workflow"}
+        self.assertEqual(set(tools), reads | writes)
         for tool in tools.values():
             schema = tool.openai_schema
             self.assertEqual(schema["type"], "function")
             self.assertEqual(schema["function"]["name"], tool.name)
-            self.assertFalse(tool.info.get("mutates_state", False))
+            self.assertEqual(tool.info.get("mutates_state", False), tool.name in writes)
+        for name in writes:
+            parameters = tools[name].openai_schema["function"]["parameters"]
+            self.assertEqual(parameters["required"], ["session_json"])
+            self.assertEqual(set(parameters["properties"]), {"session_json"})
+            self.assertEqual(parameters["properties"]["session_json"]["type"], "string")
 
     def test_native_client_and_fresh_toolkits_replay_same_owned_read(self):
         results, traces = [], []
