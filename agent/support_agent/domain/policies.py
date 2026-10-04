@@ -159,8 +159,8 @@ def cancellation_reason_rule(reason) -> dict:
         return input_error("invalid_cancellation_reason", "Cancellation reason must be a string.", "CA-01")
     if reason is None or not reason.strip():
         return need("cancellation_reason_required", "Ask why the customer wants to cancel.", "CA-01", "CA-02")
-    aliases = {"no longer needed": ("no longer needed", "i no longer need it", "changed my mind", "i changed my mind", "不再需要", "改变主意"),
-               "ordered by mistake": ("ordered by mistake", "i ordered by mistake", "placed the order by mistake", "误下单", "下错单", "误购")}
+    aliases = {"no longer needed": ("no longer needed", "i no longer need it", "i do not need it anymore", "i don't need it anymore", "i don't want it anymore", "i do not want it anymore", "不想要了", "不需要了", "changed my mind", "i changed my mind", "不再需要", "改变主意"),
+               "ordered by mistake": ("ordered by mistake", "i ordered by mistake", "placed the order by mistake", "it was ordered by mistake", "i placed it by mistake", "误下单", "下错单", "误购")}
     text = " ".join(reason.strip().rstrip(".。!").casefold().split())
     for canonical, values in aliases.items():
         if text in values:

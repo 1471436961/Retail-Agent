@@ -125,7 +125,8 @@ def normalize_spec(spec):
 def _clean_read_history(history):
     return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event",
                                                        "presentation_note", "address_dispatch", "address_result", "address_unknown", "address_abandoned", "address_assessment",
-                                                       "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned", "payment_assessment"}} for entry in history]
+                                                       "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned", "payment_assessment",
+                                                       "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "cancellation_assessment"}} for entry in history]
 
 
 def _return_opening_boundary(history, target):
@@ -554,7 +555,7 @@ def render_proposal_set(specifications, retained=()):
 def restore_proposal_set(state, index):
     """Validate every scope against its preceding facts before accepting any."""
     entry = state["history"][index]
-    _keys(entry, {"role", "content", "proposal_set"}, {"presentation_note", "address_assessment", "payment_assessment"})
+    _keys(entry, {"role", "content", "proposal_set"}, {"presentation_note", "address_assessment", "payment_assessment", "cancellation_assessment"})
     if entry["role"] != "assistant":
         raise InvalidProposal("Only assistant presentations carry operation sets")
     events = entry["proposal_set"]

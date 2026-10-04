@@ -1,0 +1,796 @@
+{
+  "source_commit": "a4961824b3a68b68030895976bbfd7913062dffa",
+  "generation": "Actual schema-7 functions at clean M4.2 HEAD; fake API, completed payment; no version relabeling",
+  "state": {
+    "schema_version": 7,
+    "turn": 6,
+    "pending_call_id": null,
+    "pending_calls": {},
+    "customer_id": "customer_a",
+    "identity": {
+      "verified": true,
+      "customer_id": "customer_a"
+    },
+    "history": [
+      {
+        "role": "user",
+        "content": "a@example.test"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "lookup-1"
+        ],
+        "tool_calls": [
+          {
+            "id": "lookup-1",
+            "name": "lookup_customer",
+            "arguments": {
+              "customer_id": "",
+              "email": "a@example.test"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "lookup-1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "The customer email is a@example.test."
+      },
+      {
+        "role": "user",
+        "content": "Switch order #TEST1 payment to PayPal"
+      },
+      {
+        "role": "assistant",
+        "content": "Payment workflow: {\"call_id\": \"payment:5\", \"mode\": \"prepare\"}",
+        "payment_dispatch": {
+          "call_id": "payment:5",
+          "mode": "prepare"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Payment workflow: {\"call_id\": \"payment:5\"}",
+        "payment_result": {
+          "call_id": "payment:5"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "address-intake:1"
+        ],
+        "tool_calls": [
+          {
+            "id": "address-intake:1",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "address-intake:1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "address-intake:2"
+        ],
+        "tool_calls": [
+          {
+            "id": "address-intake:2",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "address-intake:2",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [{\"transaction_type\": \"payment\", \"payment_method_id\": \"card_a\", \"amount\": 12.5}], \"shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Requested operations and dependencies (this is not a confirmation recap):\nTask 1: payment_method for customer customer_a, order #TEST1\nEach selected operation still requires a complete proposal, user confirmation and pre-write verification. No operation has been executed.",
+        "task_plan": {
+          "requests": [
+            {
+              "action": "payment_method",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              }
+            }
+          ],
+          "request_index": 4
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Original method: Mastercard ending 0001 (card_a).\nNew method: PayPal (paypal_a).\nPayment-switch policy requires the full new charge of 12.5 to succeed before the full original amount is refunded to the original method.\nWe will submit one payment-method change and verify its returned records; transaction-list order does not establish actual processing order.\nRefund channel policy: 3-6 business days; this is not proof of settlement or arrival. Order remains pending after a successful switch.\n\nOperation 1:\nSwitch this order's payment method.\nCustomer: customer_a\nOrder: #TEST1\nPayment method: paypal_a\nFull order charge: 12.5\nOriginal payment refund basis: 12.5 to card_a\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+        "proposal_set": [
+          {
+            "version": 1,
+            "spec": {
+              "action": "payment_method",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              },
+              "parameters": {
+                "payment_method_id": "paypal_a"
+              },
+              "amount": {
+                "kind": "order_total",
+                "value": 12.5,
+                "refund_rows": [
+                  {
+                    "transaction_type": "payment",
+                    "payment_method_id": "card_a",
+                    "amount": 12.5
+                  }
+                ]
+              }
+            },
+            "request_index": 4,
+            "facts": {
+              "customer": {
+                "customer_id": "customer_a",
+                "email": "a@example.test",
+                "name": {
+                  "first_name": "Ada",
+                  "last_name": "Example"
+                },
+                "default_shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "payment_methods": [
+                  {
+                    "id": "card_a",
+                    "source": "credit_card",
+                    "brand": "Mastercard",
+                    "last_four": "0001"
+                  },
+                  {
+                    "id": "card_v",
+                    "source": "credit_card",
+                    "brand": "Visa",
+                    "last_four": "0002"
+                  },
+                  {
+                    "id": "paypal_a",
+                    "source": "paypal"
+                  },
+                  {
+                    "id": "gift_a",
+                    "source": "gift_card",
+                    "balance": 40.0
+                  }
+                ],
+                "order_ids": [
+                  "#TEST1",
+                  "#TEST3"
+                ]
+              },
+              "order": {
+                "order_id": "#TEST1",
+                "customer_id": "customer_a",
+                "status": "pending",
+                "items": [
+                  {
+                    "item_id": "item_blue",
+                    "product_id": "product_mug",
+                    "price": 12.5,
+                    "name": "Synthetic mug",
+                    "options": {
+                      "color": "blue"
+                    }
+                  }
+                ],
+                "payments": [
+                  {
+                    "transaction_type": "payment",
+                    "payment_method_id": "card_a",
+                    "amount": 12.5
+                  }
+                ],
+                "shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "fulfillments": []
+              },
+              "catalog": []
+            },
+            "fingerprint": "5ce3a39907db69bde5e0b37ebad844142cf2531c62e8dcbb5b92af8c5d48b4c6",
+            "reuse_version": null
+          }
+        ],
+        "presentation_note": "Original method: Mastercard ending 0001 (card_a).\nNew method: PayPal (paypal_a).\nPayment-switch policy requires the full new charge of 12.5 to succeed before the full original amount is refunded to the original method.\nWe will submit one payment-method change and verify its returned records; transaction-list order does not establish actual processing order.\nRefund channel policy: 3-6 business days; this is not proof of settlement or arrival. Order remains pending after a successful switch.",
+        "payment_assessment": {
+          "decision": "needs_information",
+          "code": "payment_confirmation_required",
+          "message": "Original method: Mastercard ending 0001 (card_a).\nNew method: PayPal (paypal_a).\nPayment-switch policy requires the full new charge of 12.5 to succeed before the full original amount is refunded to the original method.\nWe will submit one payment-method change and verify its returned records; transaction-list order does not establish actual processing order.\nRefund channel policy: 3-6 business days; this is not proof of settlement or arrival. Order remains pending after a successful switch.\n\nOperation 1:\nSwitch this order's payment method.\nCustomer: customer_a\nOrder: #TEST1\nPayment method: paypal_a\nFull order charge: 12.5\nOriginal payment refund basis: 12.5 to card_a\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+          "rules": [
+            "PY-01",
+            "CF-01"
+          ],
+          "details": {
+            "records": [
+              {
+                "action": "payment_method",
+                "target": {
+                  "customer_id": "customer_a",
+                  "order_id": "#TEST1"
+                },
+                "decision": "needs_information",
+                "code": "payment_recapped"
+              }
+            ],
+            "write_authorized": false
+          }
+        }
+      },
+      {
+        "role": "user",
+        "content": "yes"
+      },
+      {
+        "role": "assistant",
+        "content": "Payment workflow: {\"call_id\": \"payment:14\", \"mode\": \"execute\"}",
+        "payment_dispatch": {
+          "call_id": "payment:14",
+          "mode": "execute"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "refresh:3"
+        ],
+        "tool_calls": [
+          {
+            "id": "refresh:3",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "refresh:3",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "refresh:4"
+        ],
+        "tool_calls": [
+          {
+            "id": "refresh:4",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "refresh:4",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [{\"transaction_type\": \"payment\", \"payment_method_id\": \"card_a\", \"amount\": 12.5}], \"shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Operation journal: {\"call_id\": \"write:19:1\", \"kind\": \"sent\", \"read_ids\": [\"refresh:3\", \"refresh:4\"], \"spec\": {\"action\": \"payment_method\", \"amount\": {\"kind\": \"order_total\", \"refund_rows\": [{\"amount\": 12.5, \"payment_method_id\": \"card_a\", \"transaction_type\": \"payment\"}], \"value\": 12.5}, \"parameters\": {\"payment_method_id\": \"paypal_a\"}, \"target\": {\"customer_id\": \"customer_a\", \"order_id\": \"#TEST1\"}}, \"version\": 1}",
+        "write_event": {
+          "kind": "sent",
+          "call_id": "write:19:1",
+          "version": 1,
+          "spec": {
+            "action": "payment_method",
+            "target": {
+              "customer_id": "customer_a",
+              "order_id": "#TEST1"
+            },
+            "parameters": {
+              "payment_method_id": "paypal_a"
+            },
+            "amount": {
+              "kind": "order_total",
+              "value": 12.5,
+              "refund_rows": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ]
+            }
+          },
+          "read_ids": [
+            "refresh:3",
+            "refresh:4"
+          ]
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Operation journal: {\"call_id\": \"write:19:1\", \"code\": \"write_receipt_accepted\", \"kind\": \"result\", \"receipt\": {\"order_id\": \"#TEST1\", \"payments\": [{\"amount\": 12.5, \"payment_method_id\": \"card_a\", \"transaction_type\": \"payment\"}, {\"amount\": 12.5, \"payment_method_id\": \"paypal_a\", \"transaction_type\": \"payment\"}, {\"amount\": 12.5, \"payment_method_id\": \"card_a\", \"transaction_type\": \"refund\"}]}, \"status\": \"acknowledged\"}",
+        "write_event": {
+          "kind": "result",
+          "call_id": "write:19:1",
+          "status": "acknowledged",
+          "receipt": {
+            "order_id": "#TEST1",
+            "payments": [
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              },
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "paypal_a",
+                "amount": 12.5
+              },
+              {
+                "transaction_type": "refund",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              }
+            ]
+          },
+          "code": "write_receipt_accepted"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "readback:6"
+        ],
+        "tool_calls": [
+          {
+            "id": "readback:6",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "readback:6",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "readback:7"
+        ],
+        "tool_calls": [
+          {
+            "id": "readback:7",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "readback:7",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [{\"transaction_type\": \"payment\", \"payment_method_id\": \"card_a\", \"amount\": 12.5}, {\"transaction_type\": \"payment\", \"payment_method_id\": \"paypal_a\", \"amount\": 12.5}, {\"transaction_type\": \"refund\", \"payment_method_id\": \"card_a\", \"amount\": 12.5}], \"shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Operation journal: {\"call_id\": \"write:19:1\", \"kind\": \"verified\", \"read_ids\": [\"readback:6\", \"readback:7\"]}",
+        "write_event": {
+          "kind": "verified",
+          "call_id": "write:19:1",
+          "read_ids": [
+            "readback:6",
+            "readback:7"
+          ]
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Payment workflow: {\"call_id\": \"payment:14\"}",
+        "payment_result": {
+          "call_id": "payment:14"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Order #TEST1: the payment switch is accepted and independently verified, including the full new charge and original refund records. Order remains pending. Refund channel policy: 3-6 business days; these records do not independently prove processing order, settlement or arrival.",
+        "payment_assessment": {
+          "decision": "allow",
+          "code": "write_verified",
+          "message": "Order #TEST1: the payment switch is accepted and independently verified, including the full new charge and original refund records. Order remains pending. Refund channel policy: 3-6 business days; these records do not independently prove processing order, settlement or arrival.",
+          "rules": [
+            "PY-01",
+            "CF-01"
+          ],
+          "details": {
+            "records": [
+              {
+                "action": "payment_method",
+                "target": {
+                  "customer_id": "customer_a",
+                  "order_id": "#TEST1"
+                },
+                "version": 1,
+                "decision": "allow",
+                "code": "write_verified"
+              }
+            ],
+            "write_authorized": false
+          }
+        }
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task:11:1",
+        "action": "payment_method",
+        "target": {
+          "customer_id": "customer_a",
+          "order_id": "#TEST1"
+        },
+        "plan_index": 11,
+        "request_index": 4,
+        "depends_on": [],
+        "conflicts": []
+      }
+    ],
+    "proposals": [
+      {
+        "version": 1,
+        "spec": {
+          "action": "payment_method",
+          "target": {
+            "customer_id": "customer_a",
+            "order_id": "#TEST1"
+          },
+          "parameters": {
+            "payment_method_id": "paypal_a"
+          },
+          "amount": {
+            "kind": "order_total",
+            "value": 12.5,
+            "refund_rows": [
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              }
+            ]
+          }
+        },
+        "request_index": 4,
+        "facts": {
+          "customer": {
+            "customer_id": "customer_a",
+            "email": "a@example.test",
+            "name": {
+              "first_name": "Ada",
+              "last_name": "Example"
+            },
+            "default_shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "payment_methods": [
+              {
+                "id": "card_a",
+                "source": "credit_card",
+                "brand": "Mastercard",
+                "last_four": "0001"
+              },
+              {
+                "id": "card_v",
+                "source": "credit_card",
+                "brand": "Visa",
+                "last_four": "0002"
+              },
+              {
+                "id": "paypal_a",
+                "source": "paypal"
+              },
+              {
+                "id": "gift_a",
+                "source": "gift_card",
+                "balance": 40.0
+              }
+            ],
+            "order_ids": [
+              "#TEST1",
+              "#TEST3"
+            ]
+          },
+          "order": {
+            "order_id": "#TEST1",
+            "customer_id": "customer_a",
+            "status": "pending",
+            "items": [
+              {
+                "item_id": "item_blue",
+                "product_id": "product_mug",
+                "price": 12.5,
+                "name": "Synthetic mug",
+                "options": {
+                  "color": "blue"
+                }
+              }
+            ],
+            "payments": [
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              }
+            ],
+            "shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "fulfillments": []
+          },
+          "catalog": []
+        },
+        "fingerprint": "5ce3a39907db69bde5e0b37ebad844142cf2531c62e8dcbb5b92af8c5d48b4c6",
+        "reuse_version": null,
+        "presentation_index": 12,
+        "set_index": 12,
+        "status": "confirmed",
+        "confirmation": {
+          "history_index": 13,
+          "fingerprint": "5ce3a39907db69bde5e0b37ebad844142cf2531c62e8dcbb5b92af8c5d48b4c6"
+        },
+        "response": {
+          "kind": "confirm",
+          "history_index": 13
+        }
+      }
+    ],
+    "operations": [
+      {
+        "call_id": "lookup-1",
+        "name": "lookup_customer",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "address-intake:1",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "address-intake:2",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "refresh:3",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "refresh:4",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "write:19:1",
+        "name": "payment_method",
+        "mutates": true,
+        "status": "succeeded",
+        "version": 1,
+        "spec": {
+          "action": "payment_method",
+          "target": {
+            "customer_id": "customer_a",
+            "order_id": "#TEST1"
+          },
+          "parameters": {
+            "payment_method_id": "paypal_a"
+          },
+          "amount": {
+            "kind": "order_total",
+            "value": 12.5,
+            "refund_rows": [
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              }
+            ]
+          }
+        },
+        "read_ids": [
+          "refresh:3",
+          "refresh:4"
+        ],
+        "receipt": {
+          "order_id": "#TEST1",
+          "payments": [
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "card_a",
+              "amount": 12.5
+            },
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "paypal_a",
+              "amount": 12.5
+            },
+            {
+              "transaction_type": "refund",
+              "payment_method_id": "card_a",
+              "amount": 12.5
+            }
+          ]
+        },
+        "verified_read_ids": [
+          "readback:6",
+          "readback:7"
+        ],
+        "sent_index": 19,
+        "persistence_unresolved": false,
+        "result_index": 20,
+        "result_code": "write_receipt_accepted"
+      },
+      {
+        "call_id": "readback:6",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "readback:7",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      }
+    ],
+    "handoff": {
+      "status": "not_requested"
+    },
+    "tool_calls_since_user": 4,
+    "model_calls_since_user": 0,
+    "identity_evidence": {
+      "inputs": {
+        "email": "a@example.test",
+        "first_name": "",
+        "last_name": "",
+        "postal_code": ""
+      },
+      "verified_at_turn": 2,
+      "source": "user_input_and_matched_search_profile"
+    },
+    "customer_record": {
+      "customer_id": "customer_a",
+      "email": "a@example.test",
+      "name": {
+        "first_name": "Ada",
+        "last_name": "Example"
+      },
+      "default_shipping_address": {
+        "address_line_1": "1 Test St",
+        "city": "Testville",
+        "region": "CA",
+        "country": "US",
+        "postal_code": "90001"
+      },
+      "payment_methods": [
+        {
+          "id": "card_a",
+          "source": "credit_card",
+          "brand": "Mastercard",
+          "last_four": "0001"
+        },
+        {
+          "id": "card_v",
+          "source": "credit_card",
+          "brand": "Visa",
+          "last_four": "0002"
+        },
+        {
+          "id": "paypal_a",
+          "source": "paypal"
+        },
+        {
+          "id": "gift_a",
+          "source": "gift_card",
+          "balance": 40.0
+        }
+      ],
+      "order_ids": [
+        "#TEST1",
+        "#TEST3"
+      ]
+    },
+    "user_request": "yes",
+    "model_usage": [],
+    "verification_draft": {
+      "email": "a@example.test"
+    },
+    "address_pending": null,
+    "payment_pending": null
+  }
+}

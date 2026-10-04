@@ -207,20 +207,17 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     state = clone_state(state)
     state["turn"] += 1
     if turn.kind == "tools":
-        payment_abandoned = {e["payment_abandoned"]["call_id"] for e in state["history"] if "payment_abandoned" in e}
-        if turn.outcomes and all(o.id in payment_abandoned for o in turn.outcomes):
-            from support_agent.payment_session import accept_payment_result
-            return accept_payment_result(state, turn.outcomes)
-        abandoned = {e["address_abandoned"]["call_id"] for e in state["history"] if "address_abandoned" in e}
-        if turn.outcomes and all(o.id in abandoned for o in turn.outcomes):
-            from support_agent.address_session import accept_address_result
-            return accept_address_result(state, turn.outcomes)
-        if state["payment_pending"] is not None:
-            from support_agent.payment_session import accept_payment_result
-            return accept_payment_result(state, turn.outcomes)
-        if state["address_pending"] is not None:
-            from support_agent.address_session import accept_address_result
-            return accept_address_result(state, turn.outcomes)
+        from support_agent.workflow_boundary import WorkflowBoundary
+        from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
+        # Ignore any abandoned preparation before choosing the active kind;
+        # a late foreign result cannot invalidate a newer cancellation batch.
+        for kind in ("address", "payment", "cancellation"):
+            abandoned = {e[kind + "_abandoned"]["call_id"] for e in state["history"] if kind + "_abandoned" in e}
+            if turn.outcomes and all(o.id in abandoned for o in turn.outcomes):
+                return WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).accept(state, turn.outcomes)
+        for kind in ("address", "payment", "cancellation"):
+            if state[kind + "_pending"] is not None:
+                return WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).accept(state, turn.outcomes)
         status, records = consume_results(state, turn.outcomes)
         state["history"].append(result_history(turn.outcomes, status=status))
         if status != "succeeded":
@@ -229,6 +226,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                     "mismatch": "The customer lookup/read did not match the verification details or authorized scope."}[status]
             return reply(state, text)
         if len(records) == 1 and records[0][0] in {"lookup_customer", "verify_customer"}:
+            from support_agent.cancellation_session import route_cancellation
+            cancellation = route_cancellation(state)
+            if cancellation is not None:
+                return cancellation
             from support_agent.payment_session import route_payment
             payment = route_payment(state)
             if payment is not None:
@@ -246,6 +247,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         return reply(state, format_reads(records))
 
     text = turn.content if isinstance(turn.content, str) else ""
+    if state["cancellation_pending"] is not None and state["cancellation_pending"]["mode"] == "prepare":
+        from support_agent.cancellation_session import _boundary
+        _boundary().event(state, "cancellation_abandoned", {"call_id": state["cancellation_pending"]["call_id"]})
     finish_pending(state, "unknown")
     if state["payment_pending"] is not None and state["payment_pending"]["mode"] == "prepare":
         from support_agent.payment_session import _boundary
@@ -278,6 +282,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                 proof = verification_inputs(**state["verification_draft"])
             except ValueError:
                 proof = None
+    if state["cancellation_pending"] is not None:
+        from support_agent.cancellation_session import route_cancellation
+        return route_cancellation(state, text)
     if state["address_pending"] is not None:
         from support_agent.address_session import route_address
         return route_address(state, text)
@@ -290,6 +297,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         return emit(state, name, args)
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
+    from support_agent.cancellation_session import route_cancellation
+    cancellation = route_cancellation(state, text)
+    if cancellation is not None:
+        return cancellation
     from support_agent.payment_session import route_payment
     payment = route_payment(state, text)
     if payment is not None:
@@ -328,4 +339,4 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         except Exception:
             # No transport/SDK exception or unverified output is shown to a customer.
             return reply(state, "I cannot safely interpret that request. Please specify a profile, order ID, product ID or item ID to read.")
-    return reply(state, "Please specify your own order ID, a product ID, an item ID, a profile/catalog query, an address change or a saved-method payment switch. Other business changes need a separate workflow; I cannot infer missing dates or account facts.")
+    return reply(state, "Please specify your own order ID, a product ID, an item ID, a profile/catalog query, an address change, a saved-method payment switch or an owned-order cancellation. Other business changes need a separate workflow; I cannot infer missing dates or account facts.")

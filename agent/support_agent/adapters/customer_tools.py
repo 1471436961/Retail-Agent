@@ -4,11 +4,12 @@ from support_agent.adapters.customer_api import read_customer, verify_and_read_c
 from support_agent.adapters.read_tools import ReadTools
 from support_agent.adapters.address_tools import AddressTools
 from support_agent.adapters.payment_tools import PaymentTools
+from support_agent.adapters.cancellation_tools import CancellationTools
 from support_agent.config import DOMAIN
 from tau2.environment.toolkit import ToolType, is_tool
 
 
-class CustomerTools(AddressTools, PaymentTools, ReadTools):
+class CustomerTools(AddressTools, PaymentTools, CancellationTools, ReadTools):
     """Add reviewed read/write tools here as you implement business workflows."""
 
     @is_tool(ToolType.READ)

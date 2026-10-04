@@ -58,12 +58,19 @@ def route_address(state, text=None):
             _event(state, "address_abandoned", {"call_id": state["address_pending"]["call_id"]})
         else:
             return _reply(state, "address_workflow_unresolved", "The address workflow outcome is unresolved. I will not send another address operation or claim completion.")
+    from support_agent.domain.cancellation_intake import starts_cancellation_request
+    if text is not None and starts_cancellation_request(text):
+        return None
     request = request_from_history(state["history"])
     if request is None:
         return None
     from support_agent.domain.payment_intake import request_from_history as payment_request
     payment = payment_request(state["history"])
     if payment is not None and payment["request_index"] > request["request_index"]:
+        return None
+    from support_agent.domain.cancellation_intake import request_from_history as cancellation_request
+    cancellation = cancellation_request(state["history"])
+    if cancellation is not None and cancellation["request_index"] > request["request_index"]:
         return None
     current = _current_records(state)
     attempted = {o["version"] for o in state["operations"] if o["mutates"]}
@@ -229,7 +236,7 @@ def run_address_workflow(state, api, claims):
     original = deepcopy(state)
     pending = state["address_pending"]
     if (pending is None or pending["status"] != "pending" or len(state["history"]) != pending["index"] + 1
-            or not state["identity"]["verified"] or not state["identity_evidence"] or state["pending_calls"]
+            or not state["identity"]["verified"] or not state["identity_evidence"] or state["cancellation_pending"] is not None or state["payment_pending"] is not None or state["pending_calls"]
             or state["handoff"]["status"] != "not_requested"):
         raise ValueError("An original idle verified dispatch is required")
     if pending["mode"] == "prepare":

@@ -11,6 +11,8 @@ from support_agent.domain.identity import PROOF_FIELDS, verification_inputs
 
 MAX_TOOL_CALLS_PER_MESSAGE = 8
 MAX_CANDIDATE_ATTEMPTS = 8
+# Internal shape inventory only; model authorization remains READ_TOOL_FIELDS.
+WORKFLOW_TOOL_NAMES = frozenset({"address_workflow", "payment_workflow", "cancellation_workflow"})
 VERIFICATION_FIELDS = {"customer_id", *PROOF_FIELDS}
 READ_TOOL_FIELDS = {
     "lookup_customer": {"customer_id", "email"},
@@ -59,7 +61,7 @@ class ToolAction:
 
 def validate_tool_action(action: ToolAction) -> None:
     """Reject unknown actions and arguments before creating a platform call."""
-    if action.name in {"address_workflow", "payment_workflow"}:
+    if action.name in WORKFLOW_TOOL_NAMES:
         if (not isinstance(action.id, str) or not action.id or not isinstance(action.arguments, dict)
                 or set(action.arguments) != {"session_json"} or not isinstance(action.arguments["session_json"], str)):
             raise InvalidAction("Invalid internal workflow call")

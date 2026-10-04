@@ -30,12 +30,19 @@ def route_payment(state, text=None):
         return _boundary().reply(state, "payment_workflow_unresolved", "The payment workflow result remains unresolved. I will not repeat it or claim completion.")
     if text is not None and starts_address_request(text):
         return None
+    from support_agent.domain.cancellation_intake import starts_cancellation_request
+    if text is not None and starts_cancellation_request(text):
+        return None
     request = request_from_history(state["history"])
     if request is None:
         return None
     from support_agent.domain.addresses import request_from_history as address_request
     address = address_request(state["history"])
     if address is not None and address["request_index"] > request["request_index"]:
+        return None
+    from support_agent.domain.cancellation_intake import request_from_history as cancellation_request
+    cancellation = cancellation_request(state["history"])
+    if cancellation is not None and cancellation["request_index"] > request["request_index"]:
         return None
     current = _current_records(state)
     latest_index = max(i for i,e in enumerate(state["history"]) if e["role"] == "user")
@@ -122,7 +129,7 @@ def run_payment_workflow(state, api, claims):
     boundary = _boundary()
     if (pending is None or pending["status"] != "pending" or len(state["history"]) != pending["index"] + 1
             or not state["identity"]["verified"] or not state["identity_evidence"] or state["pending_calls"]
-            or state["address_pending"] is not None or state["handoff"]["status"] != "not_requested"):
+            or state["cancellation_pending"] is not None or state["address_pending"] is not None or state["handoff"]["status"] != "not_requested"):
         raise ValueError("An original idle verified payment dispatch is required")
     if pending["mode"] == "prepare":
         boundary.event(state, "payment_result", {"call_id":pending["call_id"]})

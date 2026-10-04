@@ -16,10 +16,11 @@ import unittest
 
 from tau2.data_model.message import AssistantMessage, MultiToolMessage, ToolCall, ToolMessage, UserMessage
 from tau2.hyper.client_api import ClientAPI, ClientAPIContext
+from tau2.environment.toolkit import ToolType
 from support_agent.adapters.customer_tools import CustomerTools
 from support_agent.adapters.model_gateway import ModelAdapter, ModelGatewayFailure, sdk_messages, usage_record
 from support_agent.application import CustomerAgent
-from support_agent.protocol import InvalidAction, ToolOutcome, TurnInput
+from support_agent.protocol import InvalidAction, ToolOutcome, TurnInput, WORKFLOW_TOOL_NAMES
 from support_agent.read_session import advance, bind_arguments
 from support_agent.state import initial_state
 from test_m2_session import verified_state
@@ -101,16 +102,18 @@ class RealSDKChecks(unittest.TestCase):
         self.assertTrue(result.error)
         self.assertNotIn("secret-diagnostic-marker",result.content)
 
-    def test_eight_read_tools_and_internal_address_payment_writes_have_real_schemas(self):
-        tools = CustomerTools(ReadFake()).get_tools()
+    def test_eight_read_tools_and_internal_workflow_writes_have_real_schemas(self):
+        toolkit = CustomerTools(ReadFake())
+        tools = toolkit.get_tools()
         reads = {"lookup_customer", "verify_customer", "read_customer_profile", "get_order", "list_customer_orders", "list_products", "get_product", "get_item"}
-        writes = {"address_workflow", "payment_workflow"}
+        writes = WORKFLOW_TOOL_NAMES
         self.assertEqual(set(tools), reads | writes)
         for tool in tools.values():
             schema = tool.openai_schema
             self.assertEqual(schema["type"], "function")
             self.assertEqual(schema["function"]["name"], tool.name)
             self.assertEqual(tool.info.get("mutates_state", False), tool.name in writes)
+            self.assertEqual(toolkit.tool_type(tool.name), ToolType.WRITE if tool.name in writes else ToolType.READ)
         for name in writes:
             parameters = tools[name].openai_schema["function"]["parameters"]
             self.assertEqual(parameters["required"], ["session_json"])
