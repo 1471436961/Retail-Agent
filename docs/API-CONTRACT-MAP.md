@@ -1,5 +1,7 @@
 # M0 教学接口与运行时契约基线
 
+2026-10-04 当前实现在六只读端点之外，增加显式 SessionWriteRuntime 的默认/订单地址、支付、取消、商品修改、换货、退货七个公开端点适配；默认工具注册仍八 READ、零 WRITE，转接属 M4 未开始。参数/返回按下文契约，不发预计金额、不自动重试写入；实际 SDK + fake 验收见 [收尾记录](M0-M3-CLOSEOUT.md)。
+
 核对日期：2026-10-02。规范来源：[教学 OpenAPI](../materials/client_api/openapi.yaml)、[课堂覆盖说明](../materials/CLASSROOM.md)、[工具契约](../materials/framework/client_api_contract.md)、[Agent 契约](../materials/framework/agent_contract.md)、[部署 manifest](../materials/framework/deployment_manifest.json)，以及 [平台契约核查记录](PLATFORM-CONTRACT-NOTES.md)中的当前资料 path/version。本表记录 **当前可见契约**，不是声称真实部署所有响应变体均已测试。
 
 ## 14 个 HTTP 操作

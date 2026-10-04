@@ -1,0 +1,7546 @@
+{
+  "schema_version": 2,
+  "status": "valid",
+  "run_id": "115a62f708b247fc8e39f8d6e01b4e48",
+  "scope": "component association, not complete business-AT execution",
+  "case_count": 134,
+  "at_count": 522,
+  "business_ats_executed": 0,
+  "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
+  "run_source_sha256": "3ca0a93777cf9f0894f43b5794cbce5056a29410fa039a393f129d08b82d31ce",
+  "specification_sha256": "72e2a7a828c354dad8f9a9dd86a63ee6f5c0615c0a66a5153fe7144ef66dcba2",
+  "specification_files": {
+    "materials/CLASSROOM.md": "b02f4a2706a1c2c5c1e04d1b4209119c7f061b8a66240d36e17af1614fe62a5c",
+    "materials/client_api/openapi.yaml": "d369f3cf5e3f83333d5c4bf0a11b82fb6417a946e16d34b64be614bcd3cadc16",
+    "materials/framework/agent_contract.md": "d00846b6cb781c8d59f7c794e88b81563c955a2991b410a9e0b66323f6481e8c",
+    "materials/framework/client_api_contract.md": "beeb01ae3d51d3267ba361fb97e1a47d6a71c719484c0daf02aecc9e2fdeb44e",
+    "materials/framework/scenario_contract.md": "1c255ee02db77afecda391d4a8335542065c5faff6f540fc70574ea8be60669e",
+    "materials/framework/deployment_manifest.json": "8637b0d5a78610b8b2b480ce3cedc64ee2f1fc792ce9419a92a2e094777040e0",
+    "docs/POLICY-REGISTER.md": "583e85f13d4ac0c6ecd8356216289c94d357a62162d9ec85414b8dc1ed74819c",
+    "docs/API-CONTRACT-MAP.md": "19f4f8a328540512237e6f2f78549066c608090d14f51434b8b48377a2b392db",
+    "docs/PLATFORM-CONTRACT-NOTES.md": "f64fc3f7f698d358ba831b89fa0b5a76a032b297420440de151122e26360e20e",
+    "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "e670463bc8186366b484e5f84dd78683b8451a11e720712d8250942a768ea954"
+  },
+  "groups": {
+    "G": {
+      "test_ids": [
+        "test_m2_session.ReadSessionTests.test_profile_or_tool_text_is_not_independent_verification",
+        "test_m2_session.ReadSessionTests.test_cross_customer_switch_and_roommate_order_are_blocked"
+      ],
+      "limitation": "Shared identity/ownership prerequisites; not the case dialogue."
+    },
+    "W": {
+      "test_ids": [
+        "test_m3_writes.PreflightTests.test_missing_partial_and_conditional_consent_do_not_read_or_send",
+        "test_m3_completion.SessionRuntimeTests.test_stale_snapshot_extra_history_and_new_runtime_share_stable_claim"
+      ],
+      "limitation": "Shared consent/single-send lifecycle; not a business producer."
+    },
+    "O": {
+      "test_ids": [
+        "test_m2_reads.ReadEndpointTests.test_owned_reference_with_wrong_returned_owner_or_id_is_rejected"
+      ],
+      "limitation": "Owned read boundary; case-specific record discovery still needs a business scenario."
+    },
+    "SEL": {
+      "test_ids": [
+        "test_m3_completion.SessionRuntimeTests.test_wrong_requested_options_block_before_claim_or_http_write"
+      ],
+      "limitation": "Selected-option validation only; preference, ranking and fallback producer belongs to M5."
+    },
+    "M": {
+      "test_ids": [
+        "test_money.MoneyCompatibilityTests.test_request_order_is_preserved_at_a_rounding_boundary",
+        "test_m3_completion.ReturnCompletionTests.test_display_estimate_uses_decimal_prices_occurrences_and_half_up"
+      ],
+      "limitation": "Action-specific primitive arithmetic only; complete case aggregation belongs to M6."
+    },
+    "F": {
+      "test_ids": [
+        "test_m3_writes.PreflightTests.test_missing_partial_and_conditional_consent_do_not_read_or_send",
+        "test_m3_writes.PreflightTests.test_order_change_after_consent_stops_old_version"
+      ],
+      "limitation": "Structured consent/refresh guards; not all natural-language conditions."
+    },
+    "I": {
+      "test_ids": [
+        "test_m3_completion.SessionRuntimeTests.test_modify_and_exchange_use_same_product_requested_options_and_exact_diff"
+      ],
+      "limitation": "Explicit structured adapter; M5 complete-list producer not implemented."
+    },
+    "T": {
+      "test_ids": [
+        "test_m3_completion.ReturnCompletionTests.test_original_destination_return_recap_confirmation_send_readback_and_restore",
+        "test_m3_completion.ReturnCompletionTests.test_late_gift_card_cannot_backfill_opening_eligibility"
+      ],
+      "limitation": "Explicit original-price estimate/destination adapter; M5 dialogue not implemented."
+    },
+    "X": {
+      "test_ids": [
+        "test_m3_completion.SessionRuntimeTests.test_modify_and_exchange_use_same_product_requested_options_and_exact_diff"
+      ],
+      "limitation": "Explicit variant adapter; M5 candidate dialogue not implemented."
+    },
+    "C": {
+      "test_ids": [
+        "test_m3_completion.SessionRuntimeTests.test_cancel_with_existing_refund_is_controlled_but_normal_charges_succeed"
+      ],
+      "limitation": "Explicit cancellation adapter and exception policy; M4 dialogue not implemented."
+    },
+    "A": {
+      "test_ids": [
+        "test_m3_writes.WriteLifecycleTests.test_send_checkpoint_receipt_and_strong_readback_complete_one_operation"
+      ],
+      "limitation": "Explicit address lifecycle; M4 address workflow not implemented."
+    },
+    "D": {
+      "test_ids": [
+        "test_m3_completion.SessionRuntimeTests.test_default_address_uses_customer_endpoint_and_does_not_change_order_address"
+      ],
+      "limitation": "Explicit default-address lifecycle; M4 address workflow not implemented."
+    },
+    "P": {
+      "test_ids": [
+        "test_m3_completion.SessionRuntimeTests.test_payment_switch_uses_one_original_charge_and_rechecks_full_balance"
+      ],
+      "limitation": "Supported single-charge adapter; M4 dialogue not implemented."
+    },
+    "H": {
+      "test_ids": [
+        "test_m0_contract.ContractBaselineTests.test_transfer_receipt_requires_accepted_and_nonempty_id"
+      ],
+      "limitation": "Schema-only transfer receipt check; production handoff belongs to M4."
+    },
+    "L": {
+      "test_ids": [
+        "test_m3_writes.PreflightTests.test_default_runtime_cannot_send_a_confirmed_proposal"
+      ],
+      "limitation": "Default no-write boundary; not every case-specific explanation."
+    }
+  },
+  "records": [
+    {
+      "at_id": "AT-A000-01",
+      "case_id": 0,
+      "requirement_line": 43,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A000-02",
+      "case_id": 0,
+      "requirement_line": 44,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A000-03",
+      "case_id": 0,
+      "requirement_line": 45,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A000-04",
+      "case_id": 0,
+      "requirement_line": 46,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A001-01",
+      "case_id": 1,
+      "requirement_line": 52,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A001-02",
+      "case_id": 1,
+      "requirement_line": 53,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A001-03",
+      "case_id": 1,
+      "requirement_line": 54,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A001-04",
+      "case_id": 1,
+      "requirement_line": 55,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "F",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A002-01",
+      "case_id": 2,
+      "requirement_line": 61,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A002-02",
+      "case_id": 2,
+      "requirement_line": 62,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A002-03",
+      "case_id": 2,
+      "requirement_line": 63,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A003-01",
+      "case_id": 3,
+      "requirement_line": 69,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A003-02",
+      "case_id": 3,
+      "requirement_line": 70,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A003-03",
+      "case_id": 3,
+      "requirement_line": 71,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A003-04",
+      "case_id": 3,
+      "requirement_line": 72,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A004-01",
+      "case_id": 4,
+      "requirement_line": 78,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A004-02",
+      "case_id": 4,
+      "requirement_line": 79,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A004-03",
+      "case_id": 4,
+      "requirement_line": 80,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A004-04",
+      "case_id": 4,
+      "requirement_line": 81,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A005-01",
+      "case_id": 5,
+      "requirement_line": 87,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A005-02",
+      "case_id": 5,
+      "requirement_line": 88,
+      "component_groups": [
+        "G",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A005-03",
+      "case_id": 5,
+      "requirement_line": 89,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A005-04",
+      "case_id": 5,
+      "requirement_line": 90,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A006-01",
+      "case_id": 6,
+      "requirement_line": 96,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A006-02",
+      "case_id": 6,
+      "requirement_line": 97,
+      "component_groups": [
+        "G",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A006-03",
+      "case_id": 6,
+      "requirement_line": 98,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A007-01",
+      "case_id": 7,
+      "requirement_line": 104,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A007-02",
+      "case_id": 7,
+      "requirement_line": 105,
+      "component_groups": [
+        "G",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A007-03",
+      "case_id": 7,
+      "requirement_line": 106,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A008-01",
+      "case_id": 8,
+      "requirement_line": 112,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A008-02",
+      "case_id": 8,
+      "requirement_line": 113,
+      "component_groups": [
+        "G",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A008-03",
+      "case_id": 8,
+      "requirement_line": 114,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A009-01",
+      "case_id": 9,
+      "requirement_line": 120,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A009-02",
+      "case_id": 9,
+      "requirement_line": 121,
+      "component_groups": [
+        "G",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A009-03",
+      "case_id": 9,
+      "requirement_line": 122,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A010-01",
+      "case_id": 10,
+      "requirement_line": 128,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A010-02",
+      "case_id": 10,
+      "requirement_line": 129,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A010-03",
+      "case_id": 10,
+      "requirement_line": 130,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A010-04",
+      "case_id": 10,
+      "requirement_line": 131,
+      "component_groups": [
+        "G",
+        "H"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A011-01",
+      "case_id": 11,
+      "requirement_line": 137,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A011-02",
+      "case_id": 11,
+      "requirement_line": 138,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A011-03",
+      "case_id": 11,
+      "requirement_line": 139,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A012-01",
+      "case_id": 12,
+      "requirement_line": 145,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A012-02",
+      "case_id": 12,
+      "requirement_line": 146,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "C",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A012-03",
+      "case_id": 12,
+      "requirement_line": 147,
+      "component_groups": [
+        "G",
+        "F",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A012-04",
+      "case_id": 12,
+      "requirement_line": 148,
+      "component_groups": [
+        "G",
+        "H"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A013-01",
+      "case_id": 13,
+      "requirement_line": 154,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A013-02",
+      "case_id": 13,
+      "requirement_line": 155,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A013-03",
+      "case_id": 13,
+      "requirement_line": 156,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A014-01",
+      "case_id": 14,
+      "requirement_line": 162,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A014-02",
+      "case_id": 14,
+      "requirement_line": 163,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A014-03",
+      "case_id": 14,
+      "requirement_line": 164,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A015-01",
+      "case_id": 15,
+      "requirement_line": 170,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A015-02",
+      "case_id": 15,
+      "requirement_line": 171,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A015-03",
+      "case_id": 15,
+      "requirement_line": 172,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A016-01",
+      "case_id": 16,
+      "requirement_line": 178,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A016-02",
+      "case_id": 16,
+      "requirement_line": 179,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A016-03",
+      "case_id": 16,
+      "requirement_line": 180,
+      "component_groups": [
+        "G",
+        "W",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A016-04",
+      "case_id": 16,
+      "requirement_line": 181,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A016-05",
+      "case_id": 16,
+      "requirement_line": 182,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A017-01",
+      "case_id": 17,
+      "requirement_line": 188,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A017-02",
+      "case_id": 17,
+      "requirement_line": 189,
+      "component_groups": [
+        "G",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A017-03",
+      "case_id": 17,
+      "requirement_line": 190,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A018-01",
+      "case_id": 18,
+      "requirement_line": 196,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A018-02",
+      "case_id": 18,
+      "requirement_line": 197,
+      "component_groups": [
+        "G",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A018-03",
+      "case_id": 18,
+      "requirement_line": 198,
+      "component_groups": [
+        "G",
+        "W",
+        "SEL",
+        "X"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A018-04",
+      "case_id": 18,
+      "requirement_line": 199,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A019-01",
+      "case_id": 19,
+      "requirement_line": 205,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T",
+        "X"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A019-02",
+      "case_id": 19,
+      "requirement_line": 206,
+      "component_groups": [
+        "G",
+        "W",
+        "M",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A019-03",
+      "case_id": 19,
+      "requirement_line": 207,
+      "component_groups": [
+        "G",
+        "W",
+        "SEL",
+        "M",
+        "X"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A019-04",
+      "case_id": 19,
+      "requirement_line": 208,
+      "component_groups": [
+        "G",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A019-05",
+      "case_id": 19,
+      "requirement_line": 209,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A020-01",
+      "case_id": 20,
+      "requirement_line": 215,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A020-02",
+      "case_id": 20,
+      "requirement_line": 216,
+      "component_groups": [
+        "G",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A020-03",
+      "case_id": 20,
+      "requirement_line": 217,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A020-04",
+      "case_id": 20,
+      "requirement_line": 218,
+      "component_groups": [
+        "G",
+        "W",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A021-01",
+      "case_id": 21,
+      "requirement_line": 224,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A021-02",
+      "case_id": 21,
+      "requirement_line": 225,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A021-03",
+      "case_id": 21,
+      "requirement_line": 226,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A021-04",
+      "case_id": 21,
+      "requirement_line": 227,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A021-05",
+      "case_id": 21,
+      "requirement_line": 228,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A022-01",
+      "case_id": 22,
+      "requirement_line": 234,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A022-02",
+      "case_id": 22,
+      "requirement_line": 235,
+      "component_groups": [
+        "G",
+        "W",
+        "D"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A022-03",
+      "case_id": 22,
+      "requirement_line": 236,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A022-04",
+      "case_id": 22,
+      "requirement_line": 237,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "D"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A023-01",
+      "case_id": 23,
+      "requirement_line": 243,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A023-02",
+      "case_id": 23,
+      "requirement_line": 244,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A023-03",
+      "case_id": 23,
+      "requirement_line": 245,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A023-04",
+      "case_id": 23,
+      "requirement_line": 246,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A023-05",
+      "case_id": 23,
+      "requirement_line": 247,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A024-01",
+      "case_id": 24,
+      "requirement_line": 253,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A024-02",
+      "case_id": 24,
+      "requirement_line": 254,
+      "component_groups": [
+        "G",
+        "F",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A024-03",
+      "case_id": 24,
+      "requirement_line": 255,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A025-01",
+      "case_id": 25,
+      "requirement_line": 261,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A025-02",
+      "case_id": 25,
+      "requirement_line": 262,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A025-03",
+      "case_id": 25,
+      "requirement_line": 263,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A025-04",
+      "case_id": 25,
+      "requirement_line": 264,
+      "component_groups": [
+        "G",
+        "F",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A025-05",
+      "case_id": 25,
+      "requirement_line": 265,
+      "component_groups": [
+        "G",
+        "H"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A026-01",
+      "case_id": 26,
+      "requirement_line": 271,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A026-02",
+      "case_id": 26,
+      "requirement_line": 272,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A026-03",
+      "case_id": 26,
+      "requirement_line": 273,
+      "component_groups": [
+        "G",
+        "H"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A027-01",
+      "case_id": 27,
+      "requirement_line": 279,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T",
+        "X"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A027-02",
+      "case_id": 27,
+      "requirement_line": 280,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A027-03",
+      "case_id": 27,
+      "requirement_line": 281,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A028-01",
+      "case_id": 28,
+      "requirement_line": 287,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A028-02",
+      "case_id": 28,
+      "requirement_line": 288,
+      "component_groups": [
+        "G",
+        "W",
+        "L",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A028-03",
+      "case_id": 28,
+      "requirement_line": 289,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A028-04",
+      "case_id": 28,
+      "requirement_line": 290,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A029-01",
+      "case_id": 29,
+      "requirement_line": 296,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A029-02",
+      "case_id": 29,
+      "requirement_line": 297,
+      "component_groups": [
+        "G",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A029-03",
+      "case_id": 29,
+      "requirement_line": 298,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A029-04",
+      "case_id": 29,
+      "requirement_line": 299,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A030-01",
+      "case_id": 30,
+      "requirement_line": 305,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A030-02",
+      "case_id": 30,
+      "requirement_line": 306,
+      "component_groups": [
+        "G",
+        "W",
+        "SEL",
+        "F",
+        "T",
+        "X"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A030-03",
+      "case_id": 30,
+      "requirement_line": 307,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A030-04",
+      "case_id": 30,
+      "requirement_line": 308,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A031-01",
+      "case_id": 31,
+      "requirement_line": 314,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A031-02",
+      "case_id": 31,
+      "requirement_line": 315,
+      "component_groups": [
+        "G",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A031-03",
+      "case_id": 31,
+      "requirement_line": 316,
+      "component_groups": [
+        "G",
+        "W",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A031-04",
+      "case_id": 31,
+      "requirement_line": 317,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A032-01",
+      "case_id": 32,
+      "requirement_line": 323,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A032-02",
+      "case_id": 32,
+      "requirement_line": 324,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A032-03",
+      "case_id": 32,
+      "requirement_line": 325,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A032-04",
+      "case_id": 32,
+      "requirement_line": 326,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A033-01",
+      "case_id": 33,
+      "requirement_line": 332,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A033-02",
+      "case_id": 33,
+      "requirement_line": 333,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A033-03",
+      "case_id": 33,
+      "requirement_line": 334,
+      "component_groups": [
+        "G",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A033-04",
+      "case_id": 33,
+      "requirement_line": 335,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "D"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A034-01",
+      "case_id": 34,
+      "requirement_line": 341,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A034-02",
+      "case_id": 34,
+      "requirement_line": 342,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A034-03",
+      "case_id": 34,
+      "requirement_line": 343,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A034-04",
+      "case_id": 34,
+      "requirement_line": 344,
+      "component_groups": [
+        "G",
+        "W",
+        "A",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A035-01",
+      "case_id": 35,
+      "requirement_line": 350,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A035-02",
+      "case_id": 35,
+      "requirement_line": 351,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A035-03",
+      "case_id": 35,
+      "requirement_line": 352,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A035-04",
+      "case_id": 35,
+      "requirement_line": 353,
+      "component_groups": [
+        "G",
+        "SEL",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A035-05",
+      "case_id": 35,
+      "requirement_line": 354,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A036-01",
+      "case_id": 36,
+      "requirement_line": 360,
+      "component_groups": [
+        "G",
+        "W",
+        "P",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A036-02",
+      "case_id": 36,
+      "requirement_line": 361,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A036-03",
+      "case_id": 36,
+      "requirement_line": 362,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A036-04",
+      "case_id": 36,
+      "requirement_line": 363,
+      "component_groups": [
+        "G",
+        "SEL",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A036-05",
+      "case_id": 36,
+      "requirement_line": 364,
+      "component_groups": [
+        "G",
+        "W",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A037-01",
+      "case_id": 37,
+      "requirement_line": 370,
+      "component_groups": [
+        "G",
+        "W",
+        "P",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A037-02",
+      "case_id": 37,
+      "requirement_line": 371,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A037-03",
+      "case_id": 37,
+      "requirement_line": 372,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A037-04",
+      "case_id": 37,
+      "requirement_line": 373,
+      "component_groups": [
+        "G",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A037-05",
+      "case_id": 37,
+      "requirement_line": 374,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A038-01",
+      "case_id": 38,
+      "requirement_line": 380,
+      "component_groups": [
+        "G",
+        "W",
+        "P",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A038-02",
+      "case_id": 38,
+      "requirement_line": 381,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A038-03",
+      "case_id": 38,
+      "requirement_line": 382,
+      "component_groups": [
+        "G",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A038-04",
+      "case_id": 38,
+      "requirement_line": 383,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A039-01",
+      "case_id": 39,
+      "requirement_line": 389,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A039-02",
+      "case_id": 39,
+      "requirement_line": 390,
+      "component_groups": [
+        "G",
+        "W",
+        "D",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A039-03",
+      "case_id": 39,
+      "requirement_line": 391,
+      "component_groups": [
+        "G",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A039-04",
+      "case_id": 39,
+      "requirement_line": 392,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A040-01",
+      "case_id": 40,
+      "requirement_line": 398,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A040-02",
+      "case_id": 40,
+      "requirement_line": 399,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "P"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A040-03",
+      "case_id": 40,
+      "requirement_line": 400,
+      "component_groups": [
+        "G",
+        "W",
+        "P",
+        "L",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A040-04",
+      "case_id": 40,
+      "requirement_line": 401,
+      "component_groups": [
+        "G",
+        "W",
+        "P",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A041-01",
+      "case_id": 41,
+      "requirement_line": 407,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A041-02",
+      "case_id": 41,
+      "requirement_line": 408,
+      "component_groups": [
+        "G",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A041-03",
+      "case_id": 41,
+      "requirement_line": 409,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A041-04",
+      "case_id": 41,
+      "requirement_line": 410,
+      "component_groups": [
+        "G",
+        "W",
+        "D"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A041-05",
+      "case_id": 41,
+      "requirement_line": 411,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A042-01",
+      "case_id": 42,
+      "requirement_line": 417,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A042-02",
+      "case_id": 42,
+      "requirement_line": 418,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A042-03",
+      "case_id": 42,
+      "requirement_line": 419,
+      "component_groups": [
+        "G",
+        "W",
+        "D"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A042-04",
+      "case_id": 42,
+      "requirement_line": 420,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A042-05",
+      "case_id": 42,
+      "requirement_line": 421,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A043-01",
+      "case_id": 43,
+      "requirement_line": 427,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A043-02",
+      "case_id": 43,
+      "requirement_line": 428,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A043-03",
+      "case_id": 43,
+      "requirement_line": 429,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A043-04",
+      "case_id": 43,
+      "requirement_line": 430,
+      "component_groups": [
+        "G",
+        "W",
+        "D",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A044-01",
+      "case_id": 44,
+      "requirement_line": 436,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A044-02",
+      "case_id": 44,
+      "requirement_line": 437,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A044-03",
+      "case_id": 44,
+      "requirement_line": 438,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A044-04",
+      "case_id": 44,
+      "requirement_line": 439,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A045-01",
+      "case_id": 45,
+      "requirement_line": 445,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A045-02",
+      "case_id": 45,
+      "requirement_line": 446,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A045-03",
+      "case_id": 45,
+      "requirement_line": 447,
+      "component_groups": [
+        "G",
+        "F",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A045-04",
+      "case_id": 45,
+      "requirement_line": 448,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A045-05",
+      "case_id": 45,
+      "requirement_line": 449,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A046-01",
+      "case_id": 46,
+      "requirement_line": 455,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A046-02",
+      "case_id": 46,
+      "requirement_line": 456,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A046-03",
+      "case_id": 46,
+      "requirement_line": 457,
+      "component_groups": [
+        "G",
+        "M",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A046-04",
+      "case_id": 46,
+      "requirement_line": 458,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A046-05",
+      "case_id": 46,
+      "requirement_line": 459,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A046-06",
+      "case_id": 46,
+      "requirement_line": 460,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A047-01",
+      "case_id": 47,
+      "requirement_line": 466,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A047-02",
+      "case_id": 47,
+      "requirement_line": 467,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A047-03",
+      "case_id": 47,
+      "requirement_line": 468,
+      "component_groups": [
+        "G",
+        "M",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A047-04",
+      "case_id": 47,
+      "requirement_line": 469,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A047-05",
+      "case_id": 47,
+      "requirement_line": 470,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A047-06",
+      "case_id": 47,
+      "requirement_line": 471,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A048-01",
+      "case_id": 48,
+      "requirement_line": 477,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A048-02",
+      "case_id": 48,
+      "requirement_line": 478,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A048-03",
+      "case_id": 48,
+      "requirement_line": 479,
+      "component_groups": [
+        "G",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A049-01",
+      "case_id": 49,
+      "requirement_line": 485,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A049-02",
+      "case_id": 49,
+      "requirement_line": 486,
+      "component_groups": [
+        "G",
+        "SEL",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A049-03",
+      "case_id": 49,
+      "requirement_line": 487,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A050-01",
+      "case_id": 50,
+      "requirement_line": 493,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A050-02",
+      "case_id": 50,
+      "requirement_line": 494,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A050-03",
+      "case_id": 50,
+      "requirement_line": 495,
+      "component_groups": [
+        "G",
+        "H"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A051-01",
+      "case_id": 51,
+      "requirement_line": 501,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A051-02",
+      "case_id": 51,
+      "requirement_line": 502,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A051-03",
+      "case_id": 51,
+      "requirement_line": 503,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A052-01",
+      "case_id": 52,
+      "requirement_line": 509,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A052-02",
+      "case_id": 52,
+      "requirement_line": 510,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A052-03",
+      "case_id": 52,
+      "requirement_line": 511,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A053-01",
+      "case_id": 53,
+      "requirement_line": 517,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A053-02",
+      "case_id": 53,
+      "requirement_line": 518,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A053-03",
+      "case_id": 53,
+      "requirement_line": 519,
+      "component_groups": [
+        "G",
+        "M",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A054-01",
+      "case_id": 54,
+      "requirement_line": 525,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A054-02",
+      "case_id": 54,
+      "requirement_line": 526,
+      "component_groups": [
+        "G",
+        "W",
+        "SEL",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A054-03",
+      "case_id": 54,
+      "requirement_line": 527,
+      "component_groups": [
+        "G",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A054-04",
+      "case_id": 54,
+      "requirement_line": 528,
+      "component_groups": [
+        "G",
+        "W",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A054-05",
+      "case_id": 54,
+      "requirement_line": 529,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A054-06",
+      "case_id": 54,
+      "requirement_line": 530,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A055-01",
+      "case_id": 55,
+      "requirement_line": 536,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A055-02",
+      "case_id": 55,
+      "requirement_line": 537,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A055-03",
+      "case_id": 55,
+      "requirement_line": 538,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A056-01",
+      "case_id": 56,
+      "requirement_line": 544,
+      "component_groups": [
+        "G",
+        "O",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A056-02",
+      "case_id": 56,
+      "requirement_line": 545,
+      "component_groups": [
+        "G",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A056-03",
+      "case_id": 56,
+      "requirement_line": 546,
+      "component_groups": [
+        "G",
+        "W",
+        "SEL",
+        "M",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A056-04",
+      "case_id": 56,
+      "requirement_line": 547,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A057-01",
+      "case_id": 57,
+      "requirement_line": 553,
+      "component_groups": [
+        "G",
+        "O",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A057-02",
+      "case_id": 57,
+      "requirement_line": 554,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A057-03",
+      "case_id": 57,
+      "requirement_line": 555,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "M",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A057-04",
+      "case_id": 57,
+      "requirement_line": 556,
+      "component_groups": [
+        "G",
+        "F",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A058-01",
+      "case_id": 58,
+      "requirement_line": 562,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A058-02",
+      "case_id": 58,
+      "requirement_line": 563,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A058-03",
+      "case_id": 58,
+      "requirement_line": 564,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A058-04",
+      "case_id": 58,
+      "requirement_line": 565,
+      "component_groups": [
+        "G",
+        "W",
+        "X"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A059-01",
+      "case_id": 59,
+      "requirement_line": 571,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A059-02",
+      "case_id": 59,
+      "requirement_line": 572,
+      "component_groups": [
+        "G",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A059-03",
+      "case_id": 59,
+      "requirement_line": 573,
+      "component_groups": [
+        "G",
+        "W",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A059-04",
+      "case_id": 59,
+      "requirement_line": 574,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A059-05",
+      "case_id": 59,
+      "requirement_line": 575,
+      "component_groups": [
+        "G",
+        "W",
+        "A",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A059-06",
+      "case_id": 59,
+      "requirement_line": 576,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A060-01",
+      "case_id": 60,
+      "requirement_line": 582,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A060-02",
+      "case_id": 60,
+      "requirement_line": 583,
+      "component_groups": [
+        "G",
+        "F",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A060-03",
+      "case_id": 60,
+      "requirement_line": 584,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A060-04",
+      "case_id": 60,
+      "requirement_line": 585,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A061-01",
+      "case_id": 61,
+      "requirement_line": 591,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A061-02",
+      "case_id": 61,
+      "requirement_line": 592,
+      "component_groups": [
+        "G",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A061-03",
+      "case_id": 61,
+      "requirement_line": 593,
+      "component_groups": [
+        "G",
+        "W",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A062-01",
+      "case_id": 62,
+      "requirement_line": 599,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A062-02",
+      "case_id": 62,
+      "requirement_line": 600,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A062-03",
+      "case_id": 62,
+      "requirement_line": 601,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A062-04",
+      "case_id": 62,
+      "requirement_line": 602,
+      "component_groups": [
+        "G",
+        "L",
+        "SEL",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A062-05",
+      "case_id": 62,
+      "requirement_line": 603,
+      "component_groups": [
+        "G",
+        "L",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A063-01",
+      "case_id": 63,
+      "requirement_line": 609,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A063-02",
+      "case_id": 63,
+      "requirement_line": 610,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A063-03",
+      "case_id": 63,
+      "requirement_line": 611,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A063-04",
+      "case_id": 63,
+      "requirement_line": 612,
+      "component_groups": [
+        "G",
+        "SEL",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A063-05",
+      "case_id": 63,
+      "requirement_line": 613,
+      "component_groups": [
+        "G",
+        "W",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A063-06",
+      "case_id": 63,
+      "requirement_line": 614,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A064-01",
+      "case_id": 64,
+      "requirement_line": 620,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A064-02",
+      "case_id": 64,
+      "requirement_line": 621,
+      "component_groups": [
+        "G",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A064-03",
+      "case_id": 64,
+      "requirement_line": 622,
+      "component_groups": [
+        "G",
+        "SEL",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A064-04",
+      "case_id": 64,
+      "requirement_line": 623,
+      "component_groups": [
+        "G",
+        "W",
+        "X"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A064-05",
+      "case_id": 64,
+      "requirement_line": 624,
+      "component_groups": [
+        "G",
+        "W",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A065-01",
+      "case_id": 65,
+      "requirement_line": 630,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A065-02",
+      "case_id": 65,
+      "requirement_line": 631,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A066-01",
+      "case_id": 66,
+      "requirement_line": 637,
+      "component_groups": [
+        "G",
+        "O",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A066-02",
+      "case_id": 66,
+      "requirement_line": 638,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A066-03",
+      "case_id": 66,
+      "requirement_line": 639,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A067-01",
+      "case_id": 67,
+      "requirement_line": 645,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A067-02",
+      "case_id": 67,
+      "requirement_line": 646,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A067-03",
+      "case_id": 67,
+      "requirement_line": 647,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A068-01",
+      "case_id": 68,
+      "requirement_line": 653,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A068-02",
+      "case_id": 68,
+      "requirement_line": 654,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A068-03",
+      "case_id": 68,
+      "requirement_line": 655,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A069-01",
+      "case_id": 69,
+      "requirement_line": 661,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A069-02",
+      "case_id": 69,
+      "requirement_line": 662,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A069-03",
+      "case_id": 69,
+      "requirement_line": 663,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A070-01",
+      "case_id": 70,
+      "requirement_line": 669,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A070-02",
+      "case_id": 70,
+      "requirement_line": 670,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A070-03",
+      "case_id": 70,
+      "requirement_line": 671,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A070-04",
+      "case_id": 70,
+      "requirement_line": 672,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A071-01",
+      "case_id": 71,
+      "requirement_line": 678,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A071-02",
+      "case_id": 71,
+      "requirement_line": 679,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A071-03",
+      "case_id": 71,
+      "requirement_line": 680,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A071-04",
+      "case_id": 71,
+      "requirement_line": 681,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A071-05",
+      "case_id": 71,
+      "requirement_line": 682,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A072-01",
+      "case_id": 72,
+      "requirement_line": 688,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A072-02",
+      "case_id": 72,
+      "requirement_line": 689,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A072-03",
+      "case_id": 72,
+      "requirement_line": 690,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A072-04",
+      "case_id": 72,
+      "requirement_line": 691,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A072-05",
+      "case_id": 72,
+      "requirement_line": 692,
+      "component_groups": [
+        "G",
+        "W",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A073-01",
+      "case_id": 73,
+      "requirement_line": 698,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A073-02",
+      "case_id": 73,
+      "requirement_line": 699,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A074-01",
+      "case_id": 74,
+      "requirement_line": 705,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A074-02",
+      "case_id": 74,
+      "requirement_line": 706,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A074-03",
+      "case_id": 74,
+      "requirement_line": 707,
+      "component_groups": [
+        "G",
+        "W",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A074-04",
+      "case_id": 74,
+      "requirement_line": 708,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A075-01",
+      "case_id": 75,
+      "requirement_line": 714,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A075-02",
+      "case_id": 75,
+      "requirement_line": 715,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A075-03",
+      "case_id": 75,
+      "requirement_line": 716,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A076-01",
+      "case_id": 76,
+      "requirement_line": 722,
+      "component_groups": [
+        "G",
+        "O",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A076-02",
+      "case_id": 76,
+      "requirement_line": 723,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A076-03",
+      "case_id": 76,
+      "requirement_line": 724,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A076-04",
+      "case_id": 76,
+      "requirement_line": 725,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A077-01",
+      "case_id": 77,
+      "requirement_line": 731,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A077-02",
+      "case_id": 77,
+      "requirement_line": 732,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A077-03",
+      "case_id": 77,
+      "requirement_line": 733,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A078-01",
+      "case_id": 78,
+      "requirement_line": 739,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A078-02",
+      "case_id": 78,
+      "requirement_line": 740,
+      "component_groups": [
+        "G",
+        "W",
+        "A",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A078-03",
+      "case_id": 78,
+      "requirement_line": 741,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A078-04",
+      "case_id": 78,
+      "requirement_line": 742,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A078-05",
+      "case_id": 78,
+      "requirement_line": 743,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A079-01",
+      "case_id": 79,
+      "requirement_line": 749,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A079-02",
+      "case_id": 79,
+      "requirement_line": 750,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A079-03",
+      "case_id": 79,
+      "requirement_line": 751,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A080-01",
+      "case_id": 80,
+      "requirement_line": 757,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A080-02",
+      "case_id": 80,
+      "requirement_line": 758,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A080-03",
+      "case_id": 80,
+      "requirement_line": 759,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A081-01",
+      "case_id": 81,
+      "requirement_line": 765,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A081-02",
+      "case_id": 81,
+      "requirement_line": 766,
+      "component_groups": [
+        "G",
+        "W",
+        "L",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A081-03",
+      "case_id": 81,
+      "requirement_line": 767,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A082-01",
+      "case_id": 82,
+      "requirement_line": 773,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A082-02",
+      "case_id": 82,
+      "requirement_line": 774,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A082-03",
+      "case_id": 82,
+      "requirement_line": 775,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A083-01",
+      "case_id": 83,
+      "requirement_line": 781,
+      "component_groups": [
+        "G",
+        "O",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A083-02",
+      "case_id": 83,
+      "requirement_line": 782,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A083-03",
+      "case_id": 83,
+      "requirement_line": 783,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A084-01",
+      "case_id": 84,
+      "requirement_line": 789,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "M",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A084-02",
+      "case_id": 84,
+      "requirement_line": 790,
+      "component_groups": [
+        "G",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A084-03",
+      "case_id": 84,
+      "requirement_line": 791,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A085-01",
+      "case_id": 85,
+      "requirement_line": 797,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A085-02",
+      "case_id": 85,
+      "requirement_line": 798,
+      "component_groups": [
+        "G",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A085-03",
+      "case_id": 85,
+      "requirement_line": 799,
+      "component_groups": [
+        "G",
+        "W",
+        "I"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A086-01",
+      "case_id": 86,
+      "requirement_line": 805,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A086-02",
+      "case_id": 86,
+      "requirement_line": 806,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A086-03",
+      "case_id": 86,
+      "requirement_line": 807,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A086-04",
+      "case_id": 86,
+      "requirement_line": 808,
+      "component_groups": [
+        "G",
+        "W",
+        "D"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A087-01",
+      "case_id": 87,
+      "requirement_line": 814,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A087-02",
+      "case_id": 87,
+      "requirement_line": 815,
+      "component_groups": [
+        "G",
+        "W",
+        "A",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A087-03",
+      "case_id": 87,
+      "requirement_line": 816,
+      "component_groups": [
+        "G",
+        "W",
+        "D",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A088-01",
+      "case_id": 88,
+      "requirement_line": 822,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A088-02",
+      "case_id": 88,
+      "requirement_line": 823,
+      "component_groups": [
+        "G",
+        "F",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A088-03",
+      "case_id": 88,
+      "requirement_line": 824,
+      "component_groups": [
+        "G",
+        "W",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A089-01",
+      "case_id": 89,
+      "requirement_line": 830,
+      "component_groups": [
+        "G",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A089-02",
+      "case_id": 89,
+      "requirement_line": 831,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A089-03",
+      "case_id": 89,
+      "requirement_line": 832,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "X",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A089-04",
+      "case_id": 89,
+      "requirement_line": 833,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A090-01",
+      "case_id": 90,
+      "requirement_line": 839,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A090-02",
+      "case_id": 90,
+      "requirement_line": 840,
+      "component_groups": [
+        "G",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A090-03",
+      "case_id": 90,
+      "requirement_line": 841,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A090-04",
+      "case_id": 90,
+      "requirement_line": 842,
+      "component_groups": [
+        "G",
+        "W",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A091-01",
+      "case_id": 91,
+      "requirement_line": 848,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A091-02",
+      "case_id": 91,
+      "requirement_line": 849,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A091-03",
+      "case_id": 91,
+      "requirement_line": 850,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "X",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A091-04",
+      "case_id": 91,
+      "requirement_line": 851,
+      "component_groups": [
+        "G",
+        "O",
+        "F",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A091-05",
+      "case_id": 91,
+      "requirement_line": 852,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A091-06",
+      "case_id": 91,
+      "requirement_line": 853,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A092-01",
+      "case_id": 92,
+      "requirement_line": 859,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A092-02",
+      "case_id": 92,
+      "requirement_line": 860,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A092-03",
+      "case_id": 92,
+      "requirement_line": 861,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A093-01",
+      "case_id": 93,
+      "requirement_line": 867,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A093-02",
+      "case_id": 93,
+      "requirement_line": 868,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A093-03",
+      "case_id": 93,
+      "requirement_line": 869,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A094-01",
+      "case_id": 94,
+      "requirement_line": 875,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A094-02",
+      "case_id": 94,
+      "requirement_line": 876,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A094-03",
+      "case_id": 94,
+      "requirement_line": 877,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A095-01",
+      "case_id": 95,
+      "requirement_line": 883,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A095-02",
+      "case_id": 95,
+      "requirement_line": 884,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A095-03",
+      "case_id": 95,
+      "requirement_line": 885,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A095-04",
+      "case_id": 95,
+      "requirement_line": 886,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A095-05",
+      "case_id": 95,
+      "requirement_line": 887,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A095-06",
+      "case_id": 95,
+      "requirement_line": 888,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A096-01",
+      "case_id": 96,
+      "requirement_line": 894,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A096-02",
+      "case_id": 96,
+      "requirement_line": 895,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A096-03",
+      "case_id": 96,
+      "requirement_line": 896,
+      "component_groups": [
+        "G",
+        "W",
+        "A",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A096-04",
+      "case_id": 96,
+      "requirement_line": 897,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A097-01",
+      "case_id": 97,
+      "requirement_line": 903,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A097-02",
+      "case_id": 97,
+      "requirement_line": 904,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A097-03",
+      "case_id": 97,
+      "requirement_line": 905,
+      "component_groups": [
+        "G",
+        "W",
+        "A",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A097-04",
+      "case_id": 97,
+      "requirement_line": 906,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A098-01",
+      "case_id": 98,
+      "requirement_line": 912,
+      "component_groups": [
+        "G",
+        "SEL",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A098-02",
+      "case_id": 98,
+      "requirement_line": 913,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A098-03",
+      "case_id": 98,
+      "requirement_line": 914,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A098-04",
+      "case_id": 98,
+      "requirement_line": 915,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A098-05",
+      "case_id": 98,
+      "requirement_line": 916,
+      "component_groups": [
+        "G",
+        "W",
+        "X"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A098-06",
+      "case_id": 98,
+      "requirement_line": 917,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A099-01",
+      "case_id": 99,
+      "requirement_line": 923,
+      "component_groups": [
+        "G",
+        "SEL",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A099-02",
+      "case_id": 99,
+      "requirement_line": 924,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A099-03",
+      "case_id": 99,
+      "requirement_line": 925,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A099-04",
+      "case_id": 99,
+      "requirement_line": 926,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A099-05",
+      "case_id": 99,
+      "requirement_line": 927,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A099-06",
+      "case_id": 99,
+      "requirement_line": 928,
+      "component_groups": [
+        "G",
+        "W",
+        "X"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A100-01",
+      "case_id": 100,
+      "requirement_line": 934,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A100-02",
+      "case_id": 100,
+      "requirement_line": 935,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A100-03",
+      "case_id": 100,
+      "requirement_line": 936,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A100-04",
+      "case_id": 100,
+      "requirement_line": 937,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A101-01",
+      "case_id": 101,
+      "requirement_line": 943,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A101-02",
+      "case_id": 101,
+      "requirement_line": 944,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A101-03",
+      "case_id": 101,
+      "requirement_line": 945,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A101-04",
+      "case_id": 101,
+      "requirement_line": 946,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A101-05",
+      "case_id": 101,
+      "requirement_line": 947,
+      "component_groups": [
+        "G",
+        "W",
+        "A",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A101-06",
+      "case_id": 101,
+      "requirement_line": 948,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A102-01",
+      "case_id": 102,
+      "requirement_line": 954,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A102-02",
+      "case_id": 102,
+      "requirement_line": 955,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A102-03",
+      "case_id": 102,
+      "requirement_line": 956,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A102-04",
+      "case_id": 102,
+      "requirement_line": 957,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A102-05",
+      "case_id": 102,
+      "requirement_line": 958,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A102-06",
+      "case_id": 102,
+      "requirement_line": 959,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A103-01",
+      "case_id": 103,
+      "requirement_line": 965,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "F",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A103-02",
+      "case_id": 103,
+      "requirement_line": 966,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A103-03",
+      "case_id": 103,
+      "requirement_line": 967,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A103-04",
+      "case_id": 103,
+      "requirement_line": 968,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A103-05",
+      "case_id": 103,
+      "requirement_line": 969,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A103-06",
+      "case_id": 103,
+      "requirement_line": 970,
+      "component_groups": [
+        "G",
+        "O",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A104-01",
+      "case_id": 104,
+      "requirement_line": 976,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "F",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A104-02",
+      "case_id": 104,
+      "requirement_line": 977,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A104-03",
+      "case_id": 104,
+      "requirement_line": 978,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A104-04",
+      "case_id": 104,
+      "requirement_line": 979,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A104-05",
+      "case_id": 104,
+      "requirement_line": 980,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "SEL",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A104-06",
+      "case_id": 104,
+      "requirement_line": 981,
+      "component_groups": [
+        "G",
+        "O",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A105-01",
+      "case_id": 105,
+      "requirement_line": 987,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A105-02",
+      "case_id": 105,
+      "requirement_line": 988,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A105-03",
+      "case_id": 105,
+      "requirement_line": 989,
+      "component_groups": [
+        "G",
+        "SEL",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A105-04",
+      "case_id": 105,
+      "requirement_line": 990,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A106-01",
+      "case_id": 106,
+      "requirement_line": 996,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A106-02",
+      "case_id": 106,
+      "requirement_line": 997,
+      "component_groups": [
+        "G",
+        "SEL",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A106-03",
+      "case_id": 106,
+      "requirement_line": 998,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A107-01",
+      "case_id": 107,
+      "requirement_line": 1004,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A107-02",
+      "case_id": 107,
+      "requirement_line": 1005,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A107-03",
+      "case_id": 107,
+      "requirement_line": 1006,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A107-04",
+      "case_id": 107,
+      "requirement_line": 1007,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A108-01",
+      "case_id": 108,
+      "requirement_line": 1013,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A108-02",
+      "case_id": 108,
+      "requirement_line": 1014,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A108-03",
+      "case_id": 108,
+      "requirement_line": 1015,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A108-04",
+      "case_id": 108,
+      "requirement_line": 1016,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A109-01",
+      "case_id": 109,
+      "requirement_line": 1022,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A109-02",
+      "case_id": 109,
+      "requirement_line": 1023,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A109-03",
+      "case_id": 109,
+      "requirement_line": 1024,
+      "component_groups": [
+        "G",
+        "W",
+        "D"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A109-04",
+      "case_id": 109,
+      "requirement_line": 1025,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A109-05",
+      "case_id": 109,
+      "requirement_line": 1026,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A110-01",
+      "case_id": 110,
+      "requirement_line": 1032,
+      "component_groups": [
+        "G",
+        "O",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A110-02",
+      "case_id": 110,
+      "requirement_line": 1033,
+      "component_groups": [
+        "G",
+        "W",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A110-03",
+      "case_id": 110,
+      "requirement_line": 1034,
+      "component_groups": [
+        "G",
+        "W",
+        "D"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A110-04",
+      "case_id": 110,
+      "requirement_line": 1035,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A110-05",
+      "case_id": 110,
+      "requirement_line": 1036,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A111-01",
+      "case_id": 111,
+      "requirement_line": 1042,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A111-02",
+      "case_id": 111,
+      "requirement_line": 1043,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A111-03",
+      "case_id": 111,
+      "requirement_line": 1044,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A111-04",
+      "case_id": 111,
+      "requirement_line": 1045,
+      "component_groups": [
+        "G",
+        "W",
+        "A",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A111-05",
+      "case_id": 111,
+      "requirement_line": 1046,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A112-01",
+      "case_id": 112,
+      "requirement_line": 1052,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "A"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A112-02",
+      "case_id": 112,
+      "requirement_line": 1053,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A112-03",
+      "case_id": 112,
+      "requirement_line": 1054,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A112-04",
+      "case_id": 112,
+      "requirement_line": 1055,
+      "component_groups": [
+        "G",
+        "W",
+        "A",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A112-05",
+      "case_id": 112,
+      "requirement_line": 1056,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A113-01",
+      "case_id": 113,
+      "requirement_line": 1062,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A113-02",
+      "case_id": 113,
+      "requirement_line": 1063,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A113-03",
+      "case_id": 113,
+      "requirement_line": 1064,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A114-01",
+      "case_id": 114,
+      "requirement_line": 1070,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "P"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A114-02",
+      "case_id": 114,
+      "requirement_line": 1071,
+      "component_groups": [
+        "G",
+        "W",
+        "P",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A114-03",
+      "case_id": 114,
+      "requirement_line": 1072,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A115-01",
+      "case_id": 115,
+      "requirement_line": 1078,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "P",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A115-02",
+      "case_id": 115,
+      "requirement_line": 1079,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A116-01",
+      "case_id": 116,
+      "requirement_line": 1085,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A116-02",
+      "case_id": 116,
+      "requirement_line": 1086,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A116-03",
+      "case_id": 116,
+      "requirement_line": 1087,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A116-04",
+      "case_id": 116,
+      "requirement_line": 1088,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A117-01",
+      "case_id": 117,
+      "requirement_line": 1094,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A117-02",
+      "case_id": 117,
+      "requirement_line": 1095,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A117-03",
+      "case_id": 117,
+      "requirement_line": 1096,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A118-01",
+      "case_id": 118,
+      "requirement_line": 1102,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A118-02",
+      "case_id": 118,
+      "requirement_line": 1103,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A118-03",
+      "case_id": 118,
+      "requirement_line": 1104,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A119-01",
+      "case_id": 119,
+      "requirement_line": 1110,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A119-02",
+      "case_id": 119,
+      "requirement_line": 1111,
+      "component_groups": [
+        "G",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A119-03",
+      "case_id": 119,
+      "requirement_line": 1112,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A119-04",
+      "case_id": 119,
+      "requirement_line": 1113,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A120-01",
+      "case_id": 120,
+      "requirement_line": 1119,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A120-02",
+      "case_id": 120,
+      "requirement_line": 1120,
+      "component_groups": [
+        "G",
+        "W",
+        "X",
+        "M",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A120-03",
+      "case_id": 120,
+      "requirement_line": 1121,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A120-04",
+      "case_id": 120,
+      "requirement_line": 1122,
+      "component_groups": [
+        "G",
+        "L",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A121-01",
+      "case_id": 121,
+      "requirement_line": 1128,
+      "component_groups": [
+        "G",
+        "O",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A121-02",
+      "case_id": 121,
+      "requirement_line": 1129,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A121-03",
+      "case_id": 121,
+      "requirement_line": 1130,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A122-01",
+      "case_id": 122,
+      "requirement_line": 1136,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A122-02",
+      "case_id": 122,
+      "requirement_line": 1137,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A122-03",
+      "case_id": 122,
+      "requirement_line": 1138,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A122-04",
+      "case_id": 122,
+      "requirement_line": 1139,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A123-01",
+      "case_id": 123,
+      "requirement_line": 1145,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "P",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A123-02",
+      "case_id": 123,
+      "requirement_line": 1146,
+      "component_groups": [
+        "G",
+        "W",
+        "F",
+        "P"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A123-03",
+      "case_id": 123,
+      "requirement_line": 1147,
+      "component_groups": [
+        "G",
+        "W",
+        "P"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A124-01",
+      "case_id": 124,
+      "requirement_line": 1153,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A124-02",
+      "case_id": 124,
+      "requirement_line": 1154,
+      "component_groups": [
+        "G",
+        "W",
+        "T",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A124-03",
+      "case_id": 124,
+      "requirement_line": 1155,
+      "component_groups": [
+        "G",
+        "W",
+        "T"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A124-04",
+      "case_id": 124,
+      "requirement_line": 1156,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A125-01",
+      "case_id": 125,
+      "requirement_line": 1162,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A125-02",
+      "case_id": 125,
+      "requirement_line": 1163,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A125-03",
+      "case_id": 125,
+      "requirement_line": 1164,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A125-04",
+      "case_id": 125,
+      "requirement_line": 1165,
+      "component_groups": [
+        "G",
+        "L",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A126-01",
+      "case_id": 126,
+      "requirement_line": 1171,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A126-02",
+      "case_id": 126,
+      "requirement_line": 1172,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A126-03",
+      "case_id": 126,
+      "requirement_line": 1173,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A127-01",
+      "case_id": 127,
+      "requirement_line": 1179,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "C"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A127-02",
+      "case_id": 127,
+      "requirement_line": 1180,
+      "component_groups": [
+        "G",
+        "W",
+        "C",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A127-03",
+      "case_id": 127,
+      "requirement_line": 1181,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A128-01",
+      "case_id": 128,
+      "requirement_line": 1187,
+      "component_groups": [
+        "G",
+        "O"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A128-02",
+      "case_id": 128,
+      "requirement_line": 1188,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A128-03",
+      "case_id": 128,
+      "requirement_line": 1189,
+      "component_groups": [
+        "G",
+        "W",
+        "D",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A129-01",
+      "case_id": 129,
+      "requirement_line": 1195,
+      "component_groups": [
+        "G",
+        "W",
+        "O",
+        "P"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A129-02",
+      "case_id": 129,
+      "requirement_line": 1196,
+      "component_groups": [
+        "G",
+        "W",
+        "P",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A129-03",
+      "case_id": 129,
+      "requirement_line": 1197,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A130-01",
+      "case_id": 130,
+      "requirement_line": 1203,
+      "component_groups": [
+        "G",
+        "H",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A130-02",
+      "case_id": 130,
+      "requirement_line": 1204,
+      "component_groups": [
+        "G",
+        "H"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A130-03",
+      "case_id": 130,
+      "requirement_line": 1205,
+      "component_groups": [
+        "G",
+        "H"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A131-01",
+      "case_id": 131,
+      "requirement_line": 1211,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A131-02",
+      "case_id": 131,
+      "requirement_line": 1212,
+      "component_groups": [
+        "G",
+        "W",
+        "L",
+        "P"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A131-03",
+      "case_id": 131,
+      "requirement_line": 1213,
+      "component_groups": [
+        "G",
+        "M"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A131-04",
+      "case_id": 131,
+      "requirement_line": 1214,
+      "component_groups": [
+        "G",
+        "W",
+        "I",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A132-01",
+      "case_id": 132,
+      "requirement_line": 1220,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A132-02",
+      "case_id": 132,
+      "requirement_line": 1221,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A133-01",
+      "case_id": 133,
+      "requirement_line": 1227,
+      "component_groups": [
+        "G",
+        "O",
+        "SEL"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A133-02",
+      "case_id": 133,
+      "requirement_line": 1228,
+      "component_groups": [
+        "G",
+        "L"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    },
+    {
+      "at_id": "AT-A133-03",
+      "case_id": 133,
+      "requirement_line": 1229,
+      "component_groups": [
+        "G",
+        "L",
+        "F"
+      ],
+      "component_result": "related_components_passed",
+      "business_result": "not_executed",
+      "business_test_ids": [],
+      "remote_result": "not_run"
+    }
+  ]
+}

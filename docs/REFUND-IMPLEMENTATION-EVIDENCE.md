@@ -1,5 +1,7 @@
 # 退款计算的源码证据与适用边界
 
+2026-10-04 当前实施决策见 [待核实事项全面复核](PENDING-ITEMS-AUDIT.md)：此前将后台结算公式缺失扩大为预计额/原路申请整体阻断，属于需要修订的理解与实现。下文保留当时源码取证事实，未知结算不当 0、不冒称到账，但不再等待新公式才能建立合法退货提案。
+
 核查日期：2026-10-03。针对 M3.1 的退款合计问题，补充公开实现核查，不局限于寻找文档公式。源码可以支持实现推断，但须记录固定版本、调用链及适用环境；上游行为与当前课堂 REST 后端一致性分别核实。本记录不授权业务写入，也不把未取得的代码视为不存在。
 
 ## 来源与核查方法
@@ -13,6 +15,7 @@
 | [src/tau2/domains/retail_plus/tools.py](https://github.com/sierra-research/hyper-tau-bench/blob/6e9f34c685d40fa7a9f5935d8970af6fd9d5f118/src/tau2/domains/retail_plus/tools.py) | `2c2488299802bee1cc22b7185fd9b601dcbf7c0d236b4eee7cab95e45e4d88c0` | 第 24 行继承 RetailTools；第 28–42 行取消委托父类；此类未覆盖退货方法 |
 | [src/tau2/domains/retail/tools.py](https://github.com/sierra-research/hyper-tau-bench/blob/6e9f34c685d40fa7a9f5935d8970af6fd9d5f118/src/tau2/domains/retail/tools.py) | `9c7bee3e877cfaf9335fe95aefe1846747b6b99a1d3f1e7a202068b6435bd204` | 取消第 160–204 行；退货第 673–717 行 |
 | [src/tau2/domains/retail/data_model.py](https://github.com/sierra-research/hyper-tau-bench/blob/6e9f34c685d40fa7a9f5935d8970af6fd9d5f118/src/tau2/domains/retail/data_model.py) | `98d1154081a76b09a463c46d47ae0e177164bdb671cc20c54e83b59fd20f166c` | 第 100–119 行：OrderItem.price 与 OrderPayment.amount 声明为 float |
+| [src/tau2/hyper/client_api/catalogs/retail.py](https://github.com/sierra-research/hyper-tau-bench/blob/6e9f34c685d40fa7a9f5935d8970af6fd9d5f118/src/tau2/hyper/client_api/catalogs/retail.py) | `366c23035a9237a8bf30bdfd20e6d5822aab951c52ab4df47cb61423c4e1cfa6` | 2026-10-04 补读第 632–709 行：支付/取消/退货 REST 到相应公开工具的映射；固定版本调用链补全，不外推课堂一致 |
 
 读取了 retail_plus/environment.py 的工具选择：get_environment 使用 RetailPlusTools。没有加载其政策、任务或数据库文件。这证明固定上游版本的工具连接关系，不证明课堂 Client API REST 路由使用相同代码。
 
@@ -29,7 +32,7 @@
 
 ### 合成取消差异探针
 
-[test_m3_rules.py](../tests/test_m3_rules.py) 的 `test_static_upstream_history_loop_differs_from_rf01_charge_basis` 使用同一方式的两笔 payment（10、3）及一笔历史 refund（1），静态建模上游循环的行选择，得到三行；本项目 cancellation_refund_basis 只保留前两笔 charge，并独立保留 refund。比较逐行依据，不计算退款合计，也不执行 SDK 或 REST 写方法。此探针展示已知源码语义差异，不能证明课堂后端行为；M4 取消流程接入前必须核实实际交易类型过滤及重复退款风险。
+[test_m3_rules.py](../tests/test_m3_rules.py) 的 `test_static_upstream_history_loop_differs_from_rf01_charge_basis` 使用同一方式的两笔 payment（10、3）及一笔历史 refund（1），静态建模上游循环的行选择，得到三行；本项目 cancellation_refund_basis 只保留前两笔 charge，并独立保留 refund。比较逐行依据，不计算退款合计，也不执行 SDK 或 REST 写方法。此探针展示已知源码语义差异，不能证明课堂后端行为；当前端口对历史 refund 记录先受控核实，正常 payment-only 可实现；不等待版本映射才实现正常流程。
 
 ## 插件查询能提供的证据
 
@@ -42,8 +45,10 @@
 
 ## 对当前实施的影响
 
-已有两类明确依据：退货选中商品的原成交价和重复次数；取消实际 charge 的原金额和原方式。仍未取得适用于当前课堂后端的退款合计计算依据，不能将上游函数中的“没有计算”解释为总额为零，也不能从差价或余额函数补造退款公式。
+已有两类明确依据：退货选中商品的原成交价和重复次数；取消实际 charge 的原金额和原方式。后台结算合计公式仍未取得，“没有计算”不等于金额为零；项目预计额不冒称后台公式，不从差价或余额函数推出结算语义。预计额可以按原成交价和次数计算，并明确项目展示规则，不向退货 API 写金额。
 
-因此 [catalog.py](../agent/support_agent/domain/catalog.py) 继续保留选择依据，return_refund_basis 返回 needs_information、aggregate_amount=null；[policies.py](../agent/support_agent/domain/policies.py) 保留逐 charge 与独立退款记录，不产生合计或到账结论。既有 code/aggregation_contract_verified 字段名保持兼容；取得适用实现代码也可以作为核实依据，不要求只能由契约文档提供。
+当前 [catalog.py](../agent/support_agent/domain/catalog.py) 已合计所选原价和次数，并按项目 Decimal/half-up 显示到分；返回预计额及 amount_is_estimate，不把该方法登记成后台结算算法。proposals 的完整退货提案绑定方法/数值/去向及真实 user 同意，执行只发送 item_ids/refund_payment_method_id。原路和起点合格礼品卡已验收，未知渠道到账仍不冒称。[policies.py](../agent/support_agent/domain/policies.py) 保留逐 charge 和独立 refund，不净额化。
 
-下一步取证应指向可公开披露的课堂 REST 退款实现或可验证的对应版本关系，明确操作前预计额的累加、舍入及其与后台交易的关系。若取得源码，记录其固定版本、完整计算路径及适用范围后再实现回归；无需反复等待同一份澄清文档，但也不能用不对应当前环境的代码代替证据。未知课堂后端行为继续保留，M3.1 不整体勾选，M3.2–M3.5 未提前实施。
+half-up 是项目自选的预计额显示规则，理由及 MO-01 反例的适用范围见 [规则台账](POLICY-REGISTER.md) §4：原价精确十进制求和后仅舍入一次，保留精确总值，顾客文本固定两位小数。它不替换契约的 float 差价/余额 round，也不证明后台结算。单件 0.005→0.01 与精确 half-even 的 0.00 不同；0.015→0.02、1.005→1.01 与 Python float round 的 0.01、1.00 不同，测试用这些中点区分实现。没有新增材料依据，两个 verified 标志继续为 False。
+
+显式 SessionWriteRuntime 支持正常取消和退货申请，对已有 refund 的取消风险记录写前受控核实，不写后探测或发补偿。后台去向更宽不妨碍 RT-02 合法子集。当前 M3.1 内部范围完成，实际测试与能力限制见 [M0–M3 收尾](M0-M3-CLOSEOUT.md)；此前合计缺口只作为历史证据保留。
