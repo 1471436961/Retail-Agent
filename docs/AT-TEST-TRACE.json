@@ -1,14 +1,14 @@
 {
   "schema_version": 2,
   "status": "valid",
-  "run_id": "1514820f90fb4312a08740c811c1db8c",
+  "run_id": "1e8efc2ea9ca41bbb923f0cedbdbfbdd",
   "scope": "component association, not complete business-AT execution",
   "case_count": 134,
   "at_count": 522,
   "business_ats_executed": 0,
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
-  "run_source_sha256": "fedb9961b72aa352e48724ed1f09c81994ae32cc6ef45224117d59642a53dab3",
-  "specification_sha256": "afaf3a70f9e2a37e025dd5ed23c1d8741d1e898abb3b3558dd38d98fe900450e",
+  "run_source_sha256": "c2a65d9a07d4289e5cf9141c47fdca06bbdaae6541e663dcf96876e8af2a1051",
+  "specification_sha256": "386c3a9519c8c03665df6c0227d1283c3f48aa29c16e2bdadc61bedb5deb829e",
   "specification_files": {
     "materials/CLASSROOM.md": "b02f4a2706a1c2c5c1e04d1b4209119c7f061b8a66240d36e17af1614fe62a5c",
     "materials/client_api/openapi.yaml": "d369f3cf5e3f83333d5c4bf0a11b82fb6417a946e16d34b64be614bcd3cadc16",
@@ -16,10 +16,10 @@
     "materials/framework/client_api_contract.md": "beeb01ae3d51d3267ba361fb97e1a47d6a71c719484c0daf02aecc9e2fdeb44e",
     "materials/framework/scenario_contract.md": "1c255ee02db77afecda391d4a8335542065c5faff6f540fc70574ea8be60669e",
     "materials/framework/deployment_manifest.json": "8637b0d5a78610b8b2b480ce3cedc64ee2f1fc792ce9419a92a2e094777040e0",
-    "docs/POLICY-REGISTER.md": "b8272753d7b32bb1196ce1b3a2227e3234d78c11c326771ba41caeb4b27af8b6",
-    "docs/API-CONTRACT-MAP.md": "f19fdc8a838f43e4ddd1a9fbc4708c131c61d31f4d08907c32c820a490ee3010",
+    "docs/POLICY-REGISTER.md": "c42891d269ed47974e322ccd00836946f29dfb9f329629419288127bbc667ac4",
+    "docs/API-CONTRACT-MAP.md": "3bdcf78c201623069d60b9d00853bb5b7d1126c7924d37f04427fbf6e4068a87",
     "docs/PLATFORM-CONTRACT-NOTES.md": "c2de04d798739b4d499525fd06a6fb13dbebcbd183f9b6e30ae9cc3cacf5486c",
-    "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "e975304219bc0b27548872b79cdafbc0b3e453feb7add6e0a13970ff6ab0059c"
+    "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "41fa35e2d111e4106bc9e9650bb854b3c9ba7db3aafab59c6ae0487a08e35194"
   },
   "groups": {
     "G": {
@@ -99,7 +99,24 @@
     "T": {
       "test_ids": [
         "test_m3_completion.ReturnCompletionTests.test_original_destination_return_recap_confirmation_send_readback_and_restore",
-        "test_m3_completion.ReturnCompletionTests.test_late_gift_card_cannot_backfill_opening_eligibility"
+        "test_m3_completion.ReturnCompletionTests.test_late_gift_card_cannot_backfill_opening_eligibility",
+        "test_m5_returns.ReturnFlowTests.test_default_prepare_complete_recap_next_consent_one_post_owned_readback",
+        "test_m5_returns.ReturnFlowTests.test_estimate_uses_original_price_not_catalog_and_half_up_midpoint",
+        "test_m5_returns.ReturnFlowTests.test_identical_duplicate_units_keep_counts_and_original_price_sum",
+        "test_m5_returns.ReturnFlowTests.test_mixed_ids_accept_sorted_receipt_and_readback_without_losing_counts",
+        "test_m5_returns.ReturnFlowTests.test_missing_or_extra_occurrence_in_receipt_or_readback_cannot_verify",
+        "test_m5_returns.ReturnFlowTests.test_unique_legal_current_destination_can_be_recapped_without_extra_choice",
+        "test_m5_returns.ReturnFlowTests.test_malformed_saved_methods_preserve_specific_fact_diagnostic",
+        "test_m5_returns.ReturnFlowTests.test_many_original_units_exceed_recap_budget_without_partial_proposal_or_send",
+        "test_m5_returns.ReturnFlowTests.test_tool_argument_and_result_limits_stop_side_effects_before_send",
+        "test_m5_returns.ReturnFlowTests.test_gift_added_after_opening_cannot_backfill_through_new_recap",
+        "test_m5_returns.ReturnFlowTests.test_profile_read_before_opening_proves_added_gift_eligibility",
+        "test_m5_returns.ReturnFlowTests.test_partial_condition_withdrawal_and_nonadjacent_yes_do_not_submit",
+        "test_m5_returns.ReturnFlowTests.test_timeout_after_backend_effect_stays_unknown_and_cannot_repeat",
+        "test_m5_returns.ReturnFlowTests.test_lost_execute_bundle_reserves_unknown_without_false_zero_writes",
+        "test_m5_returns.ReturnRecoveryTests.test_basis_tampering_of_sources_estimate_or_opening_is_rejected",
+        "test_m5_returns.ReturnRecoveryTests.test_shared_business_kinds_restore_and_block_every_peer_without_handoff",
+        "test_m5_returns.ReturnRecoveryTests.test_real_schema10_fixture_migrates_without_inventing_return_consent"
       ],
       "limitation": "Explicit original-price estimate/destination adapter; M5 dialogue not implemented."
     },

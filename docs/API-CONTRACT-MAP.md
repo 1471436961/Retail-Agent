@@ -78,3 +78,11 @@ usage 可为空；prompt_tokens 与 completion_tokens 都存在才相加，total
 取消默认生产器先核实独立身份、自有订单、精确 pending、原因与 payment 明细，完整复述并绑定真实 user 确认，刷新后仅 POST `/v1/orders/{order_id}/cancellations`，body 恰好 reason。没有金额、退款去向、独立退款、job 或补偿接口。原因归一化使用 cancellation_reason_rule，不把价格、物流或品牌投诉擅自映射。受理回执须匹配 order_id/status/cancellation/payments，自有强读回须核实 cancelled、原因、原交易前缀和每笔原 charge 全额原路 refund 的次数；同方式重复 charge 不折叠。没有约定退款数组先后顺序，按多重集核对新增 refund；这不证明后端内部事务或处理器到账。
 
 S06 当前 CR8 取消流程图与 S11 email_06 支持逐笔原路及取消/退款同一事务的业务要求。只发送一个契约端点并核对可见结果，不能由 fake 或数组推断课堂内部原子性。固定上游全历史循环与 RF-01 的差异仍受控：已有 refund 历史自动阻断并解释审查风险，不净额化、删除历史、重试或独立补退。取消总额仅将原 charge JSON 十进制表示精确求和显示，不舍入、不给后台传合计；与退货预计额和已公开差价/余额算法分别处理。
+
+## 2026-10-05 M5.3 退货默认流程
+
+当前工具库存八 READ＋六个内部 WRITE（增加 returns_workflow）；模型候选/绑定/网关保持八 READ。真实 ClientAPIToolKitBase/ToolType.WRITE/单 string session_json 库存与完整默认轮次由 SDK＋fake transport 验收；工具形状不是签名或可信来源证明。
+
+唯一退货传输为 `POST /v1/orders/{order_id}/returns`，请求严格 item_ids/refund_payment_method_id，无 amount/quantity/来源/退款端点。先验证身份及档案自有引用再 GET，当前 delivered 及一次申请状态门复核；封闭 OrderReturn 申请回执和之后自有强读回核对完整次数/去向。后端可排序 item_ids，按多重集保留次数，不去重。write_verified 只证明 return requested 的申请，不宣称已执行退款或到账。
+
+默认 producer 已调用 RT-02、RF-02 和原价预计额规则；礼品卡来源在该订单首个实际请求之前最近接纳档案（未验证请求则首个成功验证档案）冻结，逐历史前缀恢复。后加卡不得靠新提案/换订单再返回回填。预计额及精确原价总值仅用于复述/同意绑定，半入到分是项目显示规则，不发到后端、不替代公开差价/余额算法。实现和有限范围见 [M5.3 交付](M5.3-DELIVERY.md)。

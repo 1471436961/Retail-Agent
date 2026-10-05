@@ -54,3 +54,9 @@ M4.3 的取消显示额与退货预计额有意分开：前者是实际原 charg
 half-up 是项目自选的预计额显示规则，理由及 MO-01 反例的适用范围见 [规则台账](POLICY-REGISTER.md) §4：原价精确十进制求和后仅舍入一次，保留精确总值，顾客文本固定两位小数。它不替换契约的 float 差价/余额 round，也不证明后台结算。单件 0.005→0.01 与精确 half-even 的 0.00 不同；0.015→0.02、1.005→1.01 与 Python float round 的 0.01、1.00 不同，测试用这些中点区分实现。没有新增材料依据，两个 verified 标志继续为 False。
 
 显式 SessionWriteRuntime 支持正常取消和退货申请，对已有 refund 的取消风险记录写前受控核实，不写后探测或发补偿。后台去向更宽不妨碍 RT-02 合法子集。当前 M3.1 内部范围完成，实际测试与能力限制见 [M0–M3 收尾](M0-M3-CLOSEOUT.md)；此前合计缺口只作为历史证据保留。
+
+## M5.3 默认申请的实现承接
+
+本批没有新增后台结算公式或真实支付证据。原价精确总值、half-up 到分预计额和两个 False 核实标志保持原义；默认复述两位小数并明确项目显示规则、渠道处理政策及“申请不证明结算/到账”。return_destination_rule 从原 payment 方式和起点已保存 gift 资格生成合法范围，默认生产器与提案/写前复核已实际调用，原路或有依据的礼品卡申请不再等待后台合计公式。
+
+[returns_session.py](../agent/support_agent/returns_session.py) 仅发送 item_ids/refund_payment_method_id；未来真实账务/到账须来自相应事实，不能由 current return_request、交易相同或 fake 后端证明。取消原 charge 精确无舍入显示与退货预计到分仍是有意的不同语义；不将项目预计额登记为后台“特殊精度算法”。起点来源恢复、申请和 Unknown 的验收见 [M5.3 交付](M5.3-DELIVERY.md)。
