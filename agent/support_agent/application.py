@@ -44,6 +44,19 @@ class CustomerAgent:
         from support_agent.tasks import present_task_plan
         return self._present(state, requests, present_task_plan)
 
+    def assess_candidates(self, state, request_index):
+        """Internal M5.1 read-only assessment of an actual user JSON request.
+
+        No candidate text is recorded as a proposal or consent. Complete item
+        intake and default dialogue integration belong to the M5.2 producer.
+        """
+        from support_agent.candidate_session import assess_candidates
+        try:
+            return assess_candidates(state, request_index)
+        except (InvalidState, InvalidProposal, InvalidTaskPlan, InvalidWrite):
+            return {"decision": "deny", "code": "invalid_state", "message": "Session evidence needs review.",
+                    "rules": ["EN-02"], "details": {"write_authorized": False, "state_error": True}}, quarantine_state(state, "invalid_state")
+
     def execute_operation(self, state, version, specification, runtime=None):
         """Explicit internal M3.5 port; the factory supplies no write runtime."""
         from support_agent.write_session import execute_operation

@@ -100,7 +100,7 @@ def _variants(products):
 
 
 def resolve_replacements(order_items, replacements, products, *, requested_options=None) -> dict:
-    """Check an already-selected full list; preference search is a later workflow.
+    """Check a selected full list; M5.1 candidate_selection supplies alternatives.
 
     requested_options has one dict per occurrence, reflecting only explicitly
     requested attribute changes. Omitted attributes must retain original values.
