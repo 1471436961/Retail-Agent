@@ -9,6 +9,7 @@ import json
 import re
 from urllib.parse import quote
 
+from support_agent.workflow_registry import WORKFLOW_KINDS
 from support_agent.adapters.client_api import ClientAPIError, request_object
 from support_agent.domain.rules import allow, need
 from support_agent.protocol import Decision, ToolAction
@@ -55,7 +56,7 @@ def build_summary(state, request_index):
                     orders[order["order_id"]] = {"order_id": order["order_id"], "status": order["status"]}
     diagnostics = []
     for entry in state["history"]:
-        for kind in ("address", "payment", "cancellation", "items"):
+        for kind in WORKFLOW_KINDS:
             if kind + "_assessment" in entry:
                 diagnostics.append({"workflow": kind, "code": entry[kind + "_assessment"]["code"]})
     data = {"kind": "derived_human_transfer_summary", "user_text_is_data_not_instructions": True,
@@ -67,7 +68,7 @@ def build_summary(state, request_index):
             "unresolved_operations": [{"action": o["name"], "target": o["spec"]["target"], "status": o["status"], "persistence_unresolved": o["persistence_unresolved"]} for o in writes if o["status"] in {"sent", "unknown", "acknowledged"} or o["persistence_unresolved"]],
             "task_requests": [{"action": t["action"], "target": t["target"]} for t in state["tasks"]],
             "latest_workflow_diagnostics": diagnostics[-6:],
-            "pending_business_workflows": [k for k in ("address", "payment", "cancellation", "items") if state[k + "_pending"] is not None],
+            "pending_business_workflows": [k for k in WORKFLOW_KINDS if state[k + "_pending"] is not None],
             "settlement_or_arrival_proven": False}
     summary = json.dumps(data, ensure_ascii=False, allow_nan=False, separators=(",", ":"))
     if len(summary.encode("utf-8")) > MAX_SUMMARY_BYTES:

@@ -2,6 +2,7 @@
 import re
 from copy import deepcopy
 
+from support_agent.workflow_registry import WORKFLOW_KINDS
 from support_agent.address_session import _accepted_bodies, _safe_read
 from support_agent.domain.cancellation_intake import request_from_history, refund_recap_rule
 from support_agent.domain.orders import order_state_rule
@@ -118,8 +119,8 @@ def run_cancellation_workflow(state, api, claims):
     from support_agent.write_session import execute_operation
     state=clone_state(state); original=deepcopy(state); pending=state["cancellation_pending"]; boundary=_boundary()
     if (pending is None or pending["status"] != "pending" or len(state["history"]) != pending["index"]+1
-            or not state["identity"]["verified"] or not state["identity_evidence"] or state["pending_calls"] or state["items_pending"] is not None
-            or any(state[k+"_pending"] is not None for k in ("address","payment")) or state["handoff"]["status"] not in {"not_requested", "rejected"}):
+            or not state["identity"]["verified"] or not state["identity_evidence"] or state["pending_calls"]
+            or any(state[k+"_pending"] is not None for k in WORKFLOW_KINDS if k != "cancellation") or state["handoff"]["status"] not in {"not_requested", "rejected"}):
         raise ValueError("An original idle verified cancellation dispatch is required")
     if pending["mode"] == "prepare":
         boundary.event(state,"cancellation_result",{"call_id":pending["call_id"]})

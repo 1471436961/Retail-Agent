@@ -2,6 +2,7 @@
 import re
 from copy import deepcopy
 
+from support_agent.workflow_registry import WORKFLOW_KINDS
 from support_agent.workflow_limits import WorkflowResultTooLarge, MAX_WORKFLOW_RESULT_BYTES, json_bytes
 from support_agent.address_session import _accepted_bodies, _safe_read
 from support_agent.domain.payment_intake import request_from_history, starts_payment_request, current_charge_rule, resolve_choice, method_label
@@ -129,7 +130,7 @@ def run_payment_workflow(state, api, claims):
     boundary = _boundary()
     if (pending is None or pending["status"] != "pending" or len(state["history"]) != pending["index"] + 1
             or not state["identity"]["verified"] or not state["identity_evidence"] or state["pending_calls"]
-            or state["cancellation_pending"] is not None or state["address_pending"] is not None or state["items_pending"] is not None or state["handoff"]["status"] not in {"not_requested", "rejected"}):
+            or any(state[k + "_pending"] is not None for k in WORKFLOW_KINDS if k != "payment") or state["handoff"]["status"] not in {"not_requested", "rejected"}):
         raise ValueError("An original idle verified payment dispatch is required")
     if pending["mode"] == "prepare":
         boundary.event(state, "payment_result", {"call_id":pending["call_id"]})

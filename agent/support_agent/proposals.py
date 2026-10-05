@@ -127,7 +127,7 @@ def _clean_read_history(history):
                                                        "presentation_note", "presentation_mode", "address_dispatch", "address_result", "address_unknown", "address_abandoned", "address_assessment",
                                                        "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned", "payment_assessment",
                                                        "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "cancellation_assessment",
-                                                       "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_assessment", "items_basis"}} for entry in history]
+                                                       "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_assessment", "items_basis", "returns_dispatch", "returns_result", "returns_unknown", "returns_abandoned", "returns_assessment", "returns_basis"}} for entry in history]
 
 
 def _return_opening_boundary(history, target):
@@ -135,7 +135,8 @@ def _return_opening_boundary(history, target):
 
     The internal structured entry may precede a natural-language workflow; in
     that case its first presentation is the opening boundary. A later accepted
-    profile cannot backfill it. M5 owns richer request/withdrawal interpretation.
+    profile cannot backfill it. M5.3's actual-user intake also supplies its
+    per-order first-request boundary; no wall clock or caller flag is used.
     """
     boundary = len(history)
     for index, entry in enumerate(history):
@@ -143,6 +144,10 @@ def _return_opening_boundary(history, target):
         if any(event.get("spec", {}).get("action") == "return" and event["spec"]["target"] == target for event in events):
             boundary = index
             break
+    from support_agent.domain.returns_intake import request_from_history
+    request = request_from_history(history[:boundary])
+    if request and request["order_id"] == target["order_id"]:
+        return request["opening_request_index"], boundary
     for index, entry in enumerate(history[:boundary]):
         if entry["role"] == "user" and re.search(r"\breturn\b|退货", entry["content"], re.I):
             explicit_orders = re.findall(r"#[A-Za-z0-9_-]+", entry["content"])
@@ -206,10 +211,14 @@ def _scope_facts(history, spec, *, state_only=False):
                     order = record
     if order is None:
         raise InvalidProposal("An accepted owned order read is required")
+    before_opening = [p for p in profiles if p[0] < opening_index]
+    # Onboarding after an unverified request freezes the first accepted profile.
+    opening = before_opening[-1] if before_opening else profiles[0] if profiles else (None, None)
     if state_only:
         # Task planning needs exact accepted state before there is a quote.
         # This returns facts only; the task caller must apply order_state_rule.
-        return {"customer": prefix["customer_record"], "order": order, "catalog": []}
+        return {"customer": prefix["customer_record"], "order": order, "catalog": [],
+                **({"opening_payment_methods": opening[1], "opening_profile_index": opening[0]} if spec["action"] == "return" else {})}
     if order_state_rule(order, spec["action"])["decision"] != "allow":
         raise InvalidProposal("Order state does not permit this proposal")
     dependencies = []
@@ -564,7 +573,7 @@ def render_proposal_set(specifications, retained=(), *, presentation_mode=None):
 def restore_proposal_set(state, index):
     """Validate every scope against its preceding facts before accepting any."""
     entry = state["history"][index]
-    _keys(entry, {"role", "content", "proposal_set"}, {"presentation_note", "presentation_mode", "address_assessment", "payment_assessment", "cancellation_assessment", "items_assessment"})
+    _keys(entry, {"role", "content", "proposal_set"}, {"presentation_note", "presentation_mode", "address_assessment", "payment_assessment", "cancellation_assessment", "items_assessment", "returns_assessment"})
     if entry["role"] != "assistant":
         raise InvalidProposal("Only assistant presentations carry operation sets")
     events = entry["proposal_set"]

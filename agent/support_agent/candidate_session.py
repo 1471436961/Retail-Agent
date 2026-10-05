@@ -6,6 +6,7 @@ The next complete-item producer can reuse the pure selector after its intake.
 """
 import json
 
+from support_agent.workflow_registry import WORKFLOW_KINDS
 from support_agent.adapters.read_api import customer_order_ids
 from support_agent.domain.candidate_selection import select_candidates
 from support_agent.domain.catalog import _selected
@@ -18,7 +19,7 @@ def _assess_candidates(state, request_index):
     blocked = lambda code, text: need(code, text, "ID-01", "U4", details={"write_authorized": False})
     if state["handoff"]["status"] not in {"not_requested", "rejected"}:
         return blocked("handoff_blocks_selection", "The handoff prevents further business processing."), state
-    if state["pending_calls"] or any(state.get(k) for k in ("address_pending", "payment_pending", "cancellation_pending", "items_pending", "handoff_pending")):
+    if state["pending_calls"] or state.get("handoff_pending") or any(state.get(k + "_pending") for k in WORKFLOW_KINDS):
         return blocked("pending_workflow", "Resolve the pending batch before assessing candidates."), state
     if not state["identity"]["verified"] or not state["identity_evidence"]:
         return blocked("identity_required", "Independent verification is required."), state

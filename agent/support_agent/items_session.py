@@ -3,6 +3,7 @@ import json
 import re
 from copy import deepcopy
 
+from support_agent.workflow_registry import WORKFLOW_KINDS
 from support_agent.address_session import _accepted_bodies, _safe_read
 from support_agent.domain.items_intake import request_from_history, starts_items_request, criteria_for_line
 from support_agent.domain.catalog import _selected, resolve_replacements
@@ -235,7 +236,7 @@ def run_items_workflow(state, api, claims):
     state = clone_state(state); original = deepcopy(state); pending = state['items_pending']; boundary = _boundary()
     if (pending is None or pending['status'] != 'pending' or len(state['history']) != pending['index'] + 1
             or not state['identity']['verified'] or not state['identity_evidence'] or state['pending_calls']
-            or any(state[k + '_pending'] is not None for k in ('address', 'payment', 'cancellation'))
+            or any(state[k + '_pending'] is not None for k in WORKFLOW_KINDS if k != 'items')
             or state['handoff']['status'] not in {'not_requested', 'rejected'}):
         raise ValueError('An original idle verified item dispatch is required')
     if pending['mode'] == 'prepare':

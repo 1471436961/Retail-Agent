@@ -6,6 +6,7 @@ migration, or weakening of clone/source validation is performed.
 """
 import json
 
+from support_agent.workflow_registry import WORKFLOW_KINDS
 from support_agent.protocol import InvalidAction
 
 MAX_MODEL_CONTEXT_CHARACTERS = 48_000  # Internal bound, not a platform token limit.
@@ -23,7 +24,7 @@ def project_messages(state, *, max_characters=MAX_MODEL_CONTEXT_CHARACTERS):
     state = clone_state(state)
     if state["handoff"]["status"] not in {"not_requested", "rejected"}:
         raise InvalidAction("Human transfer blocks model delegation")
-    if any(state[k + "_pending"] is not None for k in ("address", "payment", "cancellation", "items")):
+    if any(state[k + "_pending"] is not None for k in WORKFLOW_KINDS):
         raise InvalidAction("An internal workflow result is unresolved")
     if type(max_characters) is not int or max_characters < 1024:
         raise InvalidAction("Invalid model context budget")

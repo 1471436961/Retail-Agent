@@ -469,5 +469,38 @@ assert len([c for c in items_backend.calls if c[0] == 'POST' and c[1].endswith('
 assert items_agent.get_init_state(items_state['history'])['operations'] == items_state['operations']
 assert not network_attempts
 print('M5_ITEMS_SDK_CHECK_PASSED; native ClientAPI/tools/assistant-state roundtrip; complete recap/next consent/one POST/readback; network attempts 0')
+from test_m5_returns import ReturnsBackend
+returns_backend = ReturnsBackend()
+def returns_transport(request):
+    response = returns_backend.request(request['method'], request['path'], body=request.get('body'))
+    return {'status_code': response.status_code, 'body': response.body, 'headers': {}, 'elapsed_seconds': 0.0}
+returns_tools = Tools(ClientAPI(returns_transport, context=ClientAPIContext(conversation_id='offline-returns-sdk')), claims=SessionClaims())
+assert returns_tools.tool_type('returns_workflow') == ToolType.WRITE
+assert set(returns_tools.get_tools()) == set(READ_TOOL_FIELDS) | WORKFLOW_TOOL_NAMES
+returns_schema = returns_tools.get_tools()['returns_workflow'].openai_schema['function']['parameters']
+assert returns_schema['required'] == ['session_json'] and returns_schema['properties']['session_json']['type'] == 'string'
+returns_agent = CustomerAgent()
+returns_state = returns_agent.get_init_state()
+def returns_turn(text):
+    global returns_state
+    message, returns_state = returns_agent.generate_next_message(UserMessage(role='user', content=text), returns_state)
+    while message.tool_calls:
+        assert len(message.tool_calls) == 1
+        action = message.tool_calls[0]
+        payload = getattr(returns_tools, action.name)(**action.arguments)
+        message, returns_state = returns_agent.generate_next_message(MultiToolMessage(role='tool', tool_messages=[ToolMessage(role='tool', id=action.id, content=json.dumps(payload), error=False)]), returns_state)
+    assert isinstance(message, AssistantMessage)
+    return message
+returns_turn('a@example.test')
+return_recap = returns_turn('Return #TEST1; items: item_blue; refund to original')
+assert 'Estimated refund: 12.50' in return_recap.content and '3-6 business days' in return_recap.content
+assert not any(c[0]=='POST' and c[1].endswith('/returns') for c in returns_backend.calls)
+returns_turn('yes')
+assert returns_state['history'][-1]['returns_assessment']['code']=='write_verified'
+return_posts = [c for c in returns_backend.calls if c[0]=='POST' and c[1].endswith('/returns')]
+assert len(return_posts)==1 and set(return_posts[0][2])=={'item_ids','refund_payment_method_id'}
+assert returns_agent.get_init_state(returns_state['history'])['operations']==returns_state['operations']
+assert not network_attempts
+print('M5_RETURNS_SDK_CHECK_PASSED; native ClientAPI/tools/schema/assistant-state; complete return/next consent/one POST/readback; network attempts 0')
 print("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0")
 print("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake")

@@ -4,6 +4,7 @@ from __future__ import annotations
 import json
 import re
 
+from support_agent.workflow_registry import WORKFLOW_KINDS
 from support_agent.adapters.read_api import ORDER_STATUSES, customer_order_ids, validate_catalog, validate_order
 from support_agent.domain.customer import customer_reply, find_customer_id
 from support_agent.domain.identity import PROOF_FIELDS, fields_from_text, matches_customer, matches_session_customer, normalized, proof_from_text, supplied_by_user, verification_inputs
@@ -224,11 +225,11 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
         # Ignore any abandoned preparation before choosing the active kind;
         # a late foreign result cannot invalidate a newer cancellation batch.
-        for kind in ("address", "payment", "cancellation", "items"):
+        for kind in WORKFLOW_KINDS:
             abandoned = {e[kind + "_abandoned"]["call_id"] for e in state["history"] if kind + "_abandoned" in e}
             if turn.outcomes and all(o.id in abandoned for o in turn.outcomes):
                 return WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).accept(state, turn.outcomes)
-        for kind in ("address", "payment", "cancellation", "items"):
+        for kind in WORKFLOW_KINDS:
             if state[kind + "_pending"] is not None:
                 return WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).accept(state, turn.outcomes)
         status, records = consume_results(state, turn.outcomes)
@@ -239,6 +240,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                     "mismatch": "The customer lookup/read did not match the verification details or authorized scope."}[status]
             return reply(state, text)
         if len(records) == 1 and records[0][0] in {"lookup_customer", "verify_customer"}:
+            from support_agent.returns_session import route_returns
+            returns = route_returns(state)
+            if returns is not None:
+                return returns
             from support_agent.items_session import route_items
             items = route_items(state)
             if items is not None:
@@ -270,6 +275,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if state["items_pending"] is not None and state["items_pending"]["mode"] == "prepare":
         from support_agent.items_session import _boundary
         _boundary().event(state, "items_abandoned", {"call_id": state["items_pending"]["call_id"]})
+    if state["returns_pending"] is not None and state["returns_pending"]["mode"] == "prepare":
+        from support_agent.returns_session import _boundary
+        _boundary().event(state, "returns_abandoned", {"call_id": state["returns_pending"]["call_id"]})
     finish_pending(state, "unknown")
     if state["payment_pending"] is not None and state["payment_pending"]["mode"] == "prepare":
         from support_agent.payment_session import _boundary
@@ -281,7 +289,7 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if handoff_intent(text) == "request":
         from support_agent.workflow_boundary import WorkflowBoundary
         from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
-        for kind in ("address", "payment", "cancellation", "items"):
+        for kind in WORKFLOW_KINDS:
             pending = state[kind + "_pending"]
             if pending is not None and pending["mode"] == "execute" and pending["status"] == "pending":
                 WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).event(state, kind + "_unknown", {"call_id": pending["call_id"]})
@@ -313,6 +321,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                 proof = verification_inputs(**state["verification_draft"])
             except ValueError:
                 proof = None
+    if state["returns_pending"] is not None:
+        from support_agent.returns_session import route_returns
+        return route_returns(state, text)
     if state["items_pending"] is not None:
         from support_agent.items_session import route_items
         return route_items(state, text)
@@ -331,6 +342,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         return emit(state, name, args)
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
+    from support_agent.returns_session import route_returns
+    returns = route_returns(state, text)
+    if returns is not None:
+        return returns
     from support_agent.items_session import route_items
     items = route_items(state, text)
     if items is not None:
