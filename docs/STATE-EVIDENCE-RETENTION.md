@@ -1,6 +1,6 @@
 # Q2 长会话摘要与身份依据保留设计
 
-当前 M5.3 默认退货流程使用 schema 11、八 READ＋六个内部 WRITE，模型只读；完整工作区 791/791，退货专项 65/65。来源、预计额、完整确认、Unknown 和 schema 10→11 前缀恢复见 [M5.3 交付](M5.3-DELIVERY.md)。T 组件映射来自实际执行；业务 AT 执行仍 0，历史章节不作为当前计数。
+当前 M5.4 默认完整换货流程使用 schema 12、八 READ＋七个内部 WRITE，模型只读；完整工作区 850/850、换货专项 59/59。条件/完整替换对来源、公开有符号差价、后次确认、Unknown 与 schema 11→12 前缀恢复见 [M5.4 交付](M5.4-DELIVERY.md)。X 组件引用实际执行；业务 AT 执行仍 0，历史章节不作为当前计数。
 
 M4.4 评审补充：本项目 canonical 状态恢复只校验/重建历史，不调用 API；固定 SDK 基础 `Environment.set_state` 的评测重建则执行工具，GENERIC/False 不会跳过执行。后者使用隔离评测后端和独立 claims，并按其实际回执格式严格比对；对原 live claims 重放陈旧转接不再 POST。两条入口不混用，不将 SDK 基础字符串化回执作为可放宽 canonical 类型的依据。摘要用户原文只存文本字段，不能改写身份、完成/Unknown 或可信目标；JSON 标签不保证下游消费方安全。证据见 [M4.4](M4.4-DELIVERY.md)。
 
@@ -116,3 +116,9 @@ items_basis 保存完整请求、每行真实 user 索引/原文、规范 criter
 schema 11 的 returns_basis 保存实际 user 索引/原文、原单位完整清单、预计额及冻结开启档案。opening_payment_methods/opening_profile_index 进入相关事实和确认指纹，不添加到退货线上参数；新档案不能回填旧起点。basis 按所在历史前缀重算，工具完整批次接纳与 Unknown reservation 延续原控制，不用后来 user 或档案修复过去许可。
 
 唯一合法当前去向可作为完整提案展示，仍须之后真实 user 确认；恢复不凭该候选或元数据制造同意。clone_state 等价仅检验通过来源与台账校验后的稳定性，source_commit 字面量仅钉元数据，均不能独立证明外部来源真实。事实复核中 TypeError/ValueError/KeyError 对应 facts_unavailable，其他指纹变化仍可 facts_changed；退货 producer 对两者都重新准备。
+
+## M5.4 换货来源与 schema 12
+
+schema 12 新增 exchange_pending 和共用边界的 dispatch/result/unknown/abandoned/assessment/basis；v1–v11 拒绝夹带新证据。真实 schema 11 fixture 在改动前由已推送 4bfd2f1 原函数生成，保留退货提案，不修改新形状版本号。exchange_basis 保存真实 user 索引/原文、规范条件/回退分支、完整原名称/选项/成交价和新规格/当前价/完整 spec，恢复按所在历史前缀重新派生并严格比较。
+
+默认换货只能消费自己来源提案的之后真实完整确认，内部任务图中的无明确订单选择不会自动变成生产器读取。执行丢失保留 Unknown reservation，prepare 丢失可放弃，晚到正文不接纳；转接与模型投影使用同一六类 slot 守卫。恢复不重放 API、不制造同意，不声明历史签名/送达或跨进程持久化去重。

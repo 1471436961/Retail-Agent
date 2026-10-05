@@ -1,8 +1,10 @@
 # 工程结构与开发方式
 
-本轮 M5.3 有限中英文明示单一自有 delivered 订单、完整原商品次数及一个合法退款去向的默认退货申请流程已实现，schema 11、八 READ＋六个内部 WRITE，模型仍只读。完整工作区实际 791/791、退货专项 65/65，零跳过/失败/错误、原生退出码 0，见 [M5.3 交付](docs/M5.3-DELIVERY.md)。M5.2 已按源码/测试、配对追踪、文档三批推送：6088c9a、cfcf34f、a0308d7；源码同一自动 t1 completed/success，报告正文案例计数未单独核实，仅证明公开 customer lookup。M5.3 源码/测试 9aa5d94、配对证据 b03241e 已逐批推送，源码同一自动 t1 completed/success（正文案例计数未单独核实）；交付文档随第三批提交。按用户要求推送结束后开始 M5.4，M5.5 未开始。134 案例/522 AT 不变，完整业务 AT 执行数仍 0，M0.2 与 M5 整体/M6/M7 保留。726/726 及商品 65/65 是已推送 M5.2 历史基线。
+本轮 M5.4 有限中英文明示单一自有 delivered 订单的完整换货默认流程已实现，schema 12、八 READ＋七个内部 WRITE，模型仍只读。完整工作区实际 850/850、换货专项 59/59，零跳过/失败/错误、原生退出码 0，见 [M5.4 交付](docs/M5.4-DELIVERY.md)。M5.3 已按源码/测试 9aa5d94、配对证据 b03241e、文档 4bfd2f1 三批逐批推送；源码同一自动 t1 completed/success，正文案例计数未单独核实，仅证明公开 customer lookup。M5.4 源码/测试 a0d2faa、配对证据 45123de 已逐批推送；源码同一自动 t1 completed/success，正文案例计数未单独核实。交付文档随第三批提交，推送后停止等待 review，不进入 M5.5。134 案例/522 AT 不变，完整业务 AT 执行数仍 0，M0.2 与 M5 整体/M6/M7 保留。791/791、退货 65/65 是已推送 M5.3 历史工作区基线。
 
 ## Python
+
+上游自查先显式读取固定提交的已知文件；检索 .venv 内证据须限定路径并使用 rg --hidden --no-ignore，检查路径和忽略规则后才能解释零命中。零命中本身不证明行为或模块不存在。顺序/置换测试必须构造实际不同的输入形态，并用独立预期结果确认差异，不能只与被测 helper 自比。
 
 ```text
 agent/
@@ -11,15 +13,16 @@ agent/
   agent.json                # 协议、语言、场景
   support_agent/            # 可安装的本地 Python package
     application.py          # 决定下一轮回答或工具调用
-    turns.py                # 轮次入口，复用身份、读取及地址/支付/取消/商品工作流
-    read_session.py         # 身份范围、读取批次及地址/支付/取消/商品调度
+    turns.py                # 轮次入口，复用身份、读取及地址/支付/取消/商品/退货/换货工作流
+    read_session.py         # 身份范围、读取批次及地址/支付/取消/商品/退货/换货调度
     address_session.py      # M4.1 地址收集、复述和提交
     payment_session.py      # M4.2 单一已有支付方式的整单切换
     cancellation_session.py # M4.3 取消原因、逐 charge 复述与确认提交
     returns_session.py      # M5.3 完整退货/起点来源/预计额/确认申请
-    items_session.py        # M5.2 完整清单、条件来源、最后询问和一次提交
+    items_session.py        # M5.2/M5.4 共用完整替换清单、条件来源和一次提交
+    exchange_session.py     # M5.4 delivered 换货薄入口、有符号差价及申请核实
     handoff_session.py      # M4.4 明示请求、证据摘要、可信转接与终态
-    workflow_boundary.py    # 五类内部批次、诊断、预算及失败恢复
+    workflow_boundary.py    # 六类内部批次、诊断、预算及失败恢复
     workflow_registry.py    # 有序业务 kind 清单；handoff 保持独立生命周期
     workflow_limits.py       # 内部工具 UTF-8 参数/结果预算，不裁剪证据
     protocol.py             # 内部消息、动作和候选校验
@@ -53,6 +56,8 @@ agent/
     adapters/payment_tools.py   # 内部支付工具，复用同一 API/认领表
     adapters/cancellation_tools.py # 内部取消工具，复用原确认/journal
     adapters/items_tools.py  # 内部商品 WRITE，完整 snapshot 与共享认领
+    adapters/returns_tools.py # 内部退货申请 WRITE，完整来源与共享认领
+    adapters/exchange_tools.py # 内部换货申请 WRITE，模型不可派发
     adapters/handoff_tools.py # 内部转接 WRITE，可信 API 会话 ID
     adapters/model_gateway.py   # JSON/SDK 转换与模型候选门控
     adapters/write_runtime.py   # 显式串行会话认领表与七个契约端点
@@ -69,6 +74,7 @@ tests/test_m4_address_review.py # prepare 恢复、迟到结果、混合结果�
 tests/test_m4_payments.py  # M4.2 真实轮次、选择/拒付/读回、跨流程及恢复
 tests/test_m4_cancellations.py # M4.3 原因/逐笔原路退款、确认/Unknown/迁移
 tests/test_m4_handoffs.py  # M4.4 接纳/Unknown/终态/摘要/共享表/迁移
+tests/test_m5_exchanges.py # M5.4 完整替换对、差价、确认、单次申请及恢复
 tests/test_m5_returns.py    # M5.3 默认退货/起点礼品卡/Unknown/恢复
 tests/test_m5_items.py      # M5.2 完整列表/最后询问/确认/刷新/写后核实
 tests/test_m5_candidates.py # M5.1 纯筛选与真实请求/读取事实验收
