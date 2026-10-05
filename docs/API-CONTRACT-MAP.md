@@ -81,7 +81,7 @@ S06 当前 CR8 取消流程图与 S11 email_06 支持逐笔原路及取消/退�
 
 ## 2026-10-05 M5.3 退货默认流程
 
-当前工具库存八 READ＋六个内部 WRITE（增加 returns_workflow）；模型候选/绑定/网关保持八 READ。真实 ClientAPIToolKitBase/ToolType.WRITE/单 string session_json 库存与完整默认轮次由 SDK＋fake transport 验收；工具形状不是签名或可信来源证明。
+M5.3 交付时工具库存八 READ＋六个内部 WRITE（增加 returns_workflow）；M5.4 起为八 READ＋七个内部 WRITE，模型候选/绑定/网关保持八 READ。真实 ClientAPIToolKitBase/ToolType.WRITE/单 string session_json 库存与完整默认轮次由 SDK＋fake transport 验收；工具形状不是签名或可信来源证明。
 
 唯一退货传输为 `POST /v1/orders/{order_id}/returns`，请求严格 item_ids/refund_payment_method_id，无 amount/quantity/来源/退款端点。先验证身份及档案自有引用再 GET，当前 delivered 及一次申请状态门复核；封闭 OrderReturn 申请回执和之后自有强读回核对完整次数/去向。后端可排序 item_ids，按多重集保留次数，不去重。write_verified 只证明 return requested 的申请，不宣称已执行退款或到账。
 
@@ -96,3 +96,11 @@ S06 当前 CR8 取消流程图与 S11 email_06 支持逐笔原路及取消/退�
 仅 POST `/v1/orders/{order_id}/exchanges`，body 严格 replacements/payment_method_id，不发报价、条件、来源或 quantity。200 OrderExchange 封闭回执及自有强读回核实 exchange requested、每一对原→新对应关系/次数、选定方式和有符号差价，只证明申请；不证明真实款项执行、到账或替换件发货。替换对整体重排可以接纳，不得分别排序旧/新 ID 后改配对。固定上游分别排序再 zip 的可观察偏差保留具体未核实结果；不冒充正确申请、不自动补偿或重发。
 
 换货申请不逐步修改原商品列表，因此同单原规格互换按原单位核实；pending 修改仍保留顺序匹配限制。schema 12 新增 exchange_pending 及来源/控制记录，旧版本拒绝夹带新证据；完整来源前缀恢复、Unknown、认领和预算沿用共用边界。详见 [M5.4 交付](M5.4-DELIVERY.md)。
+
+## M5.5 交互矩阵补充
+
+取消端点只支持整单取消，不支持选择商品/部分数量取消。有限中英文范围解析在初始请求、活动草稿修正及已有 execute 快照再次检查；明确部分意图返回 cancellation_whole_order_required，不扩大成整单提案、私有刷新或写入。客户另行明确整单取消后仍须完整复述和后一次真实确认。原因 JSON/自由原因文本不作商品范围，only order 不等于 only item；assistant/tool 内容不能产生范围。
+
+M5.5 评审修订：明确 keep/retain/leave、except/exclude 及保留/除外等有限范围收窄表达同样需要澄清，不忽略后生成整单提案。cancel item 与 cancel items 都有意判为商品范围，不因单复数改变整单端点语义；原因数据中的相同词不派生范围。已接纳 Unknown journal 允许调查性读取，但读取不证明本次写成功、不清除 Unknown 或放行重发；丢失执行结果的 Unknown reservation 保持全会话阻断。
+
+商品修改、退货、换货的交互使用同一提案/身份/认领机制；重复 ID 保留原次数，超次数或不可区分的原实例阻断完整清单。零差价仍要求已有单一方式；正差价礼品卡覆盖整份清单，退货礼品卡是退款去向、不要求扣款余额。当前十四端点库存及封闭 schema 基线与八 READ/七内部 WRITE SDK 发现核验保持；矩阵为有限合成记录的默认离线测试，不是完整公开案例 AT 或课堂账务效果证明。见 [M5.5 交付](M5.5-DELIVERY.md)。
