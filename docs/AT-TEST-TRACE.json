@@ -1,14 +1,14 @@
 {
   "schema_version": 2,
   "status": "valid",
-  "run_id": "1e8efc2ea9ca41bbb923f0cedbdbfbdd",
+  "run_id": "55b75c83c77143a1acfd92ee5fb783d2",
   "scope": "component association, not complete business-AT execution",
   "case_count": 134,
   "at_count": 522,
   "business_ats_executed": 0,
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
-  "run_source_sha256": "c2a65d9a07d4289e5cf9141c47fdca06bbdaae6541e663dcf96876e8af2a1051",
-  "specification_sha256": "386c3a9519c8c03665df6c0227d1283c3f48aa29c16e2bdadc61bedb5deb829e",
+  "run_source_sha256": "7188bad8e51b746100c78363e838536fae8ae965fe47ef4a9144c5da434de338",
+  "specification_sha256": "78b6e97fd3f4d1df99b9eaceea09bdd84c97489b48c583057566e1d780279d41",
   "specification_files": {
     "materials/CLASSROOM.md": "b02f4a2706a1c2c5c1e04d1b4209119c7f061b8a66240d36e17af1614fe62a5c",
     "materials/client_api/openapi.yaml": "d369f3cf5e3f83333d5c4bf0a11b82fb6417a946e16d34b64be614bcd3cadc16",
@@ -16,8 +16,8 @@
     "materials/framework/client_api_contract.md": "beeb01ae3d51d3267ba361fb97e1a47d6a71c719484c0daf02aecc9e2fdeb44e",
     "materials/framework/scenario_contract.md": "1c255ee02db77afecda391d4a8335542065c5faff6f540fc70574ea8be60669e",
     "materials/framework/deployment_manifest.json": "8637b0d5a78610b8b2b480ce3cedc64ee2f1fc792ce9419a92a2e094777040e0",
-    "docs/POLICY-REGISTER.md": "c42891d269ed47974e322ccd00836946f29dfb9f329629419288127bbc667ac4",
-    "docs/API-CONTRACT-MAP.md": "3bdcf78c201623069d60b9d00853bb5b7d1126c7924d37f04427fbf6e4068a87",
+    "docs/POLICY-REGISTER.md": "a790c0c6c2b6df3efbcb9677ce5acf590c84be8e07ee98556440f236a436bf0f",
+    "docs/API-CONTRACT-MAP.md": "b92248b796527712d0e3e08e12d36b3acd284a29b05e7bd87ceec13978df27cd",
     "docs/PLATFORM-CONTRACT-NOTES.md": "c2de04d798739b4d499525fd06a6fb13dbebcbd183f9b6e30ae9cc3cacf5486c",
     "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "41fa35e2d111e4106bc9e9650bb854b3c9ba7db3aafab59c6ae0487a08e35194"
   },
@@ -118,13 +118,27 @@
         "test_m5_returns.ReturnRecoveryTests.test_shared_business_kinds_restore_and_block_every_peer_without_handoff",
         "test_m5_returns.ReturnRecoveryTests.test_real_schema10_fixture_migrates_without_inventing_return_consent"
       ],
-      "limitation": "Explicit original-price estimate/destination adapter; M5 dialogue not implemented."
+      "limitation": "M5.3 finite default return application, original-price estimate, opening-qualified destination and complete consent on synthetic records; not settlement/arrival or full public-case execution."
     },
     "X": {
       "test_ids": [
-        "test_m3_completion.SessionRuntimeTests.test_modify_and_exchange_use_same_product_requested_options_and_exact_diff"
+        "test_m3_completion.SessionRuntimeTests.test_modify_and_exchange_use_same_product_requested_options_and_exact_diff",
+        "test_m5_exchanges.ExchangeFlowTests.test_complete_recap_next_consent_one_post_and_owned_readback",
+        "test_m5_exchanges.ExchangeFlowTests.test_negative_difference_can_use_other_saved_card_not_return_destination_rules",
+        "test_m5_exchanges.ExchangeFlowTests.test_zero_difference_requires_explicit_existing_method_and_keeps_zero",
+        "test_m5_exchanges.ExchangeFlowTests.test_positive_gift_must_cover_entire_difference_without_split_or_fallback",
+        "test_m5_exchanges.ExchangeFlowTests.test_original_sources_can_swap_variants_without_pending_mutation_ambiguity",
+        "test_m5_exchanges.ExchangeFlowTests.test_addition_and_correction_require_new_whole_list_consent",
+        "test_m5_exchanges.ExchangeFlowTests.test_new_competitor_invalidates_previous_unique_candidate_before_post",
+        "test_m5_exchanges.ExchangeFlowTests.test_after_submission_no_append_method_change_second_exchange_or_return",
+        "test_m5_exchanges.ExchangeFlowTests.test_paired_reordering_is_allowed_without_losing_association",
+        "test_m5_exchanges.ExchangeFlowTests.test_independent_old_new_sort_cannot_reassign_original_to_wrong_variant",
+        "test_m5_exchanges.ExchangeFlowTests.test_shared_store_blocks_stale_snapshot_after_toolkit_reconstruction",
+        "test_m5_exchanges.ExchangeFlowTests.test_lost_execute_result_preserves_unknown_reservation_and_no_retry",
+        "test_m5_exchanges.ExchangeRecoveryTests.test_basis_source_criteria_price_and_selected_variant_tampering_rejected",
+        "test_m5_exchanges.ExchangeRecoveryTests.test_original_schema11_fixture_migrates_without_exchange_consent"
       ],
-      "limitation": "Explicit variant adapter; M5 candidate dialogue not implemented."
+      "limitation": "M5.4 finite default complete delivered exchange, source-derived criteria, signed difference, saved method, one POST and paired receipt/readback on synthetic records; not all language, actual settlement/shipment or full public-case execution."
     },
     "C": {
       "test_ids": [

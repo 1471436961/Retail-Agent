@@ -86,3 +86,13 @@ S06 当前 CR8 取消流程图与 S11 email_06 支持逐笔原路及取消/退�
 唯一退货传输为 `POST /v1/orders/{order_id}/returns`，请求严格 item_ids/refund_payment_method_id，无 amount/quantity/来源/退款端点。先验证身份及档案自有引用再 GET，当前 delivered 及一次申请状态门复核；封闭 OrderReturn 申请回执和之后自有强读回核对完整次数/去向。后端可排序 item_ids，按多重集保留次数，不去重。write_verified 只证明 return requested 的申请，不宣称已执行退款或到账。
 
 默认 producer 已调用 RT-02、RF-02 和原价预计额规则；礼品卡来源在该订单首个实际请求之前最近接纳档案（未验证请求则首个成功验证档案）冻结，逐历史前缀恢复。后加卡不得靠新提案/换订单再返回回填。预计额及精确原价总值仅用于复述/同意绑定，半入到分是项目显示规则，不发到后端、不替代公开差价/余额算法。实现和有限范围见 [M5.3 交付](M5.3-DELIVERY.md)。
+
+## 2026-10-05 M5.4 换货默认流程
+
+默认库存八 READ＋七个内部 WRITE，新增 exchange_workflow；模型仍限八 READ。实际 user 的单一自有 delivered 订单/完整替换对/一个已有结算方式经共享商品解析、筛选与价格函数生成完整提案。正差价礼品卡须覆盖全额，负差价可用其他已有银行卡、PayPal 或礼品卡，不套用退货 RT-02 起点/原路限制；零差价仍须选择已有方式。差价按用户清单顺序取订单原价和目标当前价 float 累加，最后 round(total,2)。
+
+商品修改/换货的 all items/全部商品不提供逐原单位目标规格，返回 bulk_replacement_targets_required 并要求客户列明，不自动展开或提交已列部分。上游独立 sorted 位于 domains/retail/tools.py 278–279，REST catalogs/retail.py 377–400 仅 zip 已存列表。M7 应区分单对、排序保持配对的多对、排序改变配对的多对；后者可能已被后台记录，须 Unknown/人工核查而不是重发。当前无课堂实际返回形态证据。
+
+仅 POST `/v1/orders/{order_id}/exchanges`，body 严格 replacements/payment_method_id，不发报价、条件、来源或 quantity。200 OrderExchange 封闭回执及自有强读回核实 exchange requested、每一对原→新对应关系/次数、选定方式和有符号差价，只证明申请；不证明真实款项执行、到账或替换件发货。替换对整体重排可以接纳，不得分别排序旧/新 ID 后改配对。固定上游分别排序再 zip 的可观察偏差保留具体未核实结果；不冒充正确申请、不自动补偿或重发。
+
+换货申请不逐步修改原商品列表，因此同单原规格互换按原单位核实；pending 修改仍保留顺序匹配限制。schema 12 新增 exchange_pending 及来源/控制记录，旧版本拒绝夹带新证据；完整来源前缀恢复、Unknown、认领和预算沿用共用边界。详见 [M5.4 交付](M5.4-DELIVERY.md)。
