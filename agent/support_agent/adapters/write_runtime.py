@@ -23,6 +23,15 @@ class SessionClaims:
         self.lock = RLock()
         self.sessions = {}
         self.dispatched = set()
+        self.handoffs = {}  # Trusted conversation barrier, including stale business snapshots.
+
+
+def ensure_business_active(client_api, claims):
+    """Reject stale internal workflow snapshots before even refreshing facts."""
+    conversation = getattr(getattr(client_api, "context", None), "conversation_id", None)
+    with claims.lock:
+        if claims.handoffs.get(conversation, {}).get("status") in {"sent", "unknown", "accepted"}:
+            raise ValueError("Conversation transfer blocks business workflow calls")
 
 
 class SessionWriteRuntime(WriteRuntime):
@@ -82,6 +91,8 @@ class SessionWriteRuntime(WriteRuntime):
         if op["status"] != "sent" or op["persistence_unresolved"]:
             raise WriteClaimConflict("Only a consistent original sent event can be claimed")
         with self.claims.lock:
+            if self.claims.handoffs.get(self.conversation, {}).get("status") in {"sent", "unknown", "accepted"}:
+                raise WriteClaimConflict("Conversation transfer blocks business claims")
             session = self.claims.sessions.setdefault(self.conversation, {})
             visible = {claim_identity(state, o["call_id"]) for o in state["operations"] if o["mutates"]}
             if identity in session or not set(session) <= visible:
@@ -116,6 +127,8 @@ class SessionWriteRuntime(WriteRuntime):
 
     def send(self, spec):
         with self.claims.lock:
+            if self.claims.handoffs.get(self.conversation, {}).get("status") in {"sent", "unknown", "accepted"}:
+                raise WriteClaimConflict("Conversation transfer blocks business sending")
             identity = self._claimed_id
             op = self.claims.sessions.get(self.conversation, {}).get(identity)
             dispatch = (self.conversation, identity)

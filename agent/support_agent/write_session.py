@@ -396,7 +396,7 @@ def reconcile_operation(state, call_id, runtime=None):
                        decision="deny" if operation["status"] == "failed" else "needs_information", status=operation["status"]), state
     if not isinstance(runtime, WriteRuntime):
         return _result("write_runtime_required", "Authenticated readonly reconciliation requires the trusted runtime."), state
-    if state["pending_calls"] or state["handoff"]["status"] != "not_requested":
+    if state["pending_calls"] or state["handoff"]["status"] not in {"not_requested", "rejected"}:
         return _result("reconciliation_blocked", "Pending reads or handoff block reconciliation."), state
     gate = _assess(runtime, "assess_submission", clone_state(state), operation["version"], json.loads(json.dumps(operation["spec"])))
     if gate:

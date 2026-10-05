@@ -21,6 +21,8 @@ def project_messages(state, *, max_characters=MAX_MODEL_CONTEXT_CHARACTERS):
     from support_agent.proposals import _current_records
     from support_agent.state import clone_state
     state = clone_state(state)
+    if state["handoff"]["status"] not in {"not_requested", "rejected"}:
+        raise InvalidAction("Human transfer blocks model delegation")
     if any(state[k + "_pending"] is not None for k in ("address", "payment", "cancellation")):
         raise InvalidAction("An internal workflow result is unresolved")
     if type(max_characters) is not int or max_characters < 1024:

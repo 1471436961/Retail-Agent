@@ -27,6 +27,8 @@ class AddressTools(ClientAPIToolKitBase):
         records, sends each at most once and independently reads back results.
         No payment, cancellation, item, return, transfer or arbitrary HTTP path.
         """
+        from support_agent.adapters.write_runtime import ensure_business_active
+        ensure_business_active(self.client_api, self._workflow_claims)
         check_workflow_argument(session_json)  # Before parsing or any API call.
         state = clone_state(json.loads(session_json))
         return run_address_workflow(state, self.client_api, self._workflow_claims)

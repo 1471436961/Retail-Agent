@@ -195,7 +195,7 @@ class ProposalPresentationTests(unittest.TestCase):
         _, pending = advance(TurnInput(kind="user", content="Read order #TEST1"), state)
         with self.assertRaises(InvalidProposal):
             present_proposal(pending, specification())
-        state["handoff"]["status"] = "accepted"
+        _, state = advance(TurnInput(kind="user", content="转人工"), state)
         with self.assertRaises(InvalidProposal):
             present_proposal(state, specification())
 
@@ -519,7 +519,7 @@ class ProposalReviewRegressionTests(unittest.TestCase):
         record_decision(confirmed, Decision(calls=(read,)))
         self.assertEqual(check_confirmation(confirmed, 1, spec)["code"], "pending_reads")
         confirmed["handoff"]["status"] = "accepted"
-        self.assertEqual(check_confirmation(confirmed, 1, spec)["code"], "handoff_blocks_consent")
+        self.assertEqual(check_confirmation(confirmed, 1, spec)["code"], "invalid_state")  # A self-reported flag is no longer a legal handoff.
 
     def test_structured_ack_retains_evidence_independently_of_wording(self):
         state, _ = verified_state()
@@ -661,6 +661,7 @@ class ProposalRecoveryTests(unittest.TestCase):
         self.assertIn("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0", result.stdout)
         self.assertIn("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake", result.stdout)
         self.assertIn("M4_ADDRESS_SDK_CHECK_PASSED; native ClientAPI local fake", result.stdout)
+        self.assertIn("M4_HANDOFF_REPLAY_CHECK_PASSED; isolated fake replay sends once; live claims prevent resend; GENERIC executes; network attempts 0", result.stdout)
 
 
 if __name__ == "__main__":

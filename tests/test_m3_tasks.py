@@ -292,7 +292,7 @@ class TaskSessionTests(unittest.TestCase):
         self.assertEqual(inspect_task_plan(state)["code"],"pending_reads")
         _,state=advance(TurnInput(kind="tools",outcomes=()),state)
         state["handoff"]["status"]="accepted"
-        self.assertEqual(inspect_task_plan(state)["code"],"handoff_blocks_tasks")
+        self.assertEqual(inspect_task_plan(state)["code"],"invalid_state")  # Forged acceptance has no transfer journal.
 
     def test_plan_replacement_does_not_complete_or_rewrite_old_tasks_or_consent(self):
         state,api,_=prepared("modify_items","shipping_address");before=deepcopy(state)

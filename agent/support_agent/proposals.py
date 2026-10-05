@@ -158,7 +158,7 @@ def _scope_facts(history, spec, *, state_only=False):
     target = spec["target"]
     if (not prefix["identity"]["verified"] or not prefix["identity_evidence"]
             or prefix["identity"]["customer_id"] != target["customer_id"] or prefix["pending_calls"]
-            or prefix["handoff"]["status"] != "not_requested"):
+            or prefix["handoff"]["status"] not in {"not_requested", "rejected"}):
         raise InvalidProposal("Proposal requires verified, idle session evidence")
     if spec["action"] == "default_shipping_address":
         return {"customer": prefix["customer_record"], "order": None, "catalog": []}
@@ -426,7 +426,7 @@ def present_proposal(state, spec):
     state = clone_state(state)
     try:
         spec = normalize_spec(spec)
-        if state["pending_calls"] or state["handoff"]["status"] != "not_requested":
+        if state["pending_calls"] or state["handoff"]["status"] not in {"not_requested", "rejected"}:
             raise InvalidProposal("Cannot present during pending calls or handoff")
         facts = _scope_facts(state["history"], spec)
         request_index = next(i for i in range(len(state["history"]) - 1, -1, -1) if state["history"][i]["role"] == "user")
@@ -485,7 +485,7 @@ def check_confirmation(state, version, spec):
             return outcome(need, code, message)
     if proposal["status"] != "confirmed" or proposal["confirmation"] is None:
         return outcome(need, "confirmation_required", "The current complete proposal lacks valid user confirmation.")
-    if state["handoff"]["status"] != "not_requested":
+    if state["handoff"]["status"] not in {"not_requested", "rejected"}:
         return outcome(deny, "handoff_blocks_consent", "The session is blocked by a handoff.")
     if state["pending_calls"]:
         return outcome(need, "pending_reads", "Read results must be resolved before checking consent.")
@@ -610,7 +610,7 @@ def present_proposals(state, specifications, *, presentation_note=""):
         if not isinstance(presentation_note, str) or len(presentation_note) > 4096:
             raise InvalidProposal("Invalid presentation note")
         specs = _normalize_set(specifications)
-        if state["pending_calls"] or state["handoff"]["status"] != "not_requested":
+        if state["pending_calls"] or state["handoff"]["status"] not in {"not_requested", "rejected"}:
             raise InvalidProposal("Cannot present during pending reads or handoff")
         facts = [_scope_facts(state["history"], spec) for spec in specs]
         current = _current_records(state)

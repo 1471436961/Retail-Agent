@@ -22,6 +22,8 @@ def reply(state, text):
 
 def bind_arguments(name: str, arguments: dict, state: dict) -> dict:
     """Fill only trusted session fields; conflicting model scope is rejected."""
+    if state["handoff"]["status"] not in {"not_requested", "rejected"}:
+        raise InvalidAction("Human transfer blocks business reads")
     if name not in READ_TOOL_FIELDS or not isinstance(arguments, dict) or set(arguments) - READ_TOOL_FIELDS[name]:
         raise InvalidAction("Unsupported read action or fields")
     if any(not isinstance(v, str) for v in arguments.values()):
@@ -206,7 +208,18 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     from support_agent.state import clone_state, finish_pending, result_history
     state = clone_state(state)
     state["turn"] += 1
+    from support_agent.handoff_session import accept_handoff_result, route_handoff, assessment as handoff_assessment, reply as handoff_reply
+    if state["handoff"]["status"] in {"accepted", "unknown"}:
+        if turn.kind == "user":
+            state["history"].append({"role": "user", "content": turn.content})
+            from support_agent.proposals import observe_user
+            observe_user(state, len(state["history"]) - 1)
+            state["user_request"] = turn.content
+            state["tool_calls_since_user"] = state["model_calls_since_user"] = 0
+        return handoff_reply(state, handoff_assessment(state["handoff"]["status"]))
     if turn.kind == "tools":
+        if state["handoff"]["status"] == "dispatched":
+            return accept_handoff_result(state, turn.outcomes)
         from support_agent.workflow_boundary import WorkflowBoundary
         from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
         # Ignore any abandoned preparation before choosing the active kind;
@@ -257,12 +270,23 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if state["address_pending"] is not None and state["address_pending"]["mode"] == "prepare":
         from support_agent.address_session import _event
         _event(state, "address_abandoned", {"call_id": state["address_pending"]["call_id"]})
+    from support_agent.handoff_session import intent as handoff_intent
+    if handoff_intent(text) == "request":
+        from support_agent.workflow_boundary import WorkflowBoundary
+        from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
+        for kind in ("address", "payment", "cancellation"):
+            pending = state[kind + "_pending"]
+            if pending is not None and pending["mode"] == "execute" and pending["status"] == "pending":
+                WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).event(state, kind + "_unknown", {"call_id": pending["call_id"]})
     state["history"].append({"role": "user", "content": text})
     from support_agent.proposals import observe_user
     proposal_reply = observe_user(state, len(state["history"]) - 1)
     state["user_request"] = text
     state["tool_calls_since_user"] = 0
     state["model_calls_since_user"] = 0
+    handoff = route_handoff(state, text)
+    if handoff is not None:
+        return handoff
     claim = find_customer_id(text)
     proof = proof_from_text(text)
     if state["identity"]["verified"]:

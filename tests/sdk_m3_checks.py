@@ -337,6 +337,106 @@ assert "accepted and independently verified" in result.content and "do not prove
 assert [c for c in cancel_backend.calls if c[1].endswith("/cancellations")] == [("POST","/v1/orders/%23TEST1/cancellations",{"reason":"no longer needed"})]
 assert cancel_agent.get_init_state(cancel_state["history"])["operations"] == cancel_state["operations"]
 assert set(cancel_tools.get_tools()) == set(READ_TOOL_FIELDS) | WORKFLOW_TOOL_NAMES
+from test_m4_handoffs import HandoffBackend
+handoff_backend = HandoffBackend()
+def handoff_transport(payload):
+    response = handoff_backend.request(payload["method"], payload["path"], body=payload.get("body"))
+    return {"status_code":response.status_code,"body":response.body,"headers":{},"elapsed_seconds":0.0}
+handoff_api = ClientAPI(handoff_transport, context=ClientAPIContext(conversation_id="offline-handoff-sdk"))
+handoff_tools, handoff_agent = Tools(handoff_api), CustomerAgent()
+handoff_state = handoff_agent.get_init_state([])
+outgoing, handoff_state = handoff_agent.generate_next_message(UserMessage(role="user",content="转人工"), handoff_state)
+handoff_dispatch_message = deepcopy(outgoing)
+call = outgoing.tool_calls[0]
+assert call.name == "handoff_workflow"
+payload = handoff_tools.handoff_workflow(**call.arguments)
+outgoing, handoff_state = handoff_agent.generate_next_message(MultiToolMessage(role="tool",tool_messages=[ToolMessage(role="tool",id=call.id,content=json.dumps(payload),error=False)]), handoff_state)
+from support_agent.handoff_session import TRANSFER_NOTICE
+assert outgoing.content == TRANSFER_NOTICE and not outgoing.tool_calls
+assert handoff_backend.calls[0][0:2] == ("POST", "/v1/conversations/offline-handoff-sdk/transfers")
+assert set(handoff_backend.calls[0][2]) == {"summary"}
+before_handoff_calls = list(handoff_backend.calls)
+outgoing, handoff_state = handoff_agent.generate_next_message(UserMessage(role="user",content="order #TEST1"), handoff_state)
+assert outgoing.content == TRANSFER_NOTICE and not outgoing.tool_calls and handoff_backend.calls == before_handoff_calls
+assert handoff_agent.get_init_state(handoff_state["history"])["handoff"] == handoff_state["handoff"]
+assert set(handoff_tools.get_tools()) == set(READ_TOOL_FIELDS) | WORKFLOW_TOOL_NAMES
+
+# SDK evaluation replay is distinct from canonical history recovery. Exercise
+# the installed Environment implementation, not the decorator's stale replay
+# comment: set_state executes even non-mutating tools, and mutates_state
+# controls response validation. All transports below are isolated local fakes.
+from tau2.environment.environment import Environment
+from tau2.environment.toolkit import ToolKitBase, ToolType, is_tool
+assert handoff_tools.tool_type("handoff_workflow") == ToolType.WRITE
+assert handoff_tools.tool_mutates_state("handoff_workflow") is True
+from loguru import logger
+logger.disable("tau2.environment.environment")  # Avoid dumping synthetic canonical state in subprocess logs.
+def isolated_replay_environment():
+    backend = HandoffBackend()
+    def transport(request):
+        response = backend.request(request["method"], request["path"], body=request.get("body"))
+        return {"status_code":response.status_code, "body":response.body, "headers":{}, "elapsed_seconds":0.0}
+    api = ClientAPI(transport, context=ClientAPIContext(conversation_id="offline-handoff-sdk"))
+    return Environment("retail_plus", "offline replay", tools=Tools(api, claims=SessionClaims())), backend
+
+# Record via the SDK itself: base Environment.to_json_str converts nested
+# numeric/bool values to strings. Do not mix that format with the raw JSON
+# result used by the application round trip above, or weaken strict checking.
+recording_environment, recording_backend = isolated_replay_environment()
+recorded_response = recording_environment.get_response(call)
+assert not recorded_response.error
+assert json.loads(recorded_response.content)["state"]["schema_version"] == "9"
+assert recording_backend.calls == before_handoff_calls
+handoff_trace = [UserMessage(role="user", content="转人工"), handoff_dispatch_message, recorded_response]
+replay_environment, replay_backend = isolated_replay_environment()
+replay_environment.set_state(None, None, handoff_trace)
+assert replay_backend.calls == before_handoff_calls  # One POST to the separate fake backend.
+assert handoff_backend.calls == before_handoff_calls  # No second POST to the original fake backend.
+
+# Passing a stale recorded dispatch to the original live claim store is not
+# a new authorization. The repeated tool returns Unknown; strict SDK replay
+# detects the mismatch with the original accepted result, without resending.
+try:
+    Environment("retail_plus", "offline duplicate probe", tools=handoff_tools).set_state(None, None, handoff_trace)
+    raise AssertionError("Strict replay on an already claimed live store must reject the changed outcome")
+except ValueError as error:
+    assert "Tool call:" in str(error) and "Expected:" in str(error)
+assert handoff_backend.calls == before_handoff_calls
+
+class ReplayMetadataProbe(ToolKitBase):
+    def __init__(self):
+        super().__init__(db=None)
+        self.executed = []
+
+    @is_tool(ToolType.GENERIC, mutates_state=False)
+    def generic_probe(self) -> dict:
+        """Observe SDK replay without a backend or any side effects."""
+        self.executed.append("generic")
+        return {"observed":"actual"}
+
+    @is_tool(ToolType.WRITE, mutates_state=True)
+    def write_probe(self) -> dict:
+        """Observe SDK response validation without a backend."""
+        self.executed.append("write")
+        return {"observed":"actual"}
+
+from tau2.data_model.message import ToolCall
+probe_tools = ReplayMetadataProbe()
+probe_environment = Environment("offline-metadata-probe", "no backend", tools=probe_tools)
+def probe_trace(name):
+    return [AssistantMessage(role="assistant", tool_calls=[ToolCall(id=name, name=name, arguments={})]),
+            ToolMessage(role="tool", id=name, content=json.dumps({"observed":"different"}), error=False)]
+probe_environment.set_state(None, None, probe_trace("generic_probe"))
+assert probe_tools.executed == ["generic"]  # GENERIC/False still executed; mismatch is not validated.
+try:
+    probe_environment.set_state(None, None, probe_trace("write_probe"))
+    raise AssertionError("Mutating replay must validate the recorded response")
+except ValueError as error:
+    assert "Tool call:" in str(error) and "Expected:" in str(error)
+assert probe_tools.executed == ["generic", "write"]
+assert not network_attempts
+print("M4_HANDOFF_REPLAY_CHECK_PASSED; isolated fake replay sends once; live claims prevent resend; GENERIC executes; network attempts 0")
+print("M4_HANDOFF_SDK_CHECK_PASSED; trusted context/201 acceptance/terminal no calls/recovery; network attempts 0")
 assert not network_attempts
 print("M4_CANCELLATION_SDK_CHECK_PASSED; native ClientAPI local fake; confirmed cancellation/per-charge refund/readback; network attempts 0")
 print("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0")

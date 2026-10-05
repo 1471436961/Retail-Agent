@@ -119,7 +119,7 @@ def run_cancellation_workflow(state, api, claims):
     state=clone_state(state); original=deepcopy(state); pending=state["cancellation_pending"]; boundary=_boundary()
     if (pending is None or pending["status"] != "pending" or len(state["history"]) != pending["index"]+1
             or not state["identity"]["verified"] or not state["identity_evidence"] or state["pending_calls"]
-            or any(state[k+"_pending"] is not None for k in ("address","payment")) or state["handoff"]["status"] != "not_requested"):
+            or any(state[k+"_pending"] is not None for k in ("address","payment")) or state["handoff"]["status"] not in {"not_requested", "rejected"}):
         raise ValueError("An original idle verified cancellation dispatch is required")
     if pending["mode"] == "prepare":
         boundary.event(state,"cancellation_result",{"call_id":pending["call_id"]})

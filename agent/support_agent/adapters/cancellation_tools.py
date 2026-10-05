@@ -15,5 +15,7 @@ class CancellationTools(ClientAPIToolKitBase):
         Actual user sources, full recap/confirmation, shared claims and original
         refund rows are required. No arbitrary HTTP path or refund destination.
         """
+        from support_agent.adapters.write_runtime import ensure_business_active
+        ensure_business_active(self.client_api, self._workflow_claims)
         check_workflow_argument(session_json)
         return run_cancellation_workflow(clone_state(json.loads(session_json)), self.client_api, self._workflow_claims)

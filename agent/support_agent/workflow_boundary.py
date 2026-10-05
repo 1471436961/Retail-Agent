@@ -105,7 +105,7 @@ class WorkflowBoundary:
         from support_agent.state import clone_state
         state = clone_state(state)
         original = deepcopy(state)
-        if any(state.get(k + "_pending") is not None for k in ("address", "payment", "cancellation")) or state["pending_calls"] or state["handoff"]["status"] != "not_requested":
+        if any(state.get(k + "_pending") is not None for k in ("address", "payment", "cancellation")) or state["pending_calls"] or state["handoff"]["status"] not in {"not_requested", "rejected"}:
             raise InvalidAction("An idle internal workflow is required")
         if not state["identity"]["verified"] or not state["identity_evidence"]:
             raise InvalidAction("Internal workflow requires original identity evidence")

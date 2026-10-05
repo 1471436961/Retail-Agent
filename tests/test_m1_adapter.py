@@ -54,7 +54,9 @@ def platform_modules(context):
     message.MultiToolMessage = FakeMultiToolMessage
     toolkit = modules["tau2.environment.toolkit"]
     toolkit.ToolType = SimpleNamespace(READ="read", WRITE="write")
-    toolkit.is_tool = lambda kind: lambda fn: fn
+    # Keep the SDK's explicit metadata parameter in this lightweight stub;
+    # actual metadata/discovery is verified by the real SDK subprocess.
+    toolkit.is_tool = lambda kind, mutates_state=None: lambda fn: fn
     modules["tau2.hyper.client_api"].ClientAPIToolKitBase = FakeToolkitBase
     modules["tau2.hyper.agent_context"].get_agent_context = lambda: context
     return modules

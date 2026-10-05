@@ -1,0 +1,791 @@
+{
+  "source_commit": "99150196de727c0a0c9c327979125c98ecc4004f",
+  "generator": "original schema-8 initial/advance functions; synthetic verified cancellation",
+  "state": {
+    "schema_version": 8,
+    "turn": 6,
+    "pending_call_id": null,
+    "pending_calls": {},
+    "customer_id": "customer_a",
+    "identity": {
+      "verified": true,
+      "customer_id": "customer_a"
+    },
+    "history": [
+      {
+        "role": "user",
+        "content": "a@example.test"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "lookup-1"
+        ],
+        "tool_calls": [
+          {
+            "id": "lookup-1",
+            "name": "lookup_customer",
+            "arguments": {
+              "customer_id": "",
+              "email": "a@example.test"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "lookup-1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "The customer email is a@example.test."
+      },
+      {
+        "role": "user",
+        "content": "Cancel order #TEST1 because no longer needed"
+      },
+      {
+        "role": "assistant",
+        "content": "Cancellation workflow: {\"call_id\": \"cancellation:5\", \"mode\": \"prepare\"}",
+        "cancellation_dispatch": {
+          "call_id": "cancellation:5",
+          "mode": "prepare"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Cancellation workflow: {\"call_id\": \"cancellation:5\"}",
+        "cancellation_result": {
+          "call_id": "cancellation:5"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "address-intake:1"
+        ],
+        "tool_calls": [
+          {
+            "id": "address-intake:1",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "address-intake:1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "address-intake:2"
+        ],
+        "tool_calls": [
+          {
+            "id": "address-intake:2",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "address-intake:2",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [{\"transaction_type\": \"payment\", \"payment_method_id\": \"card_a\", \"amount\": 12.5}], \"shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Requested operations and dependencies (this is not a confirmation recap):\nTask 1: cancel for customer customer_a, order #TEST1\nEach selected operation still requires a complete proposal, user confirmation and pre-write verification. No operation has been executed.",
+        "task_plan": {
+          "requests": [
+            {
+              "action": "cancel",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              }
+            }
+          ],
+          "request_index": 4
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Current order status: pending.\nOriginal charge total (sum of recorded amounts, not a net balance): 12.50.\nEach charge will be refunded separately in full to its own original method; no fees, withheld portion, new card or separate refund API.\nCharge 1: 12.50 to Mastercard ending 0001 (card_a); channel policy: 3-6 business days.\nCancellation should record cancelled and the per-charge refunds. Channel timing is policy, not proof of settlement or arrival.\n\nOperation 1:\nCancel this entire order.\nCustomer: customer_a\nOrder: #TEST1\nReason: no longer needed\nOriginal charge refund basis: 12.5 to card_a\nNo aggregate refund amount or arrival is verified.\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+        "proposal_set": [
+          {
+            "version": 1,
+            "spec": {
+              "action": "cancel",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              },
+              "parameters": {
+                "reason": "no longer needed"
+              },
+              "amount": {
+                "kind": "per_charge_refunds",
+                "rows": [
+                  {
+                    "transaction_type": "payment",
+                    "payment_method_id": "card_a",
+                    "amount": 12.5
+                  }
+                ]
+              }
+            },
+            "request_index": 4,
+            "facts": {
+              "customer": {
+                "customer_id": "customer_a",
+                "email": "a@example.test",
+                "name": {
+                  "first_name": "Ada",
+                  "last_name": "Example"
+                },
+                "default_shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "payment_methods": [
+                  {
+                    "id": "card_a",
+                    "source": "credit_card",
+                    "brand": "Mastercard",
+                    "last_four": "0001"
+                  },
+                  {
+                    "id": "card_v",
+                    "source": "credit_card",
+                    "brand": "Visa",
+                    "last_four": "0002"
+                  },
+                  {
+                    "id": "paypal_a",
+                    "source": "paypal"
+                  },
+                  {
+                    "id": "gift_a",
+                    "source": "gift_card",
+                    "balance": 40.0
+                  }
+                ],
+                "order_ids": [
+                  "#TEST1",
+                  "#TEST3"
+                ]
+              },
+              "order": {
+                "order_id": "#TEST1",
+                "customer_id": "customer_a",
+                "status": "pending",
+                "items": [
+                  {
+                    "item_id": "item_blue",
+                    "product_id": "product_mug",
+                    "price": 12.5,
+                    "name": "Synthetic mug",
+                    "options": {
+                      "color": "blue"
+                    }
+                  }
+                ],
+                "payments": [
+                  {
+                    "transaction_type": "payment",
+                    "payment_method_id": "card_a",
+                    "amount": 12.5
+                  }
+                ],
+                "shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "fulfillments": []
+              },
+              "catalog": []
+            },
+            "fingerprint": "317046b720122418a61681da7ac5af5a157aa4196c0d1de97cd5c7dd29df4494",
+            "reuse_version": null
+          }
+        ],
+        "presentation_note": "Current order status: pending.\nOriginal charge total (sum of recorded amounts, not a net balance): 12.50.\nEach charge will be refunded separately in full to its own original method; no fees, withheld portion, new card or separate refund API.\nCharge 1: 12.50 to Mastercard ending 0001 (card_a); channel policy: 3-6 business days.\nCancellation should record cancelled and the per-charge refunds. Channel timing is policy, not proof of settlement or arrival.",
+        "cancellation_assessment": {
+          "decision": "needs_information",
+          "code": "cancellation_confirmation_required",
+          "message": "Current order status: pending.\nOriginal charge total (sum of recorded amounts, not a net balance): 12.50.\nEach charge will be refunded separately in full to its own original method; no fees, withheld portion, new card or separate refund API.\nCharge 1: 12.50 to Mastercard ending 0001 (card_a); channel policy: 3-6 business days.\nCancellation should record cancelled and the per-charge refunds. Channel timing is policy, not proof of settlement or arrival.\n\nOperation 1:\nCancel this entire order.\nCustomer: customer_a\nOrder: #TEST1\nReason: no longer needed\nOriginal charge refund basis: 12.5 to card_a\nNo aggregate refund amount or arrival is verified.\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+          "rules": [
+            "CA-01",
+            "CF-01"
+          ],
+          "details": {
+            "records": [
+              {
+                "action": "cancel",
+                "target": {
+                  "customer_id": "customer_a",
+                  "order_id": "#TEST1"
+                },
+                "decision": "needs_information",
+                "code": "cancellation_recapped"
+              }
+            ],
+            "write_authorized": false
+          }
+        }
+      },
+      {
+        "role": "user",
+        "content": "yes"
+      },
+      {
+        "role": "assistant",
+        "content": "Cancellation workflow: {\"call_id\": \"cancellation:14\", \"mode\": \"execute\"}",
+        "cancellation_dispatch": {
+          "call_id": "cancellation:14",
+          "mode": "execute"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "refresh:3"
+        ],
+        "tool_calls": [
+          {
+            "id": "refresh:3",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "refresh:3",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "refresh:4"
+        ],
+        "tool_calls": [
+          {
+            "id": "refresh:4",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "refresh:4",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"pending\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [{\"transaction_type\": \"payment\", \"payment_method_id\": \"card_a\", \"amount\": 12.5}], \"shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Operation journal: {\"call_id\": \"write:19:1\", \"kind\": \"sent\", \"read_ids\": [\"refresh:3\", \"refresh:4\"], \"spec\": {\"action\": \"cancel\", \"amount\": {\"kind\": \"per_charge_refunds\", \"rows\": [{\"amount\": 12.5, \"payment_method_id\": \"card_a\", \"transaction_type\": \"payment\"}]}, \"parameters\": {\"reason\": \"no longer needed\"}, \"target\": {\"customer_id\": \"customer_a\", \"order_id\": \"#TEST1\"}}, \"version\": 1}",
+        "write_event": {
+          "kind": "sent",
+          "call_id": "write:19:1",
+          "version": 1,
+          "spec": {
+            "action": "cancel",
+            "target": {
+              "customer_id": "customer_a",
+              "order_id": "#TEST1"
+            },
+            "parameters": {
+              "reason": "no longer needed"
+            },
+            "amount": {
+              "kind": "per_charge_refunds",
+              "rows": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ]
+            }
+          },
+          "read_ids": [
+            "refresh:3",
+            "refresh:4"
+          ]
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Operation journal: {\"call_id\": \"write:19:1\", \"code\": \"write_receipt_accepted\", \"kind\": \"result\", \"receipt\": {\"cancellation\": {\"reason\": \"no longer needed\"}, \"order_id\": \"#TEST1\", \"payments\": [{\"amount\": 12.5, \"payment_method_id\": \"card_a\", \"transaction_type\": \"payment\"}, {\"amount\": 12.5, \"payment_method_id\": \"card_a\", \"transaction_type\": \"refund\"}], \"status\": \"cancelled\"}, \"status\": \"acknowledged\"}",
+        "write_event": {
+          "kind": "result",
+          "call_id": "write:19:1",
+          "status": "acknowledged",
+          "receipt": {
+            "order_id": "#TEST1",
+            "status": "cancelled",
+            "cancellation": {
+              "reason": "no longer needed"
+            },
+            "payments": [
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              },
+              {
+                "transaction_type": "refund",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              }
+            ]
+          },
+          "code": "write_receipt_accepted"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "readback:6"
+        ],
+        "tool_calls": [
+          {
+            "id": "readback:6",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "readback:6",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "readback:7"
+        ],
+        "tool_calls": [
+          {
+            "id": "readback:7",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "readback:7",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"cancelled\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\"}}], \"payments\": [{\"transaction_type\": \"payment\", \"payment_method_id\": \"card_a\", \"amount\": 12.5}, {\"transaction_type\": \"refund\", \"payment_method_id\": \"card_a\", \"amount\": 12.5}], \"shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"fulfillments\": [], \"cancellation\": {\"reason\": \"no longer needed\"}}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Operation journal: {\"call_id\": \"write:19:1\", \"kind\": \"verified\", \"read_ids\": [\"readback:6\", \"readback:7\"]}",
+        "write_event": {
+          "kind": "verified",
+          "call_id": "write:19:1",
+          "read_ids": [
+            "readback:6",
+            "readback:7"
+          ]
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Cancellation workflow: {\"call_id\": \"cancellation:14\"}",
+        "cancellation_result": {
+          "call_id": "cancellation:14"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Order #TEST1: cancellation accepted and independently verified: cancelled, with each full refund record to its original method. Channel policy: card_a: 3-6 business days. These records do not prove settlement or arrival; no separate refund or retry was requested.",
+        "cancellation_assessment": {
+          "decision": "allow",
+          "code": "write_verified",
+          "message": "Order #TEST1: cancellation accepted and independently verified: cancelled, with each full refund record to its original method. Channel policy: card_a: 3-6 business days. These records do not prove settlement or arrival; no separate refund or retry was requested.",
+          "rules": [
+            "CA-01",
+            "CF-01"
+          ],
+          "details": {
+            "records": [
+              {
+                "action": "cancel",
+                "target": {
+                  "customer_id": "customer_a",
+                  "order_id": "#TEST1"
+                },
+                "version": 1,
+                "decision": "allow",
+                "code": "write_verified"
+              }
+            ],
+            "write_authorized": false
+          }
+        }
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task:11:1",
+        "action": "cancel",
+        "target": {
+          "customer_id": "customer_a",
+          "order_id": "#TEST1"
+        },
+        "plan_index": 11,
+        "request_index": 4,
+        "depends_on": [],
+        "conflicts": []
+      }
+    ],
+    "proposals": [
+      {
+        "version": 1,
+        "spec": {
+          "action": "cancel",
+          "target": {
+            "customer_id": "customer_a",
+            "order_id": "#TEST1"
+          },
+          "parameters": {
+            "reason": "no longer needed"
+          },
+          "amount": {
+            "kind": "per_charge_refunds",
+            "rows": [
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              }
+            ]
+          }
+        },
+        "request_index": 4,
+        "facts": {
+          "customer": {
+            "customer_id": "customer_a",
+            "email": "a@example.test",
+            "name": {
+              "first_name": "Ada",
+              "last_name": "Example"
+            },
+            "default_shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "payment_methods": [
+              {
+                "id": "card_a",
+                "source": "credit_card",
+                "brand": "Mastercard",
+                "last_four": "0001"
+              },
+              {
+                "id": "card_v",
+                "source": "credit_card",
+                "brand": "Visa",
+                "last_four": "0002"
+              },
+              {
+                "id": "paypal_a",
+                "source": "paypal"
+              },
+              {
+                "id": "gift_a",
+                "source": "gift_card",
+                "balance": 40.0
+              }
+            ],
+            "order_ids": [
+              "#TEST1",
+              "#TEST3"
+            ]
+          },
+          "order": {
+            "order_id": "#TEST1",
+            "customer_id": "customer_a",
+            "status": "pending",
+            "items": [
+              {
+                "item_id": "item_blue",
+                "product_id": "product_mug",
+                "price": 12.5,
+                "name": "Synthetic mug",
+                "options": {
+                  "color": "blue"
+                }
+              }
+            ],
+            "payments": [
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              }
+            ],
+            "shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "fulfillments": []
+          },
+          "catalog": []
+        },
+        "fingerprint": "317046b720122418a61681da7ac5af5a157aa4196c0d1de97cd5c7dd29df4494",
+        "reuse_version": null,
+        "presentation_index": 12,
+        "set_index": 12,
+        "status": "confirmed",
+        "confirmation": {
+          "history_index": 13,
+          "fingerprint": "317046b720122418a61681da7ac5af5a157aa4196c0d1de97cd5c7dd29df4494"
+        },
+        "response": {
+          "kind": "confirm",
+          "history_index": 13
+        }
+      }
+    ],
+    "operations": [
+      {
+        "call_id": "lookup-1",
+        "name": "lookup_customer",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "address-intake:1",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "address-intake:2",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "refresh:3",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "refresh:4",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "write:19:1",
+        "name": "cancel",
+        "mutates": true,
+        "status": "succeeded",
+        "version": 1,
+        "spec": {
+          "action": "cancel",
+          "target": {
+            "customer_id": "customer_a",
+            "order_id": "#TEST1"
+          },
+          "parameters": {
+            "reason": "no longer needed"
+          },
+          "amount": {
+            "kind": "per_charge_refunds",
+            "rows": [
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              }
+            ]
+          }
+        },
+        "read_ids": [
+          "refresh:3",
+          "refresh:4"
+        ],
+        "receipt": {
+          "order_id": "#TEST1",
+          "status": "cancelled",
+          "cancellation": {
+            "reason": "no longer needed"
+          },
+          "payments": [
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "card_a",
+              "amount": 12.5
+            },
+            {
+              "transaction_type": "refund",
+              "payment_method_id": "card_a",
+              "amount": 12.5
+            }
+          ]
+        },
+        "verified_read_ids": [
+          "readback:6",
+          "readback:7"
+        ],
+        "sent_index": 19,
+        "persistence_unresolved": false,
+        "result_index": 20,
+        "result_code": "write_receipt_accepted"
+      },
+      {
+        "call_id": "readback:6",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "readback:7",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      }
+    ],
+    "handoff": {
+      "status": "not_requested"
+    },
+    "tool_calls_since_user": 4,
+    "model_calls_since_user": 0,
+    "identity_evidence": {
+      "inputs": {
+        "email": "a@example.test",
+        "first_name": "",
+        "last_name": "",
+        "postal_code": ""
+      },
+      "verified_at_turn": 2,
+      "source": "user_input_and_matched_search_profile"
+    },
+    "customer_record": {
+      "customer_id": "customer_a",
+      "email": "a@example.test",
+      "name": {
+        "first_name": "Ada",
+        "last_name": "Example"
+      },
+      "default_shipping_address": {
+        "address_line_1": "1 Test St",
+        "city": "Testville",
+        "region": "CA",
+        "country": "US",
+        "postal_code": "90001"
+      },
+      "payment_methods": [
+        {
+          "id": "card_a",
+          "source": "credit_card",
+          "brand": "Mastercard",
+          "last_four": "0001"
+        },
+        {
+          "id": "card_v",
+          "source": "credit_card",
+          "brand": "Visa",
+          "last_four": "0002"
+        },
+        {
+          "id": "paypal_a",
+          "source": "paypal"
+        },
+        {
+          "id": "gift_a",
+          "source": "gift_card",
+          "balance": 40.0
+        }
+      ],
+      "order_ids": [
+        "#TEST1",
+        "#TEST3"
+      ]
+    },
+    "user_request": "yes",
+    "model_usage": [],
+    "verification_draft": {
+      "email": "a@example.test"
+    },
+    "address_pending": null,
+    "payment_pending": null,
+    "cancellation_pending": null
+  }
+}

@@ -15,5 +15,7 @@ class PaymentTools(ClientAPIToolKitBase):
         Uses the same trusted toolkit Client API and SessionClaims as address
         writes. No arbitrary endpoint, confirmed flag, or partial payment.
         """
+        from support_agent.adapters.write_runtime import ensure_business_active
+        ensure_business_active(self.client_api, self._workflow_claims)
         check_workflow_argument(session_json)
         return run_payment_workflow(clone_state(json.loads(session_json)), self.client_api, self._workflow_claims)

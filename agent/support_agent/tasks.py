@@ -34,7 +34,7 @@ def _request_scope(history, requests):
     from support_agent.adapters.read_api import customer_order_ids
     prefix = initial_state(_clean_read_history(history))
     if (not prefix["identity"]["verified"] or not prefix["identity_evidence"]
-            or prefix["pending_calls"] or prefix["handoff"]["status"] != "not_requested"):
+            or prefix["pending_calls"] or prefix["handoff"]["status"] not in {"not_requested", "rejected"}):
         raise InvalidTaskPlan("Plan requires a verified idle session")
     owned = customer_order_ids(prefix["customer_record"])
     for request in requests:
@@ -130,7 +130,7 @@ def inspect_task_plan(state):
         state = clone_state(state)
     except (TypeError, ValueError, KeyError, InvalidState):
         return outcome(deny, "invalid_state", "Task evidence is invalid; processing is stopped.", state_error=True)
-    if state["handoff"]["status"] != "not_requested":
+    if state["handoff"]["status"] not in {"not_requested", "rejected"}:
         return outcome(deny, "handoff_blocks_tasks", "Handoff blocks further task planning.")
     if state["pending_calls"]:
         return outcome(need, "pending_reads", "Resolve the complete pending read batch first.")
