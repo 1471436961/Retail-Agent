@@ -1,12 +1,14 @@
 # Q2 长会话摘要与身份依据保留设计
 
+当前 M5.3 默认退货流程使用 schema 11、八 READ＋六个内部 WRITE，模型只读；完整工作区 791/791，退货专项 65/65。来源、预计额、完整确认、Unknown 和 schema 10→11 前缀恢复见 [M5.3 交付](M5.3-DELIVERY.md)。T 组件映射来自实际执行；业务 AT 执行仍 0，历史章节不作为当前计数。
+
 M4.4 评审补充：本项目 canonical 状态恢复只校验/重建历史，不调用 API；固定 SDK 基础 `Environment.set_state` 的评测重建则执行工具，GENERIC/False 不会跳过执行。后者使用隔离评测后端和独立 claims，并按其实际回执格式严格比对；对原 live claims 重放陈旧转接不再 POST。两条入口不混用，不将 SDK 基础字符串化回执作为可放宽 canonical 类型的依据。摘要用户原文只存文本字段，不能改写身份、完成/Unknown 或可信目标；JSON 标签不保证下游消费方安全。证据见 [M4.4](M4.4-DELIVERY.md)。
 
-当前 M4.4/M4.5 使用 schema 9；handoff_event/assessment 与原 handoff 槽闭合重建，v1–v8 不可携带新证据或自报 accepted。真实 schema 8 fixture 从已推送 9915019 原函数生成。摘要不删 canonical 身份/确认/Unknown 链，受理和不确定结果终止派发，迟到正文不接纳，业务 execute reservation 不因转人工清除。详见 [M4.4](M4.4-DELIVERY.md)。以下 schema 8/7 段均为历史阶段记录。
+M4.4/M4.5 历史批次使用 schema 9；handoff_event/assessment 与原 handoff 槽闭合重建，v1–v8 不可携带新证据或自报 accepted。真实 schema 8 fixture 从已推送 9915019 原函数生成。摘要不删 canonical 身份/确认/Unknown 链，受理和不确定结果终止派发，迟到正文不接纳，业务 execute reservation 不因转人工清除。详见 [M4.4](M4.4-DELIVERY.md)。以下 schema 8/7 段均为历史阶段记录。
 
-当前 M4.3 使用 schema 8；cancellation_pending 与 cancellation_dispatch/result/unknown/abandoned/assessment 在原身份、提案、任务、journal 和共享 WorkflowBoundary 中重建。schema 1–7 不允许携带新增取消证据；真实 schema 7 fixture 在 a496182 干净源码、改动前生成，保留已完成支付而不创造取消许可。地址/支付/取消单批次互斥；任意已 abandoned prepare 的晚到结果先忽略，不能污染新的其他类批次。execute 结果丢失保留 Unknown，会话不能用重新验证、其他业务请求、yes 或布尔字段清除。下段 schema 7 是 M4.2 的历史阶段说明，当前见 [M4.3 交付](M4.3-DELIVERY.md)。
+M4.3 历史批次使用 schema 8；cancellation_pending 与 cancellation_dispatch/result/unknown/abandoned/assessment 在原身份、提案、任务、journal 和共享 WorkflowBoundary 中重建。schema 1–7 不允许携带新增取消证据；真实 schema 7 fixture 在 a496182 干净源码、改动前生成，保留已完成支付而不创造取消许可。地址/支付/取消单批次互斥；任意已 abandoned prepare 的晚到结果先忽略，不能污染新的其他类批次。execute 结果丢失保留 Unknown，会话不能用重新验证、其他业务请求、yes 或布尔字段清除。下段 schema 7 是 M4.2 的历史阶段说明，当前见 [M4.3 交付](M4.3-DELIVERY.md)。
 
-2026-10-04 已实现有界模型投影，见 [M0–M3 收尾](M0-M3-CLOSEOUT.md)。当前 M4.2 使用 schema 7，在原身份/提案/任务/journal 上新增支付批次并与地址共用边界，下文 M3/M4.1 段为各阶段历史设计。state 不裁剪，身份/确认/Unknown 来源完整保留，未实施 state 归档或增量回放优化。当前调用方及验收见 [M4.2 交付](M4.2-DELIVERY.md)。
+2026-10-04 已实现有界模型投影，见 [M0–M3 收尾](M0-M3-CLOSEOUT.md)。M4.2 历史批次使用 schema 7，在原身份/提案/任务/journal 上新增支付批次并与地址共用边界，下文 M3/M4.1 段为各阶段历史设计。state 不裁剪，身份/确认/Unknown 来源完整保留，未实施 state 归档或增量回放优化。当前调用方及验收见 [M4.2 交付](M4.2-DELIVERY.md)。
 
 历史日期：2026-10-02。当时摘要/容量控制尚未实现；现已交付下述有界投影。适用于本项目 JSON state，不声称是平台字段或容量限制。
 
@@ -108,3 +110,9 @@ schema 10 新增 items_pending 和 items_dispatch/result/unknown/abandoned/asses
 items_basis 保存完整请求、每行真实 user 索引/原文、规范 criteria/实际回退、选定规格、原/新价及完整 spec。克隆与恢复按每条 basis 的历史前缀重新构造并比较全部字段与文本；不伪造 user JSON、不用助手摘要制造条件或确认。presentation_note 展示客户可读的完整条件/清单，原文与索引完整保留在 basis。商品单提案的可选 presentation_mode=items_last_call 由统一渲染将补充询问放在最后，恢复同时比较模式与文本；旧展示缺该模式时保持旧渲染，旧 schema 1–9 不得夹带该新模式。事实投影排除该展示元数据，不把它作为业务或身份事实。变更后重新展示并等待后一次完整确认。提交前刷新完整相关 product 目录并重跑筛选；新竞争候选也会使旧唯一选择停止发送。
 
 原始历史及身份/确认/Unknown 链完整保留，256 KiB 参数/1 MiB 结果和单请求 12 READ 是内部预算，超限前置阻断、不截断清单或拆分提交。历史真实性/送达、SessionClaims 表与 state 同时丢失后的跨进程去重仍不在本库保证内；元数据重放不是签名。
+
+## M5.3 退货开启来源与恢复
+
+schema 11 的 returns_basis 保存实际 user 索引/原文、原单位完整清单、预计额及冻结开启档案。opening_payment_methods/opening_profile_index 进入相关事实和确认指纹，不添加到退货线上参数；新档案不能回填旧起点。basis 按所在历史前缀重算，工具完整批次接纳与 Unknown reservation 延续原控制，不用后来 user 或档案修复过去许可。
+
+唯一合法当前去向可作为完整提案展示，仍须之后真实 user 确认；恢复不凭该候选或元数据制造同意。clone_state 等价仅检验通过来源与台账校验后的稳定性，source_commit 字面量仅钉元数据，均不能独立证明外部来源真实。事实复核中 TypeError/ValueError/KeyError 对应 facts_unavailable，其他指纹变化仍可 facts_changed；退货 producer 对两者都重新准备。

@@ -1,6 +1,6 @@
 # 工程结构与开发方式
 
-本轮 M5.2 有限中英文明示单一自有订单、逐项条件/规格或完整列表 JSON 的默认商品修改流程已实现，schema 10、八 READ＋五个内部 WRITE，模型只读。完整工作区实际 726/726、商品专项 65/65，零跳过/失败/错误、原生退出码 0，见 [M5.2 交付](docs/M5.2-DELIVERY.md)。M5.1 已分三批推送：6a97a35、9ae45af、c318306；同源码 SHA 自动 t1 completed/success，报告正文案例计数未单独核实。M5.2 按源码/测试、配对追踪、文档三批交付：源码 6088c9a、追踪 cfcf34f 已推送；源码同一自动 t1 completed/success，案例计数未单独核实；M5.3–M5.5 未开始。134 案例/522 AT 不变，完整业务 AT 执行数仍 0，M0.2 与 M5 整体/M6/M7 保留。661/661 为 M5.1 历史基线，不再作为当前源码执行证据。
+本轮 M5.3 有限中英文明示单一自有 delivered 订单、完整原商品次数及一个合法退款去向的默认退货申请流程已实现，schema 11、八 READ＋六个内部 WRITE，模型仍只读。完整工作区实际 791/791、退货专项 65/65，零跳过/失败/错误、原生退出码 0，见 [M5.3 交付](docs/M5.3-DELIVERY.md)。M5.2 已按源码/测试、配对追踪、文档三批推送：6088c9a、cfcf34f、a0308d7；源码同一自动 t1 completed/success，报告正文案例计数未单独核实，仅证明公开 customer lookup。M5.3 源码/测试 9aa5d94、配对证据 b03241e 已逐批推送，源码同一自动 t1 completed/success（正文案例计数未单独核实）；交付文档随第三批提交。按用户要求推送结束后开始 M5.4，M5.5 未开始。134 案例/522 AT 不变，完整业务 AT 执行数仍 0，M0.2 与 M5 整体/M6/M7 保留。726/726 及商品 65/65 是已推送 M5.2 历史基线。
 
 ## Python
 
@@ -16,9 +16,11 @@ agent/
     address_session.py      # M4.1 地址收集、复述和提交
     payment_session.py      # M4.2 单一已有支付方式的整单切换
     cancellation_session.py # M4.3 取消原因、逐 charge 复述与确认提交
+    returns_session.py      # M5.3 完整退货/起点来源/预计额/确认申请
     items_session.py        # M5.2 完整清单、条件来源、最后询问和一次提交
     handoff_session.py      # M4.4 明示请求、证据摘要、可信转接与终态
-    workflow_boundary.py    # 四类内部批次、诊断、预算及失败恢复
+    workflow_boundary.py    # 五类内部批次、诊断、预算及失败恢复
+    workflow_registry.py    # 有序业务 kind 清单；handoff 保持独立生命周期
     workflow_limits.py       # 内部工具 UTF-8 参数/结果预算，不裁剪证据
     protocol.py             # 内部消息、动作和候选校验
     state.py                # 每个会话独立的 JSON 状态
@@ -36,6 +38,7 @@ agent/
     domain/rules.py         # 可解释 JSON 规则结果，非写入授权
     domain/orders.py        # 精确状态与能力准入
     domain/catalog.py       # 选中规格、次数、原价与差价解析
+    domain/returns_intake.py # M5.3 真实 user 原商品次数/合法去向有限解析
     domain/items_intake.py   # M5.2 真实 user 条件/列表/方式有限解析
     domain/candidate_selection.py # M5.1 硬约束/库存/保留属性/偏好/回退/排序
     domain/policies.py      # 支付、退款去向及取消原因规则
@@ -66,6 +69,7 @@ tests/test_m4_address_review.py # prepare 恢复、迟到结果、混合结果�
 tests/test_m4_payments.py  # M4.2 真实轮次、选择/拒付/读回、跨流程及恢复
 tests/test_m4_cancellations.py # M4.3 原因/逐笔原路退款、确认/Unknown/迁移
 tests/test_m4_handoffs.py  # M4.4 接纳/Unknown/终态/摘要/共享表/迁移
+tests/test_m5_returns.py    # M5.3 默认退货/起点礼品卡/Unknown/恢复
 tests/test_m5_items.py      # M5.2 完整列表/最后询问/确认/刷新/写后核实
 tests/test_m5_candidates.py # M5.1 纯筛选与真实请求/读取事实验收
 tests/test_m4_matrix.py    # M4.5 五端点故障、改口与实际发送矩阵
