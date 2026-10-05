@@ -13,7 +13,8 @@ CANCELLATION_SCHEMA_VERSION = 8
 HANDOFF_SCHEMA_VERSION = 9
 ITEMS_SCHEMA_VERSION = 10
 RETURNS_SCHEMA_VERSION = 11
-SCHEMA_VERSION = RETURNS_SCHEMA_VERSION
+EXCHANGE_SCHEMA_VERSION = 12
+SCHEMA_VERSION = EXCHANGE_SCHEMA_VERSION
 
 
 class InvalidState(ValueError):
@@ -83,7 +84,7 @@ def _history_entry(message):
                         "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned", "payment_assessment",
                         "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "cancellation_assessment", "handoff_event", "handoff_assessment",
                         "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_assessment", "items_basis", "presentation_mode",
-                        "returns_dispatch", "returns_result", "returns_unknown", "returns_abandoned", "returns_assessment", "returns_basis"):
+                        "returns_dispatch", "returns_result", "returns_unknown", "returns_abandoned", "returns_assessment", "returns_basis", "exchange_dispatch", "exchange_result", "exchange_unknown", "exchange_abandoned", "exchange_assessment", "exchange_basis"):
                 if key in message:
                     entry[key] = message[key]
         calls = message.get("tool_calls") if isinstance(message, dict) else getattr(message, "tool_calls", None)
@@ -136,7 +137,7 @@ def initial_state(message_history=None) -> dict:
         "payment_pending": None,
         "cancellation_pending": None,
         "items_pending": None,
-        "returns_pending": None,
+        "returns_pending": None, "exchange_pending": None,
     }
     index = 0
     while index < len(history):
@@ -166,6 +167,9 @@ def initial_state(message_history=None) -> dict:
             if "handoff_event" in entry:
                 from support_agent.handoff_session import restore_handoff
                 restore_handoff(state, len(state["history"]) - 1)
+            elif {"exchange_dispatch", "exchange_result", "exchange_unknown", "exchange_abandoned"} & set(entry):
+                from support_agent.workflow_boundary import WorkflowBoundary
+                WorkflowBoundary("exchange", 1024 * 1024).restore(state, len(state["history"]) - 1)
             elif {"returns_dispatch", "returns_result", "returns_unknown", "returns_abandoned"} & set(entry):
                 from support_agent.workflow_boundary import WorkflowBoundary
                 WorkflowBoundary("returns", 1024 * 1024).restore(state, len(state["history"]) - 1)
@@ -235,7 +239,7 @@ def initial_state(message_history=None) -> dict:
 
 def clone_state(state: dict) -> dict:
     """Round-trip the state to reject non-JSON values and avoid aliasing."""
-    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, SCHEMA_VERSION}:
+    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, SCHEMA_VERSION}:
         raise InvalidState("Unsupported session state version")
     if {"write_authorized", "delivery_verified", "confirmed", "condition_verified"} & set(state):
         raise InvalidState("Authorization flags cannot be added to session state")
@@ -243,6 +247,11 @@ def clone_state(state: dict) -> dict:
         copied = json.loads(json.dumps(state, allow_nan=False))
     except (TypeError, ValueError) as exc:
         raise InvalidState("Session state must be JSON serializable") from exc
+    if copied["schema_version"] < EXCHANGE_SCHEMA_VERSION:
+        if (copied.get("exchange_pending") is not None or not isinstance(copied.get("history"), list)
+                or any(isinstance(e, dict) and {"exchange_dispatch", "exchange_result", "exchange_unknown", "exchange_abandoned", "exchange_assessment", "exchange_basis"} & set(e) for e in copied["history"])):
+            raise InvalidState("Legacy state cannot contain schema 12 exchange workflow evidence")
+        copied["exchange_pending"] = None
     if copied["schema_version"] < RETURNS_SCHEMA_VERSION:
         if (copied.get("returns_pending") is not None or not isinstance(copied.get("history"), list)
                 or any(isinstance(e, dict) and {"returns_dispatch", "returns_result", "returns_unknown", "returns_abandoned", "returns_assessment", "returns_basis"} & set(e) for e in copied["history"])):
@@ -293,7 +302,7 @@ def clone_state(state: dict) -> dict:
                 or any(isinstance(e, dict) and ({"proposal_set", "proposal_set_ack"} & set(e)) for e in copied["history"])):
             raise InvalidState("Schema 2 cannot contain schema 3 scope evidence")
         copied["schema_version"] = SCHEMA_VERSION
-    elif copied["schema_version"] in {3, 4, 5, 6, 7, 8, 9, 10}:
+    elif copied["schema_version"] in {3, 4, 5, 6, 7, 8, 9, 10, 11}:
         copied["schema_version"] = SCHEMA_VERSION
     # M1 states remain readable; missing evidence does not grant private reads.
     for key, default in (("model_calls_since_user", 0), ("identity_evidence", None), ("customer_record", None), ("user_request", ""), ("model_usage", []), ("verification_draft", {})):
@@ -312,9 +321,9 @@ def clone_state(state: dict) -> dict:
         if len({"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event",
                 "address_dispatch", "address_result", "address_unknown", "address_abandoned",
                 "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned",
-                "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "handoff_event", "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_basis", "returns_dispatch", "returns_result", "returns_unknown", "returns_abandoned", "returns_basis"} & set(entry)) > 1:
+                "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "handoff_event", "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_basis", "returns_dispatch", "returns_result", "returns_unknown", "returns_abandoned", "returns_basis", "exchange_dispatch", "exchange_result", "exchange_unknown", "exchange_abandoned", "exchange_basis"} & set(entry)) > 1:
             raise InvalidState("Mixed presentation/acknowledgement evidence")
-        if len({"address_assessment", "payment_assessment", "cancellation_assessment", "handoff_assessment", "items_assessment", "returns_assessment"} & set(entry)) > 1:
+        if len({"address_assessment", "payment_assessment", "cancellation_assessment", "handoff_assessment", "items_assessment", "returns_assessment", "exchange_assessment"} & set(entry)) > 1:
             raise InvalidState("Mixed workflow diagnostics")
         if "presentation_note" in entry and "proposal_set" not in entry:
             raise InvalidState("Presentation notes require a complete operation set")
@@ -421,4 +430,9 @@ def clone_state(state: dict) -> dict:
         validate_returns_basis(copied)
     except (TypeError, ValueError, KeyError) as exc:
         raise InvalidState("Invalid return intake provenance") from exc
+    from support_agent.exchange_session import validate_exchange_basis
+    try:
+        validate_exchange_basis(copied)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise InvalidState("Invalid exchange intake provenance") from exc
     return copied

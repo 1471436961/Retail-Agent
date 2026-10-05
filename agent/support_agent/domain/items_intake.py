@@ -17,13 +17,21 @@ def starts_items_request(text):
                 and re.search(r'\bitems?\b|商品|规格', intent, re.I))
 
 
-def request_from_history(history):
+def starts_exchange_request(text):
+    intent = text.split("{", 1)[0]
+    return bool(re.search(r"\bexchange\b|换货", intent, re.I))
+
+
+def request_from_history(history, *, kind="items"):
+    if kind not in {"items", "exchange"}:
+        raise ValueError("Unsupported replacement intake")
+    starts = starts_items_request if kind == "items" else starts_exchange_request
     request = None
     for index, entry in enumerate(history):
         if entry['role'] != 'user':
             continue
         text = entry['content'].strip()
-        initial = starts_items_request(text)
+        initial = starts(text)
         structured = re.search(r'(?:items|商品)\s*[:：]\s*(\{.*)', text, re.I | re.S)
         line_start = bool(re.search(r'(?:\bitem\s+|商品\s*)[\w-]+\s*[:：]', text, re.I))
         method = re.search(r'(?:pay\s+with|payment_method_id\s*[:=]|结算方式\s*[:：]|使用支付方式)\s*([\w-]+)', text, re.I)
@@ -42,7 +50,10 @@ def request_from_history(history):
         # A payment-only reply cannot silently repair a rejected/incomplete list.
         if initial or structured or line_start or removal:
             request['error'] = None if request['order_id'] else 'target_order_required'
-        if re.search(r'\b(cancel|return|exchange|address|quantity)\b|取消订单|退货|换货|地址|数量', text.split('{', 1)[0], re.I):
+        if initial and len(ids) > 1:
+            request['error'] = 'single_order_required'
+        forbidden = r'\b(cancel|return|exchange|address|quantity)\b|取消订单|退货|换货|地址|数量' if kind == 'items' else r'\b(cancel|return|modify|change|address|quantity)\b|取消订单|退货|修改订单|修改商品|地址|数量'
+        if re.search(forbidden, text.split('{', 1)[0], re.I):
             request['error'] = 'mixed_or_quantity_request'
         if structured:
             try:
@@ -98,6 +109,12 @@ def request_from_history(history):
                     request['method'] = {'query': method[1], 'index': index}
                     if request['error'] == 'settlement_choice_unresolved':
                         request['error'] = None
+        # A bulk phrase does not provide per-original replacement targets.
+        # Inspect only the intent clause, never JSON or an item's option value.
+        intent = re.split(r'[;；]', text.split('{', 1)[0], maxsplit=1)[0]
+        if (initial and request['error'] is None
+                and re.search(r'\ball\s+items\b|全部商品', intent, re.I)):
+            request['error'] = 'bulk_replacement_targets_required'
     return request
 
 

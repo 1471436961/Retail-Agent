@@ -69,7 +69,16 @@ def _normalize_receipt(spec, body):
         if not isinstance(body["exchange"], dict):
             raise ValueError("Exchange receipt must be an object")
         finite_number(body["exchange"].get("price_difference"))
-        if body["status"] != "exchange requested" or body["exchange"] != expected:
+        exchange = body["exchange"]
+        pairs = exchange.get("replacements")
+        if (set(exchange) != set(expected) or not isinstance(pairs, list)
+                or any(not isinstance(p, dict) or set(p) != {"existing_item_id", "replacement_item_id"}
+                       or any(not isinstance(v, str) for v in p.values()) for p in pairs)
+                or Counter((p["existing_item_id"], p["replacement_item_id"]) for p in pairs)
+                   != Counter((p["existing_item_id"], p["replacement_item_id"]) for p in params["replacements"])
+                or exchange["payment_method_id"] != expected["payment_method_id"]
+                or exchange["price_difference"] != expected["price_difference"]
+                or body["status"] != "exchange requested"):
             raise ValueError("Exchange receipt differs from the complete proposal")
     elif action == "return":
         request = body["return_request"]

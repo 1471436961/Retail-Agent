@@ -1,0 +1,617 @@
+{
+  "source_commit": "4bfd2f18b95e3a8ce74463b496d9b5916b19ff5d",
+  "generation": "Original schema-11 functions before M5.4 edits; accepted complete return recap, no submission.",
+  "state": {
+    "schema_version": 11,
+    "turn": 4,
+    "pending_call_id": null,
+    "pending_calls": {},
+    "customer_id": "customer_a",
+    "identity": {
+      "verified": true,
+      "customer_id": "customer_a"
+    },
+    "history": [
+      {
+        "role": "user",
+        "content": "a@example.test"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "lookup-1"
+        ],
+        "tool_calls": [
+          {
+            "id": "lookup-1",
+            "name": "lookup_customer",
+            "arguments": {
+              "customer_id": "",
+              "email": "a@example.test"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "lookup-1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "The customer email is a@example.test."
+      },
+      {
+        "role": "user",
+        "content": "Return order #TEST1; items: item_blue; refund to original"
+      },
+      {
+        "role": "assistant",
+        "content": "Returns workflow: {\"call_id\": \"returns:5\", \"mode\": \"prepare\"}",
+        "returns_dispatch": {
+          "call_id": "returns:5",
+          "mode": "prepare"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Returns workflow: {\"call_id\": \"returns:5\"}",
+        "returns_result": {
+          "call_id": "returns:5"
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "address-intake:1"
+        ],
+        "tool_calls": [
+          {
+            "id": "address-intake:1",
+            "name": "read_customer_profile",
+            "arguments": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "address-intake:1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "address-intake:2"
+        ],
+        "tool_calls": [
+          {
+            "id": "address-intake:2",
+            "name": "get_order",
+            "arguments": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "first_name": "",
+              "last_name": "",
+              "postal_code": ""
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "address-intake:2",
+        "content": "{\"order_id\": \"#TEST1\", \"customer_id\": \"customer_a\", \"status\": \"delivered\", \"items\": [{\"item_id\": \"item_blue\", \"product_id\": \"product_mug\", \"price\": 12.5, \"name\": \"Synthetic mug\", \"options\": {\"color\": \"blue\", \"capacity\": \"500 ml\", \"waterproof\": \"yes\"}}], \"payments\": [{\"transaction_type\": \"payment\", \"payment_method_id\": \"card_a\", \"amount\": 12.5}], \"shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"fulfillments\": []}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "Return intake evidence: {\"estimate\": {\"aggregate_amount\": 12.5, \"aggregation_contract_verified\": false, \"amount_is_estimate\": true, \"estimate_method\": \"original_prices_decimal_sum_half_up_cents\", \"exact_price_sum\": \"12.5\", \"item_ids\": [\"item_blue\"], \"items\": [{\"item_id\": \"item_blue\", \"name\": \"Synthetic mug\", \"options\": {\"capacity\": \"500 ml\", \"color\": \"blue\", \"waterproof\": \"yes\"}, \"price\": 12.5, \"product_id\": \"product_mug\"}], \"settlement_verified\": false}, \"method_label\": \"Mastercard ending 0001 (card_a)\", \"opening_payment_methods\": [{\"brand\": \"Mastercard\", \"id\": \"card_a\", \"last_four\": \"0001\", \"source\": \"credit_card\"}, {\"brand\": \"Visa\", \"id\": \"card_v\", \"last_four\": \"0002\", \"source\": \"credit_card\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"balance\": 40.0, \"id\": \"gift_a\", \"source\": \"gift_card\"}], \"opening_profile_index\": 2, \"request\": {\"all_items\": false, \"destination\": {\"kind\": \"original\"}, \"destination_index\": 4, \"error\": null, \"item_ids\": [\"item_blue\"], \"list_index\": 4, \"opening_request_index\": 4, \"order_id\": \"#TEST1\", \"request_index\": 4}, \"sources\": [{\"history_index\": 4, \"user_text\": \"Return order #TEST1; items: item_blue; refund to original\"}], \"spec\": {\"action\": \"return\", \"amount\": {\"estimate_method\": \"original_prices_decimal_sum_half_up_cents\", \"kind\": \"estimated_refund\", \"value\": 12.5}, \"parameters\": {\"item_ids\": [\"item_blue\"], \"refund_payment_method_id\": \"card_a\"}, \"target\": {\"customer_id\": \"customer_a\", \"order_id\": \"#TEST1\"}}, \"timing\": \"3-6 business days; This is channel policy, not evidence that money has arrived.\"}",
+        "returns_basis": {
+          "request": {
+            "order_id": "#TEST1",
+            "item_ids": [
+              "item_blue"
+            ],
+            "all_items": false,
+            "destination": {
+              "kind": "original"
+            },
+            "opening_request_index": 4,
+            "list_index": 4,
+            "destination_index": 4,
+            "request_index": 4,
+            "error": null
+          },
+          "sources": [
+            {
+              "history_index": 4,
+              "user_text": "Return order #TEST1; items: item_blue; refund to original"
+            }
+          ],
+          "spec": {
+            "action": "return",
+            "target": {
+              "customer_id": "customer_a",
+              "order_id": "#TEST1"
+            },
+            "parameters": {
+              "item_ids": [
+                "item_blue"
+              ],
+              "refund_payment_method_id": "card_a"
+            },
+            "amount": {
+              "kind": "estimated_refund",
+              "value": 12.5,
+              "estimate_method": "original_prices_decimal_sum_half_up_cents"
+            }
+          },
+          "estimate": {
+            "items": [
+              {
+                "item_id": "item_blue",
+                "product_id": "product_mug",
+                "price": 12.5,
+                "name": "Synthetic mug",
+                "options": {
+                  "color": "blue",
+                  "capacity": "500 ml",
+                  "waterproof": "yes"
+                }
+              }
+            ],
+            "item_ids": [
+              "item_blue"
+            ],
+            "aggregate_amount": 12.5,
+            "exact_price_sum": "12.5",
+            "estimate_method": "original_prices_decimal_sum_half_up_cents",
+            "amount_is_estimate": true,
+            "aggregation_contract_verified": false,
+            "settlement_verified": false
+          },
+          "opening_profile_index": 2,
+          "opening_payment_methods": [
+            {
+              "id": "card_a",
+              "source": "credit_card",
+              "brand": "Mastercard",
+              "last_four": "0001"
+            },
+            {
+              "id": "card_v",
+              "source": "credit_card",
+              "brand": "Visa",
+              "last_four": "0002"
+            },
+            {
+              "id": "paypal_a",
+              "source": "paypal"
+            },
+            {
+              "id": "gift_a",
+              "source": "gift_card",
+              "balance": 40.0
+            }
+          ],
+          "method_label": "Mastercard ending 0001 (card_a)",
+          "timing": "3-6 business days; This is channel policy, not evidence that money has arrived."
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Requested operations and dependencies (this is not a confirmation recap):\nTask 1: return for customer customer_a, order #TEST1\nEach selected operation still requires a complete proposal, user confirmation and pre-write verification. No operation has been executed.",
+        "task_plan": {
+          "requests": [
+            {
+              "action": "return",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              }
+            }
+          ],
+          "request_index": 4
+        }
+      },
+      {
+        "role": "assistant",
+        "content": "Current order status: delivered. Complete return list (each row is one purchased unit):\nUnit 1: item_blue; Synthetic mug; original options {\"color\": \"blue\", \"capacity\": \"500 ml\", \"waterproof\": \"yes\"}; original price 12.5.\nExact selected original-price sum: 12.5. Estimated refund: 12.50 (decimal sum, half-up cents; project display rule, not backend settlement).\nRefund destination: Mastercard ending 0001 (card_a); channel policy after processing: 3-6 business days; This is channel policy, not evidence that money has arrived.\nThis submits one complete return request per order; after acceptance no items can be added. An accepted application does not prove refund execution, settlement or arrival.\n\nOperation 1:\nRequest a return of the complete selected list.\nCustomer: customer_a\nOrder: #TEST1\nOriginal units (occurrences preserved): [\"item_blue\"]\nRefund destination: card_a\nEstimated original-price refund: 12.50 (decimal sum, half-up cents).\nThis estimate is not a settlement guarantee; the API receives no amount and refund arrival is not verified.\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+        "proposal_set": [
+          {
+            "version": 1,
+            "spec": {
+              "action": "return",
+              "target": {
+                "customer_id": "customer_a",
+                "order_id": "#TEST1"
+              },
+              "parameters": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              },
+              "amount": {
+                "kind": "estimated_refund",
+                "value": 12.5,
+                "estimate_method": "original_prices_decimal_sum_half_up_cents"
+              }
+            },
+            "request_index": 4,
+            "facts": {
+              "customer": {
+                "customer_id": "customer_a",
+                "email": "a@example.test",
+                "name": {
+                  "first_name": "Ada",
+                  "last_name": "Example"
+                },
+                "default_shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "payment_methods": [
+                  {
+                    "id": "card_a",
+                    "source": "credit_card",
+                    "brand": "Mastercard",
+                    "last_four": "0001"
+                  },
+                  {
+                    "id": "card_v",
+                    "source": "credit_card",
+                    "brand": "Visa",
+                    "last_four": "0002"
+                  },
+                  {
+                    "id": "paypal_a",
+                    "source": "paypal"
+                  },
+                  {
+                    "id": "gift_a",
+                    "source": "gift_card",
+                    "balance": 40.0
+                  }
+                ],
+                "order_ids": [
+                  "#TEST1",
+                  "#TEST3"
+                ]
+              },
+              "order": {
+                "order_id": "#TEST1",
+                "customer_id": "customer_a",
+                "status": "delivered",
+                "items": [
+                  {
+                    "item_id": "item_blue",
+                    "product_id": "product_mug",
+                    "price": 12.5,
+                    "name": "Synthetic mug",
+                    "options": {
+                      "color": "blue",
+                      "capacity": "500 ml",
+                      "waterproof": "yes"
+                    }
+                  }
+                ],
+                "payments": [
+                  {
+                    "transaction_type": "payment",
+                    "payment_method_id": "card_a",
+                    "amount": 12.5
+                  }
+                ],
+                "shipping_address": {
+                  "address_line_1": "1 Test St",
+                  "city": "Testville",
+                  "region": "CA",
+                  "country": "US",
+                  "postal_code": "90001"
+                },
+                "fulfillments": []
+              },
+              "catalog": [],
+              "opening_payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "opening_profile_index": 2
+            },
+            "fingerprint": "99bf34e6934963d6eee0ba4dafc9314a0287934c44ff21bba7474a188733ecba",
+            "reuse_version": null
+          }
+        ],
+        "presentation_note": "Current order status: delivered. Complete return list (each row is one purchased unit):\nUnit 1: item_blue; Synthetic mug; original options {\"color\": \"blue\", \"capacity\": \"500 ml\", \"waterproof\": \"yes\"}; original price 12.5.\nExact selected original-price sum: 12.5. Estimated refund: 12.50 (decimal sum, half-up cents; project display rule, not backend settlement).\nRefund destination: Mastercard ending 0001 (card_a); channel policy after processing: 3-6 business days; This is channel policy, not evidence that money has arrived.\nThis submits one complete return request per order; after acceptance no items can be added. An accepted application does not prove refund execution, settlement or arrival.",
+        "returns_assessment": {
+          "decision": "needs_information",
+          "code": "returns_confirmation_required",
+          "message": "Current order status: delivered. Complete return list (each row is one purchased unit):\nUnit 1: item_blue; Synthetic mug; original options {\"color\": \"blue\", \"capacity\": \"500 ml\", \"waterproof\": \"yes\"}; original price 12.5.\nExact selected original-price sum: 12.5. Estimated refund: 12.50 (decimal sum, half-up cents; project display rule, not backend settlement).\nRefund destination: Mastercard ending 0001 (card_a); channel policy after processing: 3-6 business days; This is channel policy, not evidence that money has arrived.\nThis submits one complete return request per order; after acceptance no items can be added. An accepted application does not prove refund execution, settlement or arrival.\n\nOperation 1:\nRequest a return of the complete selected list.\nCustomer: customer_a\nOrder: #TEST1\nOriginal units (occurrences preserved): [\"item_blue\"]\nRefund destination: card_a\nEstimated original-price refund: 12.50 (decimal sum, half-up cents).\nThis estimate is not a settlement guarantee; the API receives no amount and refund arrival is not verified.\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+          "rules": [
+            "RT-01",
+            "CF-01"
+          ],
+          "details": {
+            "sources": [
+              {
+                "history_index": 4,
+                "user_text": "Return order #TEST1; items: item_blue; refund to original"
+              }
+            ],
+            "records": [],
+            "write_authorized": false
+          }
+        }
+      }
+    ],
+    "tasks": [
+      {
+        "id": "task:12:1",
+        "action": "return",
+        "target": {
+          "customer_id": "customer_a",
+          "order_id": "#TEST1"
+        },
+        "plan_index": 12,
+        "request_index": 4,
+        "depends_on": [],
+        "conflicts": []
+      }
+    ],
+    "proposals": [
+      {
+        "version": 1,
+        "spec": {
+          "action": "return",
+          "target": {
+            "customer_id": "customer_a",
+            "order_id": "#TEST1"
+          },
+          "parameters": {
+            "item_ids": [
+              "item_blue"
+            ],
+            "refund_payment_method_id": "card_a"
+          },
+          "amount": {
+            "kind": "estimated_refund",
+            "value": 12.5,
+            "estimate_method": "original_prices_decimal_sum_half_up_cents"
+          }
+        },
+        "request_index": 4,
+        "facts": {
+          "customer": {
+            "customer_id": "customer_a",
+            "email": "a@example.test",
+            "name": {
+              "first_name": "Ada",
+              "last_name": "Example"
+            },
+            "default_shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "payment_methods": [
+              {
+                "id": "card_a",
+                "source": "credit_card",
+                "brand": "Mastercard",
+                "last_four": "0001"
+              },
+              {
+                "id": "card_v",
+                "source": "credit_card",
+                "brand": "Visa",
+                "last_four": "0002"
+              },
+              {
+                "id": "paypal_a",
+                "source": "paypal"
+              },
+              {
+                "id": "gift_a",
+                "source": "gift_card",
+                "balance": 40.0
+              }
+            ],
+            "order_ids": [
+              "#TEST1",
+              "#TEST3"
+            ]
+          },
+          "order": {
+            "order_id": "#TEST1",
+            "customer_id": "customer_a",
+            "status": "delivered",
+            "items": [
+              {
+                "item_id": "item_blue",
+                "product_id": "product_mug",
+                "price": 12.5,
+                "name": "Synthetic mug",
+                "options": {
+                  "color": "blue",
+                  "capacity": "500 ml",
+                  "waterproof": "yes"
+                }
+              }
+            ],
+            "payments": [
+              {
+                "transaction_type": "payment",
+                "payment_method_id": "card_a",
+                "amount": 12.5
+              }
+            ],
+            "shipping_address": {
+              "address_line_1": "1 Test St",
+              "city": "Testville",
+              "region": "CA",
+              "country": "US",
+              "postal_code": "90001"
+            },
+            "fulfillments": []
+          },
+          "catalog": [],
+          "opening_payment_methods": [
+            {
+              "id": "card_a",
+              "source": "credit_card",
+              "brand": "Mastercard",
+              "last_four": "0001"
+            },
+            {
+              "id": "card_v",
+              "source": "credit_card",
+              "brand": "Visa",
+              "last_four": "0002"
+            },
+            {
+              "id": "paypal_a",
+              "source": "paypal"
+            },
+            {
+              "id": "gift_a",
+              "source": "gift_card",
+              "balance": 40.0
+            }
+          ],
+          "opening_profile_index": 2
+        },
+        "fingerprint": "99bf34e6934963d6eee0ba4dafc9314a0287934c44ff21bba7474a188733ecba",
+        "reuse_version": null,
+        "presentation_index": 13,
+        "set_index": 13,
+        "status": "proposed",
+        "confirmation": null,
+        "response": null
+      }
+    ],
+    "operations": [
+      {
+        "call_id": "lookup-1",
+        "name": "lookup_customer",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "address-intake:1",
+        "name": "read_customer_profile",
+        "mutates": false,
+        "status": "succeeded"
+      },
+      {
+        "call_id": "address-intake:2",
+        "name": "get_order",
+        "mutates": false,
+        "status": "succeeded"
+      }
+    ],
+    "handoff": {
+      "status": "not_requested"
+    },
+    "tool_calls_since_user": 2,
+    "model_calls_since_user": 0,
+    "identity_evidence": {
+      "inputs": {
+        "email": "a@example.test",
+        "first_name": "",
+        "last_name": "",
+        "postal_code": ""
+      },
+      "verified_at_turn": 2,
+      "source": "user_input_and_matched_search_profile"
+    },
+    "customer_record": {
+      "customer_id": "customer_a",
+      "email": "a@example.test",
+      "name": {
+        "first_name": "Ada",
+        "last_name": "Example"
+      },
+      "default_shipping_address": {
+        "address_line_1": "1 Test St",
+        "city": "Testville",
+        "region": "CA",
+        "country": "US",
+        "postal_code": "90001"
+      },
+      "payment_methods": [
+        {
+          "id": "card_a",
+          "source": "credit_card",
+          "brand": "Mastercard",
+          "last_four": "0001"
+        },
+        {
+          "id": "card_v",
+          "source": "credit_card",
+          "brand": "Visa",
+          "last_four": "0002"
+        },
+        {
+          "id": "paypal_a",
+          "source": "paypal"
+        },
+        {
+          "id": "gift_a",
+          "source": "gift_card",
+          "balance": 40.0
+        }
+      ],
+      "order_ids": [
+        "#TEST1",
+        "#TEST3"
+      ]
+    },
+    "user_request": "Return order #TEST1; items: item_blue; refund to original",
+    "model_usage": [],
+    "verification_draft": {
+      "email": "a@example.test"
+    },
+    "address_pending": null,
+    "payment_pending": null,
+    "cancellation_pending": null,
+    "items_pending": null,
+    "returns_pending": null
+  }
+}

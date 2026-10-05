@@ -127,7 +127,7 @@ def _clean_read_history(history):
                                                        "presentation_note", "presentation_mode", "address_dispatch", "address_result", "address_unknown", "address_abandoned", "address_assessment",
                                                        "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned", "payment_assessment",
                                                        "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "cancellation_assessment",
-                                                       "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_assessment", "items_basis", "returns_dispatch", "returns_result", "returns_unknown", "returns_abandoned", "returns_assessment", "returns_basis"}} for entry in history]
+                                                       "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_assessment", "items_basis", "returns_dispatch", "returns_result", "returns_unknown", "returns_abandoned", "returns_assessment", "returns_basis", "exchange_dispatch", "exchange_result", "exchange_unknown", "exchange_abandoned", "exchange_assessment", "exchange_basis"}} for entry in history]
 
 
 def _return_opening_boundary(history, target):
@@ -573,7 +573,7 @@ def render_proposal_set(specifications, retained=(), *, presentation_mode=None):
 def restore_proposal_set(state, index):
     """Validate every scope against its preceding facts before accepting any."""
     entry = state["history"][index]
-    _keys(entry, {"role", "content", "proposal_set"}, {"presentation_note", "presentation_mode", "address_assessment", "payment_assessment", "cancellation_assessment", "items_assessment", "returns_assessment"})
+    _keys(entry, {"role", "content", "proposal_set"}, {"presentation_note", "presentation_mode", "address_assessment", "payment_assessment", "cancellation_assessment", "items_assessment", "returns_assessment", "exchange_assessment"})
     if entry["role"] != "assistant":
         raise InvalidProposal("Only assistant presentations carry operation sets")
     events = entry["proposal_set"]

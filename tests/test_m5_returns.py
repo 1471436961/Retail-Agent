@@ -433,10 +433,10 @@ class ReturnRecoveryTests(unittest.TestCase):
         from support_agent.workflow_registry import WORKFLOW_KINDS
         from support_agent.workflow_boundary import WorkflowBoundary
         from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
-        self.assertEqual(WORKFLOW_KINDS,('address','payment','cancellation','items','returns'))
+        self.assertEqual(WORKFLOW_KINDS,('address','payment','cancellation','items','returns','exchange'))
         self.assertNotIn('handoff',WORKFLOW_KINDS)
         self.assertEqual(WORKFLOW_TOOL_NAMES,frozenset(k+'_workflow' for k in WORKFLOW_KINDS)|{'handoff_workflow'})
-        for unknown in ('handoff','exchange','model_supplied_kind'):
+        for unknown in ('handoff','unsupported_future','model_supplied_kind'):
             with self.subTest(unknown=unknown), self.assertRaises(ValueError):
                 WorkflowBoundary(unknown,MAX_WORKFLOW_RESULT_BYTES)
         flow=ReturnsConversation()

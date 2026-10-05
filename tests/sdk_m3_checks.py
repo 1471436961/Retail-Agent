@@ -502,5 +502,48 @@ assert len(return_posts)==1 and set(return_posts[0][2])=={'item_ids','refund_pay
 assert returns_agent.get_init_state(returns_state['history'])['operations']==returns_state['operations']
 assert not network_attempts
 print('M5_RETURNS_SDK_CHECK_PASSED; native ClientAPI/tools/schema/assistant-state; complete return/next consent/one POST/readback; network attempts 0')
+from test_m5_exchanges import ExchangeBackend
+exchange_backend = ExchangeBackend()
+
+def exchange_transport(request):
+    response = exchange_backend.request(request['method'], request['path'], body=request.get('body'))
+    return {'status_code': response.status_code, 'body': response.body, 'headers': {}, 'elapsed_seconds': 0.0}
+
+exchange_tools = Tools(ClientAPI(exchange_transport, context=ClientAPIContext(conversation_id='offline-exchange-sdk')), claims=SessionClaims())
+assert set(exchange_tools.get_tools()) == set(READ_TOOL_FIELDS) | WORKFLOW_TOOL_NAMES
+assert len(READ_TOOL_FIELDS) == 8 and len(WORKFLOW_TOOL_NAMES) == 7
+for name in WORKFLOW_TOOL_NAMES:
+    assert exchange_tools.tool_type(name) == ToolType.WRITE
+    schema = exchange_tools.get_tools()[name].openai_schema['function']['parameters']
+    assert schema['required'] == ['session_json'] and set(schema['properties']) == {'session_json'}
+    assert schema['properties']['session_json']['type'] == 'string'
+exchange_agent = CustomerAgent()
+exchange_state = exchange_agent.get_init_state()
+
+def exchange_turn(text):
+    global exchange_state
+    message, exchange_state = exchange_agent.generate_next_message(UserMessage(role='user', content=text), exchange_state)
+    while message.tool_calls:
+        assert len(message.tool_calls) == 1
+        action = message.tool_calls[0]
+        payload = getattr(exchange_tools, action.name)(**action.arguments)
+        message, exchange_state = exchange_agent.generate_next_message(MultiToolMessage(role='tool', tool_messages=[ToolMessage(role='tool', id=action.id, content=json.dumps(payload), error=False)]), exchange_state)
+    assert isinstance(message, AssistantMessage)
+    return message
+
+exchange_turn('a@example.test')
+exchange_recap = exchange_turn('Exchange #TEST1 items; item item_blue: color green; pay with paypal_a')
+assert 'Delivered' in exchange_recap.content and 'Refund difference: 2.50' in exchange_recap.content
+assert exchange_recap.content.count('?') == 1
+assert not any(c[0] == 'POST' and c[1].endswith('/exchanges') for c in exchange_backend.calls)
+exchange_turn('yes')
+assert exchange_state['history'][-1]['exchange_assessment']['code'] == 'write_verified'
+exchange_posts = [c for c in exchange_backend.calls if c[0] == 'POST' and c[1].endswith('/exchanges')]
+assert len(exchange_posts) == 1 and exchange_posts[0][2] == {'replacements': [{'existing_item_id': 'item_blue', 'replacement_item_id': 'item_green'}], 'payment_method_id': 'paypal_a'}
+assert exchange_agent.get_init_state(exchange_state['history'])['operations'] == exchange_state['operations']
+exchange_turn('pay with card_a')
+assert len([c for c in exchange_backend.calls if c[0] == 'POST' and c[1].endswith('/exchanges')]) == 1
+assert not network_attempts
+print('M5_EXCHANGE_SDK_CHECK_PASSED; native ClientAPI/tools/schema/assistant-state; complete exchange/signed difference/next consent/one POST/readback; network attempts 0')
 print("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0")
 print("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake")

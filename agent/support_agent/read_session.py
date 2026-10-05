@@ -240,6 +240,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                     "mismatch": "The customer lookup/read did not match the verification details or authorized scope."}[status]
             return reply(state, text)
         if len(records) == 1 and records[0][0] in {"lookup_customer", "verify_customer"}:
+            from support_agent.exchange_session import route_exchange
+            exchange = route_exchange(state)
+            if exchange is not None:
+                return exchange
             from support_agent.returns_session import route_returns
             returns = route_returns(state)
             if returns is not None:
@@ -269,6 +273,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         return reply(state, format_reads(records))
 
     text = turn.content if isinstance(turn.content, str) else ""
+    if state["exchange_pending"] is not None and state["exchange_pending"]["mode"] == "prepare":
+        from support_agent.exchange_session import _boundary
+        _boundary().event(state, "exchange_abandoned", {"call_id": state["exchange_pending"]["call_id"]})
     if state["cancellation_pending"] is not None and state["cancellation_pending"]["mode"] == "prepare":
         from support_agent.cancellation_session import _boundary
         _boundary().event(state, "cancellation_abandoned", {"call_id": state["cancellation_pending"]["call_id"]})
@@ -321,6 +328,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                 proof = verification_inputs(**state["verification_draft"])
             except ValueError:
                 proof = None
+    if state["exchange_pending"] is not None:
+        from support_agent.exchange_session import route_exchange
+        return route_exchange(state, text)
     if state["returns_pending"] is not None:
         from support_agent.returns_session import route_returns
         return route_returns(state, text)
@@ -342,6 +352,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         return emit(state, name, args)
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
+    from support_agent.exchange_session import route_exchange
+    exchange = route_exchange(state, text)
+    if exchange is not None:
+        return exchange
     from support_agent.returns_session import route_returns
     returns = route_returns(state, text)
     if returns is not None:

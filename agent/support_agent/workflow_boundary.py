@@ -17,8 +17,8 @@ class WorkflowBoundary:
             raise ValueError("Unsupported internal workflow")
         self.kind, self.result_limit = kind, result_limit
         self.tool = kind + "_workflow"
-        self.actions = frozenset({"address": {"shipping_address", "default_shipping_address"}, "payment": {"payment_method"}, "cancellation": {"cancel"}, "items": {"modify_items"}, "returns": {"return"}}[kind])
-        self.rule = {"address": "AD-01", "payment": "PY-01", "cancellation": "CA-01", "items": "IT-01", "returns": "RT-01"}[kind]
+        self.actions = frozenset({"address": {"shipping_address", "default_shipping_address"}, "payment": {"payment_method"}, "cancellation": {"cancel"}, "items": {"modify_items"}, "returns": {"return"}, "exchange": {"exchange"}}[kind])
+        self.rule = {"address": "AD-01", "payment": "PY-01", "cancellation": "CA-01", "items": "IT-01", "returns": "RT-01", "exchange": "EX-01"}[kind]
         self.control_keys = frozenset(kind + "_" + suffix for suffix in ("dispatch", "result", "unknown", "abandoned"))
 
     def validate_assessment(self, entry):

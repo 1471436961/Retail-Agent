@@ -99,13 +99,15 @@ def _variants(products):
     return variants
 
 
-def resolve_replacements(order_items, replacements, products, *, requested_options=None) -> dict:
+def resolve_replacements(order_items, replacements, products, *, requested_options=None, sequential_matching=True) -> dict:
     """Check a selected full list; M5.1 candidate_selection supplies alternatives.
 
     requested_options has one dict per occurrence, reflecting only explicitly
     requested attribute changes. Omitted attributes must retain original values.
     Only ID pairs belong in future backend requests; no quantity/occurrence field.
     """
+    if type(sequential_matching) is not bool:
+        return input_error("invalid_matching_mode", "The trusted matching mode must be boolean.", "U5")
     if replacements is None:
         return need("replacement_list_required", "Specify the complete original/replacement ID list.", "IT-01", "U5")
     if isinstance(replacements, list) and any(isinstance(r, dict) and "quantity" in r for r in replacements):
@@ -130,7 +132,9 @@ def resolve_replacements(order_items, replacements, products, *, requested_optio
     prior_targets = set()
     for original, replacement, changes in zip(selection["details"]["items"], replacements, requested_options):
         source_id, target_id = replacement["existing_item_id"], replacement["replacement_item_id"]
-        if source_id in prior_targets:
+        # Pending modification mutates the item list between first-ID matches.
+        # Exchange only records an application; every source is an original unit.
+        if sequential_matching and source_id in prior_targets:
             return need("sequential_match_ambiguous", "An earlier replacement introduces a later source ID; first-ID matching cannot prove original-unit intent.", "U5")
         if target_id not in variants:
             return need("target_variant_required", "The exact target variant and its product membership are missing.", "IT-01")
