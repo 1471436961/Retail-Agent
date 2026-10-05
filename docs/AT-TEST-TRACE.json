@@ -1,14 +1,14 @@
 {
   "schema_version": 2,
   "status": "valid",
-  "run_id": "7458d971c7c54e8d96e2a36518e546cb",
+  "run_id": "a784347b08de47a2a8f61c63e14e6b59",
   "scope": "component association, not complete business-AT execution",
   "case_count": 134,
   "at_count": 522,
   "business_ats_executed": 0,
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
-  "run_source_sha256": "aedb52bf5f9b81db48e8b2a83f4555444bca4b928836fcea8c1c91fab33bddc7",
-  "specification_sha256": "163fe68de6b76f5c60f43df88432c0da911a083298d155f75514b98db9154573",
+  "run_source_sha256": "ccefbd23078dd58cb56f815712af8092d4ba14c3567dcc571fdc7958bc4fcf65",
+  "specification_sha256": "630a901ebf7d75d7225211aee58af4602a2ecb469bfd894e5b808b6a16eabf0e",
   "specification_files": {
     "materials/CLASSROOM.md": "b02f4a2706a1c2c5c1e04d1b4209119c7f061b8a66240d36e17af1614fe62a5c",
     "materials/client_api/openapi.yaml": "d369f3cf5e3f83333d5c4bf0a11b82fb6417a946e16d34b64be614bcd3cadc16",
@@ -16,9 +16,9 @@
     "materials/framework/client_api_contract.md": "beeb01ae3d51d3267ba361fb97e1a47d6a71c719484c0daf02aecc9e2fdeb44e",
     "materials/framework/scenario_contract.md": "1c255ee02db77afecda391d4a8335542065c5faff6f540fc70574ea8be60669e",
     "materials/framework/deployment_manifest.json": "8637b0d5a78610b8b2b480ce3cedc64ee2f1fc792ce9419a92a2e094777040e0",
-    "docs/POLICY-REGISTER.md": "46bb078a2e9c1be622c69a9a2ded94d4c7688967bdb65122cbee35e5add4f66e",
-    "docs/API-CONTRACT-MAP.md": "c5d08989f21d8768d9dd0889e9e02f31c3dc83a560bd0843ea2a2ba51e8fa04c",
-    "docs/PLATFORM-CONTRACT-NOTES.md": "868821d718f1264601a49b30f9c50be540aabecb22a89067c9ed388c07894e09",
+    "docs/POLICY-REGISTER.md": "e1d7d624762d760b4cdac306e00f50a031bc2c21a843301c8acc766085ec7754",
+    "docs/API-CONTRACT-MAP.md": "f19fdc8a838f43e4ddd1a9fbc4708c131c61d31f4d08907c32c820a490ee3010",
+    "docs/PLATFORM-CONTRACT-NOTES.md": "c2de04d798739b4d499525fd06a6fb13dbebcbd183f9b6e30ae9cc3cacf5486c",
     "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "e975304219bc0b27548872b79cdafbc0b3e453feb7add6e0a13970ff6ab0059c"
   },
   "groups": {
@@ -32,9 +32,11 @@
     "W": {
       "test_ids": [
         "test_m3_writes.PreflightTests.test_missing_partial_and_conditional_consent_do_not_read_or_send",
-        "test_m3_completion.SessionRuntimeTests.test_stale_snapshot_extra_history_and_new_runtime_share_stable_claim"
+        "test_m3_completion.SessionRuntimeTests.test_stale_snapshot_extra_history_and_new_runtime_share_stable_claim",
+        "test_m4_matrix.FiveEndpointMatrixTests.test_timeout_after_backend_effect_is_unknown_on_each_endpoint_without_retry",
+        "test_m4_matrix.FiveEndpointMatrixTests.test_lost_tool_result_after_real_send_is_unknown_and_not_zero_send_for_all_endpoints"
       ],
-      "limitation": "Shared consent/single-send lifecycle; not a business producer."
+      "limitation": "Shared consent/single-send lifecycle and finite default workflow matrix; not a complete public business AT."
     },
     "O": {
       "test_ids": [
@@ -128,9 +130,16 @@
     },
     "H": {
       "test_ids": [
-        "test_m0_contract.ContractBaselineTests.test_transfer_receipt_requires_accepted_and_nonempty_id"
+        "test_m0_contract.ContractBaselineTests.test_transfer_receipt_requires_accepted_and_nonempty_id",
+        "test_m4_handoffs.HandoffFlowTests.test_accepted_transfer_uses_exact_201_receipt_and_required_notice",
+        "test_m4_handoffs.HandoffFlowTests.test_reducer_accepted_transfer_blocks_future_dispatch_and_model_decisions",
+        "test_m4_handoffs.HandoffFlowTests.test_embedded_user_instructions_cannot_replace_summary_facts_or_host_target",
+        "test_m4_handoffs.HandoffFlowTests.test_embedded_completion_claim_does_not_promote_unknown_business_result",
+        "test_m4_handoffs.HandoffFlowTests.test_unknown_business_operation_is_preserved_in_handoff_summary",
+        "test_m4_handoffs.HandoffFlowTests.test_timeout_and_503_stop_business_and_never_retry_transfer",
+        "test_m4_handoffs.HandoffRecoveryTests.test_accepted_journal_restore_and_clone_preserve_receipt_sources_and_operations"
       ],
-      "limitation": "Schema-only transfer receipt check; production handoff belongs to M4."
+      "limitation": "Finite explicit-user default handoff, trusted context, accepted/Unknown and terminal calls; not the complete public dialogue or actual human response."
     },
     "L": {
       "test_ids": [

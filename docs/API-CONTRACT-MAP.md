@@ -1,6 +1,6 @@
 # M0 教学接口与运行时契约基线
 
-2026-10-04 当前默认库存八 READ＋三个内部地址/支付/取消 WRITE，模型仍限 READ；schema 8。地址、整单支付切换和单一取消接入真实 user → 完整复述/确认 → 写前刷新 → 契约端点/强读回。其余默认生产器尚未开放，转接待 M4.4。支付先扣后退是政策要求；交易数组顺序不证明处理时序，单个 PUT 也不提供未声明的原子/回滚保证。取消保留逐 charge 原金额/原去向，历史 refund 受控审查，不净额或重复退款。当前有限离线范围见 [M4.3 取消交付](M4.3-DELIVERY.md)，支付语义边界见 [M4.2 交付](M4.2-DELIVERY.md)。共用工具预算 256 KiB/1 MiB 是项目 UTF-8 预算，写后交付失败保留 Unknown，不改变教学 REST 契约。
+2026-10-04 当前默认八 READ＋四个内部地址/支付/取消/转接 WRITE，模型仍限 READ，schema 9。地址/支付/取消复用完整提案确认、刷新及强读回；转接由真实 user 显式请求，可信 conversation_id 来自 Client API context，固定 POST body 仅 summary，只有 201/accepted/非空 transfer_id 才表述受理。转接 pending/Unknown/accepted 停止业务和模型调用，明确 rejected 不冒称受理；跨实例认领须共享同进程 SessionClaims，丢失 journal/跨进程不在保证内。内部摘要 64 KiB、工具参数 256 KiB/结果 1 MiB 是项目预算，不修改 REST 限制。见 [M4.4 交付](M4.4-DELIVERY.md)与[M4.5 故障矩阵](M4.5-DELIVERY.md)。支付先扣后退仍是政策要求，数组排列不证明实际处理时序或原子性；取消逐 charge 原路、历史 refund 审查不变。
 
 核对日期：2026-10-02。规范来源：[教学 OpenAPI](../materials/client_api/openapi.yaml)、[课堂覆盖说明](../materials/CLASSROOM.md)、[工具契约](../materials/framework/client_api_contract.md)、[Agent 契约](../materials/framework/agent_contract.md)、[部署 manifest](../materials/framework/deployment_manifest.json)，以及 [平台契约核查记录](PLATFORM-CONTRACT-NOTES.md)中的当前资料 path/version。本表记录 **当前可见契约**，不是声称真实部署所有响应变体均已测试。
 

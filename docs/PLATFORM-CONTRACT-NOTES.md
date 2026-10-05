@@ -1,6 +1,16 @@
 # 平台契约核查记录
 
-2026-10-04 查询/版本与分类见 [全面复核](PENDING-ITEMS-AUDIT.md)，基础见 [M0–M3 收尾](M0-M3-CLOSEOUT.md)，当前实现见 [M4.3 取消交付](M4.3-DELIVERY.md)。八 READ＋三个内部地址/支付/取消 WRITE、schema 8 和真实 SDK/fake 对话为本项目实现，不宣称真实课堂业务通过。内部工具签名仅 session_json，共用 UTF-8 预算 256 KiB/1 MiB；固定 SDK 支持 WRITE，agent.json 没有逐工具权限字段。模型仍限 READ，内部名形状校验不证明宿主来源。正常取消使用原 charge 全额原路，历史 refund 在入口/写前受控审查；预计额显示、内部认领和串行端口属于工程实现，跨进程状态丢失与实际结算到账不在当前保证内。
+## M4.4 评审：分类与评测重建
+
+2026-10-05 核对固定上游 `6e9f34c685d40fa7a9f5935d8970af6fd9d5f118` 的源码及已安装真实 SDK：教学 Client API 中 GENERIC 是转接示例，不是标签强制要求；REST 目录 `src/tau2/hyper/client_api/catalogs/retail.py` 的 transfers 操作明确 mutates_state=True、幂等不保证且禁止自动重试。本项目转接改用显式 `@is_tool(ToolType.WRITE, mutates_state=True)`，不因标签差异等待额外平台裁决。
+
+`src/tau2/environment/toolkit.py` 的装饰器注释称非变更工具不重放，但 `src/tau2/environment/environment.py` 的实际 set_state 仍执行已知工具，mutates_state 决定是否比对回执；to_json_str 还将嵌套数字/布尔值转成字符串。真实 SDK 子检查直接执行两类元数据探针，用 get_response 实际生成的轨迹在隔离 fake 后端严格重建，并验证原 live claims 拒绝重复转接；不改上游、不放宽生产类型。项目 canonical 恢复与 SDK 评测重建分开说明，见 [M4.4](M4.4-DELIVERY.md)。该基础 Environment 观测不外推未知课堂宿主的全部接线。
+
+本地固定源码 SHA-256：toolkit.py `979a1c87cd2279fdda00e48c007bbfe8fe976120d665b81d0978c37517b8a848`；environment.py `33f0484e967038690b5fc25386eb6a2aa12d748199c1a6bdd8867e541153b337`；上述 catalogs/retail.py `366c23035a9237a8bf30bdfd20e6d5822aab951c52ab4df47cb61423c4e1cfa6`。这些是固定公开源码及离线 SDK 证据，不是新的助教返回或真实课堂运行。
+
+回执额外要求 transfer_id 非空白，严于公开 minLength: 1，纯空白进入 Unknown。摘要用户文本保留为 JSON 文本字段，新测试证明不能在本库改写可信身份/目标/完成记录或将 Unknown 升级；不能外推下游模型免疫提示注入。
+
+2026-10-04 当前八 READ＋四个内部 WRITE、schema 9，新增人工转接见 [M4.4](M4.4-DELIVERY.md)，五端点离线验收见 [M4.5](M4.5-DELIVERY.md)。固定 SDK 实际库存、mutates_state、WRITE 类型和单一 session_json schema 由包装测试验证；不新增 agent.json 逐工具字段或网站权限。公开转接契约明确 201/accepted/非空 transfer_id 与可信 Client API context；示例 GENERIC 不是本项目内部 mutating 包装的强制类型。摘要 64 KiB 和 UTF-8 参数/结果预算为工程决策。宿主若绕开本项目 ModelAdapter 直接让模型调用所有内部工具，history 完整性仍是信任边界，clone 不是签名。实际课堂、并发/崩溃状态丢失、人工响应与到账不冒称通过；按现有契约实施，不等待额外平台承诺。
 
 核查日期：2026-10-02。项目：`enterprise-ai/retail_plus`，Python。通过 Parallight 的 Agentist 助教取得公开证据，并与本地契约、原始业务材料交叉核对。本文件是项目派生摘要，不替换平台原文，也不代表真实 SDK、模型调用或业务评测已经通过。
 

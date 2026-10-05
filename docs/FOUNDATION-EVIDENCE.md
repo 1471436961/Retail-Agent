@@ -51,3 +51,11 @@ M4.2 评审修订增加匹配的逆序交易列表与回执/读回排列不一�
 ## M4.3 当前取消组件
 
 [M4.3 交付](M4.3-DELIVERY.md)与[取消回归](../tests/test_m4_cancellations.py)覆盖原因澄清、精确 pending、自有事实、完整逐 charge 原路复述/确认、单一 POST/回执强读回、409/422、Unknown、共享认领、跨流程互斥和真实 schema 7→8 恢复。模型仍八 READ，默认库存三个内部 WRITE；取消专项 63 项，完整工作区 544/544。C 类映射引用这些实际执行的方法，完整公开业务 AT 执行数仍 0，不把合成结果或 t1 记成公开取消案例通过。M4.2 的 481/481 保留历史来源；当前报告和追踪通过 run_id/source/specification 同时校验。
+
+## M4.4 / M4.5 当前转接与五端点组件
+
+[M4.4](M4.4-DELIVERY.md)的[转接专项](../tests/test_m4_handoffs.py)覆盖真实 user 来源、可信会话路径、201/accepted/非空 ID、已核实与 Unknown 摘要、受理后零业务/模型派发、共享表及迁移；H 映射从只验 schema 扩展到真实默认轮次。真实 SDK 子进程使用 native 消息/Tool/ClientAPI 和 fake transport，网络禁止，子检查不额外累加。
+
+[M4.5](M4.5-DELIVERY.md)的[矩阵](../tests/test_m4_matrix.py)对默认地址/订单地址/支付/取消/转接五端点执行同一正常、409/422、写后超时、缺字段、丢失/错配批次与改口检查；子测试不另计方法数。完整公开业务 AT 执行仍 0，134/522 不变；成功计数须来自本轮 FOUNDATION-RUN 与 AT-TEST-TRACE 的 run_id/source/specification 成对校验，不能沿用 M4.3 的 544。
+
+M4.4 评审收尾新增两条摘要文本隔离测试，断言伪造完成/身份/去向/到账文字不能改写派生字段，Unknown 业务不被升级或重发。[真实 SDK 子检查](../tests/sdk_m3_checks.py)另外用基础 Environment 的真实记录格式验证隔离 fake 后端的严格重建、原 live claims 拒绝重复 POST，以及 GENERIC/False 仍执行但不比对回执的行为；这些检查包含于原主包装项，不另加计数。canonical 历史恢复与 SDK 评测重建是不同入口，不能将后者的执行当成前者的重发，也不能靠 GENERIC 标签提供去重。JSON 数据标签不证明下游消费方免疫提示注入。

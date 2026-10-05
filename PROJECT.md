@@ -1,6 +1,6 @@
 # 工程结构与开发方式
 
-2026-10-04 当前已实现 M4.1 地址、M4.2 已有支付方式切换与 M4.3 取消。最新完整离线运行 544/544，零跳过、退出码 0，见 [M4.3 交付](docs/M4.3-DELIVERY.md)与[逐方法报告](docs/FOUNDATION-RUN.json)。默认八 READ＋三个内部 WRITE，模型候选仍限 READ；三个生产器共用原身份、完整提案确认、schema 8、任务/journal、UTF-8 预算、Unknown 与可信认领表。取消先收集理由、核实 pending、自有订单与 payment 明细，复述逐笔全额原路退款并确认，刷新后仅提交一个取消 POST/强读回；已有退款历史受控审查，不净额或补退。M0–M3 的 353/353、M4.1 的 421/421、M4.2 的 481/481 分别保留历史基线。M4.2 已分源码 1a095ca 与文档 a496182 两批推送；M4.3 源码与测试 ecbc660 已推送，对应自动 t1 工作流 completed/success，报告正文案例计数未单独核实；本轮按用户授权在文档批推送后继续 M4.4/M4.5。134/522 原业务范围不变，完整业务 AT 执行仍 0，M0.2/M4 整体未完成。
+2026-10-05 当前 M4.1–M4.5 的有限默认离线范围已实现，最终完整工作区 602/602、零跳过/失败/错误、原生退出码 0，见 [M4.4 转接](docs/M4.4-DELIVERY.md)与[M4.5 矩阵](docs/M4.5-DELIVERY.md)。schema 9、八 READ＋四个内部地址/支付/取消/转接 WRITE，模型仍只读。转接使用真实 user 明示请求、证据摘要及可信会话 ID，只有有效 201 受理回执才提示转接；受理/Unknown 后停止业务和模型，明确 rejected 后仍可业务。M4.3 源码 ecbc660、文档 9915019 已按两批推送；同一源码 SHA 的自动 t1 completed/success，报告案例计数未单独核实，不证明业务覆盖。M4.4 源码/测试 `c4d8016` 与 M4.5 矩阵/追踪 `449b4ea` 已分别推送；交付文档和共享索引另成独立提交，M5 未开始。134/522 不变，完整业务 AT 执行数 0，M0.2/M6/M7 继续保留；不声称实际课堂、渠道到账或跨进程丢失 journal 去重。
 
 ## Python
 
@@ -16,6 +16,7 @@ agent/
     address_session.py      # M4.1 地址收集、复述和提交
     payment_session.py      # M4.2 单一已有支付方式的整单切换
     cancellation_session.py # M4.3 取消原因、逐 charge 复述与确认提交
+    handoff_session.py      # M4.4 明示请求、证据摘要、可信转接与终态
     workflow_boundary.py    # 三类内部批次、诊断、预算及失败恢复
     workflow_limits.py       # 内部工具 UTF-8 参数/结果预算，不裁剪证据
     protocol.py             # 内部消息、动作和候选校验
@@ -44,6 +45,7 @@ agent/
     adapters/address_tools.py   # 内部地址工具与可信 API/共享认领表
     adapters/payment_tools.py   # 内部支付工具，复用同一 API/认领表
     adapters/cancellation_tools.py # 内部取消工具，复用原确认/journal
+    adapters/handoff_tools.py # 内部转接 WRITE，可信 API 会话 ID
     adapters/model_gateway.py   # JSON/SDK 转换与模型候选门控
     adapters/write_runtime.py   # 显式串行会话认领表与七个契约端点
 tests/test_customer.py      # 无网络、无模型的单元测试
@@ -58,6 +60,8 @@ tests/test_m4_addresses.py # M4.1 实际轮次、两类地址、修正、复制�
 tests/test_m4_address_review.py # prepare 恢复、迟到结果、混合结果、异常与预算边界
 tests/test_m4_payments.py  # M4.2 真实轮次、选择/拒付/读回、跨流程及恢复
 tests/test_m4_cancellations.py # M4.3 原因/逐笔原路退款、确认/Unknown/迁移
+tests/test_m4_handoffs.py  # M4.4 接纳/Unknown/终态/摘要/共享表/迁移
+tests/test_m4_matrix.py    # M4.5 五端点故障、改口与实际发送矩阵
 pyproject.toml             # 本地 package 元数据
 ```
 
