@@ -236,7 +236,7 @@ def run_address_workflow(state, api, claims):
     original = deepcopy(state)
     pending = state["address_pending"]
     if (pending is None or pending["status"] != "pending" or len(state["history"]) != pending["index"] + 1
-            or not state["identity"]["verified"] or not state["identity_evidence"] or state["cancellation_pending"] is not None or state["payment_pending"] is not None or state["pending_calls"]
+            or not state["identity"]["verified"] or not state["identity_evidence"] or state["cancellation_pending"] is not None or state["payment_pending"] is not None or state["items_pending"] is not None or state["pending_calls"]
             or state["handoff"]["status"] not in {"not_requested", "rejected"}):
         raise ValueError("An original idle verified dispatch is required")
     if pending["mode"] == "prepare":

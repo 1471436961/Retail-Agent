@@ -129,7 +129,7 @@ def run_payment_workflow(state, api, claims):
     boundary = _boundary()
     if (pending is None or pending["status"] != "pending" or len(state["history"]) != pending["index"] + 1
             or not state["identity"]["verified"] or not state["identity_evidence"] or state["pending_calls"]
-            or state["cancellation_pending"] is not None or state["address_pending"] is not None or state["handoff"]["status"] not in {"not_requested", "rejected"}):
+            or state["cancellation_pending"] is not None or state["address_pending"] is not None or state["items_pending"] is not None or state["handoff"]["status"] not in {"not_requested", "rejected"}):
         raise ValueError("An original idle verified payment dispatch is required")
     if pending["mode"] == "prepare":
         boundary.event(state, "payment_result", {"call_id":pending["call_id"]})

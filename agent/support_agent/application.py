@@ -10,7 +10,7 @@ from tau2.data_model.message import AssistantMessage, MultiToolMessage, ToolCall
 
 
 class CustomerAgent:
-    """Deterministic reads/address/payment workflows, with later business stages pending."""
+    """Deterministic reads/address/payment/cancellation/handoff/item workflows."""
 
     def __init__(self, context=None, model_adapter=None):
         # Runtime capabilities are instance-local, never persisted in JSON state.

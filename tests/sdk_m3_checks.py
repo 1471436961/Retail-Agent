@@ -385,7 +385,8 @@ def isolated_replay_environment():
 recording_environment, recording_backend = isolated_replay_environment()
 recorded_response = recording_environment.get_response(call)
 assert not recorded_response.error
-assert json.loads(recorded_response.content)["state"]["schema_version"] == "9"
+from support_agent.state import SCHEMA_VERSION
+assert json.loads(recorded_response.content)["state"]["schema_version"] == str(SCHEMA_VERSION)
 assert recording_backend.calls == before_handoff_calls
 handoff_trace = [UserMessage(role="user", content="转人工"), handoff_dispatch_message, recorded_response]
 replay_environment, replay_backend = isolated_replay_environment()
@@ -439,5 +440,34 @@ print("M4_HANDOFF_REPLAY_CHECK_PASSED; isolated fake replay sends once; live cla
 print("M4_HANDOFF_SDK_CHECK_PASSED; trusted context/201 acceptance/terminal no calls/recovery; network attempts 0")
 assert not network_attempts
 print("M4_CANCELLATION_SDK_CHECK_PASSED; native ClientAPI local fake; confirmed cancellation/per-charge refund/readback; network attempts 0")
+from test_m5_items import ItemsBackend
+items_backend = ItemsBackend()
+def items_transport(request):
+    response = items_backend.request(request['method'], request['path'], body=request.get('body'))
+    return {'status_code': response.status_code, 'body': response.body, 'headers': {}, 'elapsed_seconds': 0.0}
+items_tools = Tools(ClientAPI(items_transport, context=ClientAPIContext(conversation_id='offline-items-sdk')), claims=SessionClaims())
+assert items_tools.tool_type('items_workflow') == ToolType.WRITE
+items_agent = CustomerAgent()
+items_state = items_agent.get_init_state()
+def items_turn(text):
+    global items_state
+    message, items_state = items_agent.generate_next_message(UserMessage(role='user', content=text), items_state)
+    while message.tool_calls:
+        assert len(message.tool_calls) == 1
+        action = message.tool_calls[0]
+        payload = getattr(items_tools, action.name)(**action.arguments)
+        message, items_state = items_agent.generate_next_message(MultiToolMessage(role='tool', tool_messages=[ToolMessage(role='tool', id=action.id, content=json.dumps(payload), error=False)]), items_state)
+    assert isinstance(message, AssistantMessage)
+    return message
+items_turn('a@example.test')
+item_recap = items_turn('Change order #TEST1 items; item item_blue: color red; pay with card_a')
+assert 'Anything else' in item_recap.content
+assert not any(c[1].endswith('/item-modifications') for c in items_backend.calls)
+items_turn('yes')
+assert items_state['history'][-1]['items_assessment']['code'] == 'write_verified'
+assert len([c for c in items_backend.calls if c[0] == 'POST' and c[1].endswith('/item-modifications')]) == 1
+assert items_agent.get_init_state(items_state['history'])['operations'] == items_state['operations']
+assert not network_attempts
+print('M5_ITEMS_SDK_CHECK_PASSED; native ClientAPI/tools/assistant-state roundtrip; complete recap/next consent/one POST/readback; network attempts 0')
 print("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0")
 print("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake")

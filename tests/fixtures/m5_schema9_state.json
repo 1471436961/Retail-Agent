@@ -1,0 +1,123 @@
+{
+  "source_commit": "c318306c50a00137fd6e3510809defb360109f37",
+  "generation": "Original pre-M5.2 functions; verified synthetic session, no business write",
+  "state": {
+    "schema_version": 9,
+    "turn": 2,
+    "pending_call_id": null,
+    "pending_calls": {},
+    "customer_id": "customer_a",
+    "identity": {
+      "verified": true,
+      "customer_id": "customer_a"
+    },
+    "history": [
+      {
+        "role": "user",
+        "content": "a@example.test"
+      },
+      {
+        "role": "assistant",
+        "content": "",
+        "tool_call_ids": [
+          "lookup-1"
+        ],
+        "tool_calls": [
+          {
+            "id": "lookup-1",
+            "name": "lookup_customer",
+            "arguments": {
+              "customer_id": "",
+              "email": "a@example.test"
+            }
+          }
+        ]
+      },
+      {
+        "role": "tool",
+        "id": "lookup-1",
+        "content": "{\"customer_id\": \"customer_a\", \"email\": \"a@example.test\", \"name\": {\"first_name\": \"Ada\", \"last_name\": \"Example\"}, \"default_shipping_address\": {\"address_line_1\": \"1 Test St\", \"city\": \"Testville\", \"region\": \"CA\", \"country\": \"US\", \"postal_code\": \"90001\"}, \"payment_methods\": [{\"id\": \"card_a\", \"source\": \"credit_card\", \"brand\": \"Mastercard\", \"last_four\": \"0001\"}, {\"id\": \"card_v\", \"source\": \"credit_card\", \"brand\": \"Visa\", \"last_four\": \"0002\"}, {\"id\": \"paypal_a\", \"source\": \"paypal\"}, {\"id\": \"gift_a\", \"source\": \"gift_card\", \"balance\": 40.0}], \"order_ids\": [\"#TEST1\", \"#TEST3\"]}",
+        "error": false
+      },
+      {
+        "role": "assistant",
+        "content": "The customer email is a@example.test."
+      }
+    ],
+    "tasks": [],
+    "proposals": [],
+    "operations": [
+      {
+        "call_id": "lookup-1",
+        "name": "lookup_customer",
+        "mutates": false,
+        "status": "succeeded"
+      }
+    ],
+    "handoff": {
+      "status": "not_requested"
+    },
+    "tool_calls_since_user": 1,
+    "model_calls_since_user": 0,
+    "identity_evidence": {
+      "inputs": {
+        "email": "a@example.test",
+        "first_name": "",
+        "last_name": "",
+        "postal_code": ""
+      },
+      "verified_at_turn": 2,
+      "source": "user_input_and_matched_search_profile"
+    },
+    "customer_record": {
+      "customer_id": "customer_a",
+      "email": "a@example.test",
+      "name": {
+        "first_name": "Ada",
+        "last_name": "Example"
+      },
+      "default_shipping_address": {
+        "address_line_1": "1 Test St",
+        "city": "Testville",
+        "region": "CA",
+        "country": "US",
+        "postal_code": "90001"
+      },
+      "payment_methods": [
+        {
+          "id": "card_a",
+          "source": "credit_card",
+          "brand": "Mastercard",
+          "last_four": "0001"
+        },
+        {
+          "id": "card_v",
+          "source": "credit_card",
+          "brand": "Visa",
+          "last_four": "0002"
+        },
+        {
+          "id": "paypal_a",
+          "source": "paypal"
+        },
+        {
+          "id": "gift_a",
+          "source": "gift_card",
+          "balance": 40.0
+        }
+      ],
+      "order_ids": [
+        "#TEST1",
+        "#TEST3"
+      ]
+    },
+    "user_request": "a@example.test",
+    "model_usage": [],
+    "verification_draft": {
+      "email": "a@example.test"
+    },
+    "address_pending": null,
+    "payment_pending": null,
+    "cancellation_pending": null
+  }
+}

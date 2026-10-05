@@ -1,9 +1,11 @@
 """M3.5 internal refresh and single-send lifecycle; no model WRITE tools.
 
-The default runtime is absent. A concrete runtime must establish authentic
-submission/consent provenance, business parameters and durable checkpoints.
+Direct calls require an explicit runtime; default business workflows construct
+their reviewed session runtime. It must establish submission/consent provenance,
+business parameters and checkpoints within its documented persistence scope.
 JSON history is evidence within that trust boundary, not a signed transcript.
-There is deliberately no automatic retry or executable classroom write adapter.
+There is deliberately no automatic retry. Concrete endpoint adapters are
+separate from this shared lifecycle; local fakes do not prove live effects.
 """
 import json
 import hashlib
@@ -409,7 +411,8 @@ def execute_operation(state, version, specification, runtime=None):
 
     Checkpoint BEFORE the sole send. A restored sent/Unknown/acknowledged write
     cannot enter this path again, even with a different version for the record.
-    No default HTTP write implementation or business workflow is installed.
+    Business workflows supply their concrete runtime; this helper itself never
+    constructs a transport or grants missing runtime capabilities.
     """
     state = clone_state(state)
     consent = check_confirmation(state, version, specification)
@@ -420,7 +423,7 @@ def execute_operation(state, version, specification, runtime=None):
     if blocked:
         return blocked, state
     if not isinstance(runtime, WriteRuntime):
-        return _result("write_runtime_required", "The default Agent has no authenticated business write runtime."), state
+        return _result("write_runtime_required", "This operation requires an explicit authenticated business write runtime."), state
     gate = _assess(runtime, "assess_submission", clone_state(state), version, json.loads(json.dumps(spec)))
     if gate:
         return gate, state

@@ -124,9 +124,10 @@ def normalize_spec(spec):
 
 def _clean_read_history(history):
     return [{k: v for k, v in entry.items() if k not in {"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event",
-                                                       "presentation_note", "address_dispatch", "address_result", "address_unknown", "address_abandoned", "address_assessment",
+                                                       "presentation_note", "presentation_mode", "address_dispatch", "address_result", "address_unknown", "address_abandoned", "address_assessment",
                                                        "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned", "payment_assessment",
-                                                       "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "cancellation_assessment"}} for entry in history]
+                                                       "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "cancellation_assessment",
+                                                       "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_assessment", "items_basis"}} for entry in history]
 
 
 def _return_opening_boundary(history, target):
@@ -535,8 +536,14 @@ def _normalize_set(specifications):
     return specs
 
 
-def render_proposal_set(specifications, retained=()):
+ITEMS_LAST_CALL = "Anything else you would like to change before I submit?"
+
+
+def render_proposal_set(specifications, retained=(), *, presentation_mode=None):
     specs = _normalize_set(specifications)
+    if presentation_mode not in {None, "items_last_call"} or (presentation_mode is not None
+            and (len(specs) != 1 or specs[0]["action"] != "modify_items")):
+        raise InvalidProposal("Unsupported presentation mode or operation scope")
     sections = []
     for number, spec in enumerate(specs, 1):
         sections.append(f"Operation {number}:\n" + "\n".join(render_proposal(spec).splitlines()[:-1]))
@@ -546,6 +553,8 @@ def render_proposal_set(specifications, retained=()):
             sections.append("This operation includes the entire modification list, with no other modifications.")
     if len(retained) == len(specs):
         sections.append("All these unchanged complete operations retain existing confirmation; no new confirmation is requested.")
+    elif presentation_mode == "items_last_call":
+        sections.append("Confirm this complete list with no additional changes to proceed, or provide additions/corrections for a new recap. I will wait for your next reply.\n" + ITEMS_LAST_CALL)
     else:
         sections.append("Do you confirm the remaining complete operations, or only specific numbered operations? "
                         "A changed item list, payment method or condition requires a new complete recap.")
@@ -555,7 +564,7 @@ def render_proposal_set(specifications, retained=()):
 def restore_proposal_set(state, index):
     """Validate every scope against its preceding facts before accepting any."""
     entry = state["history"][index]
-    _keys(entry, {"role", "content", "proposal_set"}, {"presentation_note", "address_assessment", "payment_assessment", "cancellation_assessment"})
+    _keys(entry, {"role", "content", "proposal_set"}, {"presentation_note", "presentation_mode", "address_assessment", "payment_assessment", "cancellation_assessment", "items_assessment"})
     if entry["role"] != "assistant":
         raise InvalidProposal("Only assistant presentations carry operation sets")
     events = entry["proposal_set"]
@@ -566,7 +575,7 @@ def restore_proposal_set(state, index):
     note = entry.get("presentation_note", "")
     if not isinstance(note, str) or len(note) > 4096:
         raise InvalidProposal("Invalid presentation note")
-    if entry["content"] != (note + "\n\n" if note else "") + render_proposal_set(specs, retained):
+    if entry["content"] != (note + "\n\n" if note else "") + render_proposal_set(specs, retained, presentation_mode=entry.get("presentation_mode")):
         raise InvalidProposal("Operation set differs from the displayed complete recap")
     request_index = next((i for i in range(index - 1, -1, -1) if state["history"][i]["role"] == "user"), None)
     staged = []
@@ -596,7 +605,7 @@ def restore_proposal_set(state, index):
     state["proposals"].extend(staged)
 
 
-def present_proposals(state, specifications, *, presentation_note=""):
+def present_proposals(state, specifications, *, presentation_note="", presentation_mode=None):
     """M3.3 trusted presentation of independently selectable complete operations.
 
     This is not a task scheduler or a model tool. New versions supersede prior
@@ -610,6 +619,7 @@ def present_proposals(state, specifications, *, presentation_note=""):
         if not isinstance(presentation_note, str) or len(presentation_note) > 4096:
             raise InvalidProposal("Invalid presentation note")
         specs = _normalize_set(specifications)
+        render_proposal_set(specs, presentation_mode=presentation_mode)
         if state["pending_calls"] or state["handoff"]["status"] not in {"not_requested", "rejected"}:
             raise InvalidProposal("Cannot present during pending reads or handoff")
         facts = [_scope_facts(state["history"], spec) for spec in specs]
@@ -625,10 +635,12 @@ def present_proposals(state, specifications, *, presentation_note=""):
                    "reuse_version": next((p["version"] for p in current if p["status"] == "confirmed"
                                           and p["fingerprint"] == fingerprint(spec, fact)), None)}
                   for offset, (spec, fact) in enumerate(zip(specs, facts), 1)]
-        text = (presentation_note + "\n\n" if presentation_note else "") + render_proposal_set(specs, [i for i, e in enumerate(events, 1) if e["reuse_version"] is not None])
+        text = (presentation_note + "\n\n" if presentation_note else "") + render_proposal_set(specs, [i for i, e in enumerate(events, 1) if e["reuse_version"] is not None], presentation_mode=presentation_mode)
         entry = {"role": "assistant", "content": text, "proposal_set": events}
         if presentation_note:
             entry["presentation_note"] = presentation_note
+        if presentation_mode is not None:
+            entry["presentation_mode"] = presentation_mode
         state["history"].append(entry)
         restore_proposal_set(state, len(state["history"]) - 1)
         return Decision(text=text), clone_state(state)

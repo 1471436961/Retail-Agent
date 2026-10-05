@@ -224,11 +224,11 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
         # Ignore any abandoned preparation before choosing the active kind;
         # a late foreign result cannot invalidate a newer cancellation batch.
-        for kind in ("address", "payment", "cancellation"):
+        for kind in ("address", "payment", "cancellation", "items"):
             abandoned = {e[kind + "_abandoned"]["call_id"] for e in state["history"] if kind + "_abandoned" in e}
             if turn.outcomes and all(o.id in abandoned for o in turn.outcomes):
                 return WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).accept(state, turn.outcomes)
-        for kind in ("address", "payment", "cancellation"):
+        for kind in ("address", "payment", "cancellation", "items"):
             if state[kind + "_pending"] is not None:
                 return WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).accept(state, turn.outcomes)
         status, records = consume_results(state, turn.outcomes)
@@ -239,6 +239,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                     "mismatch": "The customer lookup/read did not match the verification details or authorized scope."}[status]
             return reply(state, text)
         if len(records) == 1 and records[0][0] in {"lookup_customer", "verify_customer"}:
+            from support_agent.items_session import route_items
+            items = route_items(state)
+            if items is not None:
+                return items
             from support_agent.cancellation_session import route_cancellation
             cancellation = route_cancellation(state)
             if cancellation is not None:
@@ -263,6 +267,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if state["cancellation_pending"] is not None and state["cancellation_pending"]["mode"] == "prepare":
         from support_agent.cancellation_session import _boundary
         _boundary().event(state, "cancellation_abandoned", {"call_id": state["cancellation_pending"]["call_id"]})
+    if state["items_pending"] is not None and state["items_pending"]["mode"] == "prepare":
+        from support_agent.items_session import _boundary
+        _boundary().event(state, "items_abandoned", {"call_id": state["items_pending"]["call_id"]})
     finish_pending(state, "unknown")
     if state["payment_pending"] is not None and state["payment_pending"]["mode"] == "prepare":
         from support_agent.payment_session import _boundary
@@ -274,7 +281,7 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if handoff_intent(text) == "request":
         from support_agent.workflow_boundary import WorkflowBoundary
         from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
-        for kind in ("address", "payment", "cancellation"):
+        for kind in ("address", "payment", "cancellation", "items"):
             pending = state[kind + "_pending"]
             if pending is not None and pending["mode"] == "execute" and pending["status"] == "pending":
                 WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).event(state, kind + "_unknown", {"call_id": pending["call_id"]})
@@ -306,6 +313,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                 proof = verification_inputs(**state["verification_draft"])
             except ValueError:
                 proof = None
+    if state["items_pending"] is not None:
+        from support_agent.items_session import route_items
+        return route_items(state, text)
     if state["cancellation_pending"] is not None:
         from support_agent.cancellation_session import route_cancellation
         return route_cancellation(state, text)
@@ -321,6 +331,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         return emit(state, name, args)
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
+    from support_agent.items_session import route_items
+    items = route_items(state, text)
+    if items is not None:
+        return items
     from support_agent.cancellation_session import route_cancellation
     cancellation = route_cancellation(state, text)
     if cancellation is not None:

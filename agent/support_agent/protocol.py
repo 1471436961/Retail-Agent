@@ -12,7 +12,7 @@ from support_agent.domain.identity import PROOF_FIELDS, verification_inputs
 MAX_TOOL_CALLS_PER_MESSAGE = 8
 MAX_CANDIDATE_ATTEMPTS = 8
 # Internal shape inventory only; model authorization remains READ_TOOL_FIELDS.
-WORKFLOW_TOOL_NAMES = frozenset({"address_workflow", "payment_workflow", "cancellation_workflow", "handoff_workflow"})
+WORKFLOW_TOOL_NAMES = frozenset({"address_workflow", "payment_workflow", "cancellation_workflow", "handoff_workflow", "items_workflow"})
 VERIFICATION_FIELDS = {"customer_id", *PROOF_FIELDS}
 READ_TOOL_FIELDS = {
     "lookup_customer": {"customer_id", "email"},

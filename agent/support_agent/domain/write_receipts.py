@@ -152,4 +152,9 @@ def receipt_matches_readback(spec, receipt, facts, before):
                         "payment_method_id": spec["parameters"]["payment_method_id"]}
             if rows[len(prior):] != [expected]:
                 return False
+        elif rows[len(prior):] not in ([], [{"transaction_type": "refund", "amount": 0,
+                                            "payment_method_id": spec["parameters"]["payment_method_id"]}]):
+            # The fixed upstream appends one zero refund; some adapters omit a
+            # zero transaction. Neither permits an extra charge or destination.
+            return False
     return True

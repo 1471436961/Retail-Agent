@@ -10,7 +10,8 @@ from support_agent.protocol import Decision, InvalidAction, ToolAction, ToolOutc
 # Introduction version stays fixed when later state schemas are added.
 CANCELLATION_SCHEMA_VERSION = 8
 HANDOFF_SCHEMA_VERSION = 9
-SCHEMA_VERSION = HANDOFF_SCHEMA_VERSION
+ITEMS_SCHEMA_VERSION = 10
+SCHEMA_VERSION = ITEMS_SCHEMA_VERSION
 
 
 class InvalidState(ValueError):
@@ -78,7 +79,8 @@ def _history_entry(message):
             for key in ("proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event",
                         "presentation_note", "address_dispatch", "address_result", "address_unknown", "address_abandoned", "address_assessment",
                         "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned", "payment_assessment",
-                        "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "cancellation_assessment", "handoff_event", "handoff_assessment"):
+                        "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "cancellation_assessment", "handoff_event", "handoff_assessment",
+                        "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_assessment", "items_basis", "presentation_mode"):
                 if key in message:
                     entry[key] = message[key]
         calls = message.get("tool_calls") if isinstance(message, dict) else getattr(message, "tool_calls", None)
@@ -130,6 +132,7 @@ def initial_state(message_history=None) -> dict:
         "address_pending": None,
         "payment_pending": None,
         "cancellation_pending": None,
+        "items_pending": None,
     }
     index = 0
     while index < len(history):
@@ -159,6 +162,9 @@ def initial_state(message_history=None) -> dict:
             if "handoff_event" in entry:
                 from support_agent.handoff_session import restore_handoff
                 restore_handoff(state, len(state["history"]) - 1)
+            elif {"items_dispatch", "items_result", "items_unknown", "items_abandoned"} & set(entry):
+                from support_agent.workflow_boundary import WorkflowBoundary
+                WorkflowBoundary("items", 1024 * 1024).restore(state, len(state["history"]) - 1)
             elif {"cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned"} & set(entry):
                 from support_agent.cancellation_session import restore_cancellation_control
                 restore_cancellation_control(state, len(state["history"]) - 1)
@@ -222,7 +228,7 @@ def initial_state(message_history=None) -> dict:
 
 def clone_state(state: dict) -> dict:
     """Round-trip the state to reject non-JSON values and avoid aliasing."""
-    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, 2, 3, 4, 5, 6, 7, 8, SCHEMA_VERSION}:
+    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, 2, 3, 4, 5, 6, 7, 8, 9, SCHEMA_VERSION}:
         raise InvalidState("Unsupported session state version")
     if {"write_authorized", "delivery_verified", "confirmed", "condition_verified"} & set(state):
         raise InvalidState("Authorization flags cannot be added to session state")
@@ -230,6 +236,12 @@ def clone_state(state: dict) -> dict:
         copied = json.loads(json.dumps(state, allow_nan=False))
     except (TypeError, ValueError) as exc:
         raise InvalidState("Session state must be JSON serializable") from exc
+    if copied["schema_version"] < ITEMS_SCHEMA_VERSION:
+        if (copied.get("items_pending") is not None or not isinstance(copied.get("history"), list)
+                or any(isinstance(e, dict) and "presentation_mode" in e for e in copied["history"])
+                or any(isinstance(e, dict) and {"items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_assessment", "items_basis"} & set(e) for e in copied["history"])):
+            raise InvalidState("Legacy state cannot contain schema 10 item workflow evidence")
+        copied["items_pending"] = None
     if copied["schema_version"] < HANDOFF_SCHEMA_VERSION:
         if (copied.get("handoff") != {"status": "not_requested"} or not isinstance(copied.get("history"), list)
                 or any(isinstance(e, dict) and {"handoff_event", "handoff_assessment"} & set(e) for e in copied["history"])):
@@ -269,7 +281,7 @@ def clone_state(state: dict) -> dict:
                 or any(isinstance(e, dict) and ({"proposal_set", "proposal_set_ack"} & set(e)) for e in copied["history"])):
             raise InvalidState("Schema 2 cannot contain schema 3 scope evidence")
         copied["schema_version"] = SCHEMA_VERSION
-    elif copied["schema_version"] in {3, 4, 5, 6, 7, 8}:
+    elif copied["schema_version"] in {3, 4, 5, 6, 7, 8, 9}:
         copied["schema_version"] = SCHEMA_VERSION
     # M1 states remain readable; missing evidence does not grant private reads.
     for key, default in (("model_calls_since_user", 0), ("identity_evidence", None), ("customer_record", None), ("user_request", ""), ("model_usage", []), ("verification_draft", {})):
@@ -288,12 +300,14 @@ def clone_state(state: dict) -> dict:
         if len({"proposal", "proposal_ack", "proposal_set", "proposal_set_ack", "task_plan", "write_event",
                 "address_dispatch", "address_result", "address_unknown", "address_abandoned",
                 "payment_dispatch", "payment_result", "payment_unknown", "payment_abandoned",
-                "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "handoff_event"} & set(entry)) > 1:
+                "cancellation_dispatch", "cancellation_result", "cancellation_unknown", "cancellation_abandoned", "handoff_event", "items_dispatch", "items_result", "items_unknown", "items_abandoned", "items_basis"} & set(entry)) > 1:
             raise InvalidState("Mixed presentation/acknowledgement evidence")
-        if len({"address_assessment", "payment_assessment", "cancellation_assessment", "handoff_assessment"} & set(entry)) > 1:
+        if len({"address_assessment", "payment_assessment", "cancellation_assessment", "handoff_assessment", "items_assessment"} & set(entry)) > 1:
             raise InvalidState("Mixed workflow diagnostics")
         if "presentation_note" in entry and "proposal_set" not in entry:
             raise InvalidState("Presentation notes require a complete operation set")
+        if "presentation_mode" in entry and "proposal_set" not in entry:
+            raise InvalidState("Presentation modes require a complete operation set")
     if any(type(copied.get(key)) is not int or copied[key] < 0 for key in ("turn", "tool_calls_since_user", "model_calls_since_user")):
         raise InvalidState("Malformed session counters")
     identity, handoff = copied.get("identity"), copied.get("handoff")
@@ -373,7 +387,7 @@ def clone_state(state: dict) -> dict:
         validate_write_operations(copied)
     except (TypeError, ValueError, KeyError) as exc:
         raise InvalidState("Invalid write lifecycle evidence") from exc
-    if any(kind + "_pending" not in copied for kind in ("address", "payment", "cancellation")):
+    if any(kind + "_pending" not in copied for kind in ("address", "payment", "cancellation", "items")):
         raise InvalidState("Missing workflow pending slot")
     from support_agent.workflow_boundary import validate_workflows
     try:
@@ -385,4 +399,9 @@ def clone_state(state: dict) -> dict:
         validate_handoff(copied)
     except (TypeError, ValueError, KeyError) as exc:
         raise InvalidState("Invalid human transfer evidence") from exc
+    from support_agent.items_session import validate_items_basis
+    try:
+        validate_items_basis(copied)
+    except (TypeError, ValueError, KeyError) as exc:
+        raise InvalidState("Invalid item intake provenance") from exc
     return copied

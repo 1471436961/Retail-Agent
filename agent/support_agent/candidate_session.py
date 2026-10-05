@@ -18,7 +18,7 @@ def _assess_candidates(state, request_index):
     blocked = lambda code, text: need(code, text, "ID-01", "U4", details={"write_authorized": False})
     if state["handoff"]["status"] not in {"not_requested", "rejected"}:
         return blocked("handoff_blocks_selection", "The handoff prevents further business processing."), state
-    if state["pending_calls"] or any(state.get(k) for k in ("address_pending", "payment_pending", "cancellation_pending", "handoff_pending")):
+    if state["pending_calls"] or any(state.get(k) for k in ("address_pending", "payment_pending", "cancellation_pending", "items_pending", "handoff_pending")):
         return blocked("pending_workflow", "Resolve the pending batch before assessing candidates."), state
     if not state["identity"]["verified"] or not state["identity_evidence"]:
         return blocked("identity_required", "Independent verification is required."), state

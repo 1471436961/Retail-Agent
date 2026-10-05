@@ -1,6 +1,6 @@
 """Shared replayable internal-workflow transport; never consent authority.
 
-Address, payment and cancellation use the same original identity/proposal/write journal. The
+Address, payment, cancellation and items use the same identity/proposal/write journal. The
 kind is a closed trusted-code selector, never a tool parameter or model choice.
 """
 import json
@@ -12,12 +12,12 @@ from support_agent.workflow_limits import check_workflow_argument, compact_json
 
 class WorkflowBoundary:
     def __init__(self, kind, result_limit):
-        if kind not in {"address", "payment", "cancellation"}:
+        if kind not in {"address", "payment", "cancellation", "items"}:
             raise ValueError("Unsupported internal workflow")
         self.kind, self.result_limit = kind, result_limit
         self.tool = kind + "_workflow"
-        self.actions = frozenset({"address": {"shipping_address", "default_shipping_address"}, "payment": {"payment_method"}, "cancellation": {"cancel"}}[kind])
-        self.rule = {"address": "AD-01", "payment": "PY-01", "cancellation": "CA-01"}[kind]
+        self.actions = frozenset({"address": {"shipping_address", "default_shipping_address"}, "payment": {"payment_method"}, "cancellation": {"cancel"}, "items": {"modify_items"}}[kind])
+        self.rule = {"address": "AD-01", "payment": "PY-01", "cancellation": "CA-01", "items": "IT-01"}[kind]
         self.control_keys = frozenset(kind + "_" + suffix for suffix in ("dispatch", "result", "unknown", "abandoned"))
 
     def validate_assessment(self, entry):
@@ -62,7 +62,7 @@ class WorkflowBoundary:
             raise ValueError("Malformed workflow evidence")
         pending = state.get(f"{self.kind}_pending")
         if key == f"{self.kind}_dispatch":
-            if (any(state.get(k + "_pending") is not None for k in ("address", "payment", "cancellation")) or set(data) != {"call_id", "mode"} or data["mode"] not in {"prepare", "execute"}
+            if (any(state.get(k + "_pending") is not None for k in ("address", "payment", "cancellation", "items")) or set(data) != {"call_id", "mode"} or data["mode"] not in {"prepare", "execute"}
                     or data["call_id"] != f"{self.kind}:{index}" or index == 0):
                 raise ValueError("Repeated or invalid workflow dispatch")
             state[f"{self.kind}_pending"] = {**data, "index": index, "status": "pending"}
@@ -105,7 +105,7 @@ class WorkflowBoundary:
         from support_agent.state import clone_state
         state = clone_state(state)
         original = deepcopy(state)
-        if any(state.get(k + "_pending") is not None for k in ("address", "payment", "cancellation")) or state["pending_calls"] or state["handoff"]["status"] not in {"not_requested", "rejected"}:
+        if any(state.get(k + "_pending") is not None for k in ("address", "payment", "cancellation", "items")) or state["pending_calls"] or state["handoff"]["status"] not in {"not_requested", "rejected"}:
             raise InvalidAction("An idle internal workflow is required")
         if not state["identity"]["verified"] or not state["identity_evidence"]:
             raise InvalidAction("Internal workflow requires original identity evidence")
@@ -151,7 +151,7 @@ class WorkflowBoundary:
                     or candidate["history"][-1]["content"] != payload["reply"]
                     or candidate["history"][-1].get(f"{self.kind}_assessment") != payload["assessment"]):
                 raise ValueError("Workflow bundle does not extend its original trusted prefix")
-            all_controls = {kind + "_" + suffix for kind in ("address", "payment", "cancellation") for suffix in ("dispatch", "result", "unknown", "abandoned")}
+            all_controls = {kind + "_" + suffix for kind in ("address", "payment", "cancellation", "items") for suffix in ("dispatch", "result", "unknown", "abandoned")}
             terminal = [(i, e) for i, e in enumerate(suffix) if all_controls & set(e)]
             if len(terminal) != 1:
                 raise ValueError("Workflow bundle requires exactly one terminal control event")
@@ -189,8 +189,8 @@ class WorkflowBoundary:
 
 
 def validate_workflows(state):
-    replay = {kind + "_pending": None for kind in ("address", "payment", "cancellation")}
-    boundaries = [WorkflowBoundary(kind, 1024 * 1024) for kind in ("address", "payment", "cancellation")]
+    replay = {kind + "_pending": None for kind in ("address", "payment", "cancellation", "items")}
+    boundaries = [WorkflowBoundary(kind, 1024 * 1024) for kind in ("address", "payment", "cancellation", "items")]
     for index, entry in enumerate(state["history"]):
         for boundary in boundaries:
             if boundary.kind + "_assessment" in entry:
