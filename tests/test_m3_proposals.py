@@ -664,6 +664,7 @@ class ProposalRecoveryTests(unittest.TestCase):
         self.assertIn("M5_ITEMS_SDK_CHECK_PASSED; native ClientAPI/tools/assistant-state roundtrip", result.stdout)
         self.assertIn("M5_RETURNS_SDK_CHECK_PASSED; native ClientAPI/tools/schema/assistant-state; complete return/next consent/one POST/readback; network attempts 0", result.stdout)
         self.assertIn("M5_EXCHANGE_SDK_CHECK_PASSED; native ClientAPI/tools/schema/assistant-state; complete exchange/signed difference/next consent/one POST/readback; network attempts 0", result.stdout)
+        self.assertIn("M5_MATRIX_SDK_CHECK_PASSED; native ClientAPI/default turns; partial cancellation clarification/new whole consent/one POST/readback/restore; network attempts 0", result.stdout)
         self.assertIn("M4_HANDOFF_REPLAY_CHECK_PASSED; isolated fake replay sends once; live claims prevent resend; GENERIC executes; network attempts 0", result.stdout)
 
 

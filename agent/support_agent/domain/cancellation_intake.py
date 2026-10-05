@@ -17,6 +17,27 @@ def starts_cancellation_request(text):
                 and re.search(r"\border\b|订单|#[A-Za-z0-9_-]+", intent, re.I))
 
 
+def _partial_order_scope(text):
+    # Inspect scope, not the free-text reason or JSON reason value. The cancel
+    # endpoint cancels an entire order; an item-scoped request cannot silently
+    # become a whole-order proposal, including corrections to an active draft.
+    intent = re.split(r"\bbecause\b|\breason\s*[:：=]|原因\s*[:：=]|因为|\{", text, maxsplit=1, flags=re.I)[0]
+    # Exclusions/retained items narrow the whole-order action even without
+    # "partial" or "only". Both singular and plural item wording is deliberate:
+    # neither can be promoted to cancelling the whole order. Reason values
+    # remain data; inspect only the request/scope before its reason delimiter.
+    if re.search(r"\b(?:except(?:\s+for)?|excluding|exclude|keep|retain|leave)\b"
+                 r"|保留|除(?:了|外)|不取消|留下|留着", intent, re.I):
+        return True
+    return bool(re.search(
+        r"\b(?:partial(?:ly)?\b(?!\s+refund\b)|part\s+of|some\s+(?:of\s+)?(?:the\s+)?items?|"
+        r"(?:only|just|one|a\s+single)\s+(?:the\s+)?(?:item(?:s)?\b|item_[\w-]+)|"
+        r"cancel\s+(?:the\s+)?items?\b)"
+        r"|部分(?:订单|商品|取消)|取消(?:一部分|部分|其中|一件|一个商品)"
+        r"|(?:只|仅)(?:取消)?\s*(?:商品|一件|一个|item_[\w-]+)|订单.*(?:中的|里|内).*商品",
+        intent, re.I))
+
+
 def _reason(text, *, initial):
     structured = re.search(r"(?:reason|原因)\s*[:：=]\s*(\{.*)", text, re.I | re.S)
     if structured:
@@ -85,6 +106,8 @@ def request_from_history(history):
             request = {**request, "error": "mixed_business_request"}
         if re.search(r"partial\s+refund|withhold|keep\s+(?:part|some)|部分退款|扣除|保留.*款", text, re.I):
             request = {**request, "error": "full_original_refunds_required", "request_index": index}
+        if _partial_order_scope(text):
+            request = {**request, "error": "cancellation_whole_order_required", "request_index": index}
     return request
 
 

@@ -39,6 +39,10 @@ def route_cancellation(state, text=None):
         return None
     if request["error"] == "mixed_business_request":
         return _boundary().reply(state, "mixed_business_request", "Cancellation conflicts with other changes on the same order. Choose a final operation in a separate workflow; no business request was submitted.")
+    if request["error"]:
+        # An old/restored proposal cannot override a currently unsupported
+        # user scope. Preparation emits the precise error without API reads.
+        return _boundary().dispatch(state, "prepare")
     from support_agent.adapters.read_api import customer_order_ids
     if request["order_id"] and not request["error"] and request["order_id"] not in customer_order_ids(state["customer_record"]):
         return _boundary().reply(state, "cancellation_order_not_owned", "This order is outside your accepted verified references. I cannot dispatch its cancellation; clarify your own order or refresh your profile first.", decision_kind="deny")
@@ -64,6 +68,7 @@ def _prepare(state, api, notice=""):
     if request is None or request["error"]:
         code = request["error"] if request else "cancellation_request_required"
         messages = {"target_order_required":"Please provide the exact owned order ID to cancel.",
+                    "cancellation_whole_order_required":"Cancellation applies to the whole order, not selected items or quantities. I have not prepared or sent a whole-order cancellation from your partial request. Please clarify whether you want to cancel the entire order or request another supported operation.",
                     "single_order_required":"Please choose one exact order for this complete cancellation proposal.",
                     "full_original_refunds_required":"Cancellation refunds every charge in full; partial refunds or withholding are unsupported. Please clarify a new cancellation request.",
                     "conditional_cancellation_request":"The condition is unresolved. Please give a new explicit cancellation request; conditional assent is not permission.",
@@ -129,6 +134,11 @@ def run_cancellation_workflow(state, api, claims):
             state=deepcopy(original); boundary.event(state,"cancellation_result",{"call_id":pending["call_id"]})
             decision,state=boundary.reply(state,"cancellation_preparation_failed","Cancellation preparation failed. No business write was sent; clarify or retry preparation.")
     else:
+        request=request_from_history(state["history"])
+        if request is None or request["error"]:
+            boundary.event(state,"cancellation_result",{"call_id":pending["call_id"]})
+            decision,state=_prepare(state,api)
+            return _payload(decision,state,original,pending)
         attempted={o["version"] for o in state["operations"] if o["mutates"]}
         selected=[p for p in _current_records(state) if p["status"]=="confirmed" and p["version"] not in attempted]
         if len(selected)!=1 or selected[0]["spec"]["action"]!="cancel":

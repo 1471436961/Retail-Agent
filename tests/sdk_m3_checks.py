@@ -545,5 +545,47 @@ exchange_turn('pay with card_a')
 assert len([c for c in exchange_backend.calls if c[0] == 'POST' and c[1].endswith('/exchanges')]) == 1
 assert not network_attempts
 print('M5_EXCHANGE_SDK_CHECK_PASSED; native ClientAPI/tools/schema/assistant-state; complete exchange/signed difference/next consent/one POST/readback; network attempts 0')
+from test_m5_matrix import MatrixBackend
+matrix_backend = MatrixBackend()
+matrix_backend.orders['#TEST1']['items'] = [deepcopy(matrix_backend.orders['#TEST1']['items'][0]) for _ in range(2)]
+
+def matrix_transport(request):
+    response = matrix_backend.request(request['method'], request['path'], body=request.get('body'))
+    return {'status_code': response.status_code, 'body': response.body, 'headers': {}, 'elapsed_seconds': 0.0}
+
+matrix_tools = Tools(ClientAPI(matrix_transport, context=ClientAPIContext(conversation_id='offline-matrix-sdk')), claims=SessionClaims())
+matrix_agent = CustomerAgent()
+matrix_state = matrix_agent.get_init_state()
+
+def matrix_turn(text):
+    global matrix_state
+    message, matrix_state = matrix_agent.generate_next_message(UserMessage(role='user', content=text), matrix_state)
+    while message.tool_calls:
+        assert len(message.tool_calls) == 1
+        action = message.tool_calls[0]
+        payload = getattr(matrix_tools, action.name)(**action.arguments)
+        message, matrix_state = matrix_agent.generate_next_message(MultiToolMessage(role='tool', tool_messages=[ToolMessage(role='tool', id=action.id, content=json.dumps(payload), error=False)]), matrix_state)
+    assert isinstance(message, AssistantMessage)
+    return message
+
+matrix_turn('a@example.test')
+calls_before_partial = deepcopy(matrix_backend.calls)
+matrix_turn('Cancel only item item_blue from order #TEST1 because no longer needed')
+assert matrix_state['history'][-1]['cancellation_assessment']['code'] == 'cancellation_whole_order_required'
+assert matrix_backend.calls == calls_before_partial and not matrix_state['proposals']
+for scope in ('but keep item_blue', 'except item_blue'):
+    matrix_turn('Cancel order #TEST1 ' + scope + ' because no longer needed')
+    assert matrix_state['history'][-1]['cancellation_assessment']['code'] == 'cancellation_whole_order_required'
+    assert matrix_backend.calls == calls_before_partial and not matrix_state['proposals']
+matrix_turn('yes')
+assert not any(c[0]=='POST' and c[1].endswith('/cancellations') for c in matrix_backend.calls)
+matrix_turn('Cancel the entire order #TEST1 because no longer needed')
+assert matrix_state['history'][-1]['cancellation_assessment']['code'] == 'cancellation_confirmation_required'
+matrix_turn('yes')
+assert matrix_state['history'][-1]['cancellation_assessment']['code'] == 'write_verified'
+assert len([c for c in matrix_backend.calls if c[0]=='POST' and c[1].endswith('/cancellations')]) == 1
+assert matrix_agent.get_init_state(matrix_state['history'])['operations'] == matrix_state['operations']
+assert not network_attempts
+print('M5_MATRIX_SDK_CHECK_PASSED; native ClientAPI/default turns; partial cancellation clarification/new whole consent/one POST/readback/restore; network attempts 0')
 print("M3_NETWORK_GUARD_CHECK_PASSED; 2 controlled audit probes; actual-path network attempts 0")
 print("M3_SDK_CHECK_PASSED; network attempts 0; gateway fake")
