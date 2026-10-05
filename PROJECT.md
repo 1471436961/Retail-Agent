@@ -1,6 +1,6 @@
 # 工程结构与开发方式
 
-2026-10-05 当前 M4.1–M4.5 的有限默认离线范围已实现，M4 收尾完整工作区 602/602、零跳过/失败/错误、原生退出码 0，见 [M4.4 转接](docs/M4.4-DELIVERY.md)与[M4.5 矩阵](docs/M4.5-DELIVERY.md)。schema 9、八 READ＋四个内部地址/支付/取消/转接 WRITE，模型仍只读。转接使用真实 user 明示请求、证据摘要及可信会话 ID，只有有效 201 受理回执才提示转接；受理/Unknown 后停止业务和模型，明确 rejected 后仍可业务。M4.3 源码 ecbc660、文档 9915019 已按两批推送；同一源码 SHA 的自动 t1 completed/success，报告案例计数未单独核实，不证明业务覆盖。M4.4 源码/测试 `c4d8016` 与 M4.5 矩阵/追踪 `449b4ea` 已分别推送；交付文档和共享索引 12e6795 已推送。M5.1 源码/测试 6a97a35、规则/追踪 9ae45af 已分批推送，同 SHA 自动 t1 completed/success、正文案例计数未单独核实。本轮 M5.1 结构化候选筛选与真实 user/已接纳读取入口已实现，最新完整工作区 661/661、专项 59/59，零跳过、原生退出码 0，见 [M5.1 交付](docs/M5.1-DELIVERY.md)；M5.2–M5.5 未开始。134/522 不变，完整业务 AT 执行数 0，M0.2/M6/M7 继续保留；不声称实际课堂、渠道到账或跨进程丢失 journal 去重。
+本轮 M5.2 有限中英文明示单一自有订单、逐项条件/规格或完整列表 JSON 的默认商品修改流程已实现，schema 10、八 READ＋五个内部 WRITE，模型只读。完整工作区实际 726/726、商品专项 65/65，零跳过/失败/错误、原生退出码 0，见 [M5.2 交付](docs/M5.2-DELIVERY.md)。M5.1 已分三批推送：6a97a35、9ae45af、c318306；同源码 SHA 自动 t1 completed/success，报告正文案例计数未单独核实。M5.2 按源码/测试、配对追踪、文档三批交付：源码 6088c9a、追踪 cfcf34f 已推送；源码同一自动 t1 completed/success，案例计数未单独核实；M5.3–M5.5 未开始。134 案例/522 AT 不变，完整业务 AT 执行数仍 0，M0.2 与 M5 整体/M6/M7 保留。661/661 为 M5.1 历史基线，不再作为当前源码执行证据。
 
 ## Python
 
@@ -11,13 +11,14 @@ agent/
   agent.json                # 协议、语言、场景
   support_agent/            # 可安装的本地 Python package
     application.py          # 决定下一轮回答或工具调用
-    turns.py                # 轮次入口，复用身份、读取及三类内部工作流
-    read_session.py         # 身份范围、读取批次及地址/支付/取消调度
+    turns.py                # 轮次入口，复用身份、读取及地址/支付/取消/商品工作流
+    read_session.py         # 身份范围、读取批次及地址/支付/取消/商品调度
     address_session.py      # M4.1 地址收集、复述和提交
     payment_session.py      # M4.2 单一已有支付方式的整单切换
     cancellation_session.py # M4.3 取消原因、逐 charge 复述与确认提交
+    items_session.py        # M5.2 完整清单、条件来源、最后询问和一次提交
     handoff_session.py      # M4.4 明示请求、证据摘要、可信转接与终态
-    workflow_boundary.py    # 三类内部批次、诊断、预算及失败恢复
+    workflow_boundary.py    # 四类内部批次、诊断、预算及失败恢复
     workflow_limits.py       # 内部工具 UTF-8 参数/结果预算，不裁剪证据
     protocol.py             # 内部消息、动作和候选校验
     state.py                # 每个会话独立的 JSON 状态
@@ -35,6 +36,7 @@ agent/
     domain/rules.py         # 可解释 JSON 规则结果，非写入授权
     domain/orders.py        # 精确状态与能力准入
     domain/catalog.py       # 选中规格、次数、原价与差价解析
+    domain/items_intake.py   # M5.2 真实 user 条件/列表/方式有限解析
     domain/candidate_selection.py # M5.1 硬约束/库存/保留属性/偏好/回退/排序
     domain/policies.py      # 支付、退款去向及取消原因规则
     domain/task_graph.py    # 同单依赖与对称冲突，独立记录无隐式依赖
@@ -47,6 +49,7 @@ agent/
     adapters/address_tools.py   # 内部地址工具与可信 API/共享认领表
     adapters/payment_tools.py   # 内部支付工具，复用同一 API/认领表
     adapters/cancellation_tools.py # 内部取消工具，复用原确认/journal
+    adapters/items_tools.py  # 内部商品 WRITE，完整 snapshot 与共享认领
     adapters/handoff_tools.py # 内部转接 WRITE，可信 API 会话 ID
     adapters/model_gateway.py   # JSON/SDK 转换与模型候选门控
     adapters/write_runtime.py   # 显式串行会话认领表与七个契约端点
@@ -63,6 +66,7 @@ tests/test_m4_address_review.py # prepare 恢复、迟到结果、混合结果�
 tests/test_m4_payments.py  # M4.2 真实轮次、选择/拒付/读回、跨流程及恢复
 tests/test_m4_cancellations.py # M4.3 原因/逐笔原路退款、确认/Unknown/迁移
 tests/test_m4_handoffs.py  # M4.4 接纳/Unknown/终态/摘要/共享表/迁移
+tests/test_m5_items.py      # M5.2 完整列表/最后询问/确认/刷新/写后核实
 tests/test_m5_candidates.py # M5.1 纯筛选与真实请求/读取事实验收
 tests/test_m4_matrix.py    # M4.5 五端点故障、改口与实际发送矩阵
 pyproject.toml             # 本地 package 元数据
@@ -84,7 +88,7 @@ pyproject.toml             # 本地 package 元数据
 
 ## 依赖与运行边界
 
-M0–M3 内部基础范围完成，353/353 为已推送基础快照；M4.1–M4.5 有限默认流程已完成。地址、支付、取消和转接已接入默认轮次；M5.1 仅交付结构化候选及内部应用入口，商品完整提案/提交生产器尚未实施。SessionWriteRuntime 的稳定认领、严格 True、Unknown 不重发、回执＋自有强读回约定不变；地址、支付和取消 toolkit 共用一份可信进程内 SessionClaims，同一 live 后端重建 toolkit 时须显式复用可信 store，不能以新空表配丢失 journal 的旧 state 冒充跨进程去重。SDK 入口返回真实 AssistantMessage 与对应 state。M0.2 的 134/522 完整公开业务 AT 实际执行仍待 M4–M6；本批合成地址/支付/取消流程通过不冒充公开 AT 或远程评测通过。
+M0–M3 内部基础范围完成，353/353 为已推送基础快照；M4.1–M4.5 有限默认流程已完成。地址、支付、取消和转接已接入默认轮次；M5.1 纯筛选现由 M5.2 商品完整提案/提交生产器调用。SessionWriteRuntime 的稳定认领、严格 True、Unknown 不重发、回执＋自有强读回约定不变；所有业务 toolkit 共用一份可信进程内 SessionClaims，同一 live 后端重建 toolkit 时须显式复用可信 store，不能以新空表配丢失 journal 的旧 state 冒充跨进程去重。SDK 入口返回真实 AssistantMessage 与对应 state。M0.2 的 134/522 完整公开业务 AT 实际执行仍待组合批次补齐；本批合成流程通过不冒充公开 AT 或远程评测通过。
 
 Windows 本地离线测试可使用 `pwsh -NoProfile -File .\scripts\test-local.ps1`：使用项目解释器，临时目录限定在仓库内，原生退出码保留，调用方环境不变。两个测试文件的四处临时目录调用已通过共享 helper 避开 Windows 0o700 的特殊 ACL 设置，直接运行 unittest 也生效；其他系统保持标准临时目录行为。评审会话现已报告原命令在受限模式实跑 266/266、零跳过、退出码 0，无提权、无重定向或注入；本会话此前的启动失败和非受限通过保留来源区分，见 [本地测试入口](docs/LOCAL-TEST-RUNNER.md)。脚本是可选便利入口。
 

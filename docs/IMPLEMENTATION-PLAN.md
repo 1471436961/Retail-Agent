@@ -10,7 +10,7 @@
 
 ## 1. 项目判断与实施目标
 
-当前 M4.1–M4.5 已完成有限默认离线范围，schema 9、八 READ＋四个内部 WRITE，模型只读；M4 收尾工作区 602/602、零跳过/失败/错误、原生退出码 0，见 [M4.4](M4.4-DELIVERY.md)与[M4.5](M4.5-DELIVERY.md)。M4.3 已按源码 ecbc660 / 文档 9915019 两批推送，同一源码自动 t1 completed/success，报告案例计数未单独核实；M4.4 源码/测试 `c4d8016` 与 M4.5 矩阵/追踪 `449b4ea` 已分别推送；交付文档和共享索引 12e6795 已推送。M5.1 源码/测试 6a97a35、规则/追踪 9ae45af 已分批推送，同 SHA 自动 t1 completed/success、正文案例计数未单独核实。本轮 M5.1 结构化候选筛选与真实 user/已接纳读取入口已实现，最新完整工作区 661/661、专项 59/59，零跳过、原生退出码 0，见 [M5.1 交付](M5.1-DELIVERY.md)；M5.2–M5.5 未开始。M0–M3 的 353、M4.1 的 421、M4.2 的 481、M4.3 的 544 分别保留历史来源。134/522 原范围不变，完整业务 AT 执行数 0，M0.2 保留 [ ]。M4 勾选仅代表合成默认离线范围，不代表完整案例、实际课堂或后端支付事务/到账。
+本轮 M5.2 有限中英文明示单一自有订单、逐项条件/规格或完整列表 JSON 的默认商品修改流程已实现，schema 10、八 READ＋五个内部 WRITE，模型只读。完整工作区实际 726/726、商品专项 65/65，零跳过/失败/错误、原生退出码 0，见 [M5.2 交付](M5.2-DELIVERY.md)。M5.1 已分三批推送：6a97a35、9ae45af、c318306；同源码 SHA 自动 t1 completed/success，报告正文案例计数未单独核实。M5.2 按源码/测试、配对追踪、文档三批交付：源码 6088c9a、追踪 cfcf34f 已推送；源码同一自动 t1 completed/success，案例计数未单独核实；M5.3–M5.5 未开始。134 案例/522 AT 不变，完整业务 AT 执行数仍 0，M0.2 与 M5 整体/M6/M7 保留。661/661 为 M5.1 历史基线，不再作为当前源码执行证据。
 
 以下为 2026-10-03 的历史阶段记录，段内完成状态仅指当时快照，不覆盖顶部当前状态。用户明确开始 M3；M3.1 规则批次回归为 130/130，源码 cd71a21、文档 9b323d3 已推送。M3.2 离线回归 176/176，源码 610f488、文档 769bcee 已推送，工作流成功、报告正文计数未单独核实，见 [M3.2 交付记录](M3.2-DELIVERY.md)。随后按用户授权完成 M3.3 内部完整操作集合的局部确认、追加/撤回/条件与失效，该批源码实跑 221/221、零跳过、原生退出码 0；源码 abac040 已推送，自动工作流成功，报告正文计数未单独核实，见 [M3.3 交付记录](M3.3-DELIVERY.md)。默认只读路由不自动生成业务提案；业务写流程未启用。退款合计依据和完整履约冲突控制仍保留，M3.1 与 M3 整体不勾选。
 
@@ -124,7 +124,7 @@ flowchart TD
 
 ### 4.2 模块职责与预期目录
 
-以下树列出 M2–M5.1 已有模块；“待 M4/M5”仅表示后续方向，不要求创建空壳文件。只读 API/工具/流程统一由 read_api/read_tools/read_session 承担，不再另建重复只读实现。地址、支付与取消流程复用同一身份、任务、提案和写 journal，不复制验证与归属门控。
+以下树列出 M2–M5.2 已有模块；“待 M4/M5”仅表示后续方向，不要求创建空壳文件。只读 API/工具/流程统一由 read_api/read_tools/read_session 承担，不再另建重复只读实现。地址、支付与取消流程复用同一身份、任务、提案和写 journal，不复制验证与归属门控。
 
 ```text
 E:\Retail-Agent\agent\
@@ -138,9 +138,10 @@ E:\Retail-Agent\agent\
     address_session.py              M4.1 地址 producer、内部调度和完整结果接纳
     payment_session.py              M4.2 支付 producer、选择/复述及提交
     cancellation_session.py         M4.3 原因/逐 charge 复述、确认与提交
+    items_session.py                M5.2 完整清单/条件来源/最后询问/确认提交
     handoff_session.py              M4.4 显式请求、证据摘要及终态转接
-    workflow_boundary.py            三类工作流共享批次、诊断、预算与恢复
-    workflow_limits.py              地址/支付/取消共用内部工具 UTF-8 参数/结果预算
+    workflow_boundary.py            四类工作流共享批次、诊断、预算与恢复
+    workflow_limits.py              地址/支付/取消/商品共用内部工具 UTF-8 参数/结果预算
     state.py                        JSON 会话状态及恢复
     proposals.py                    已实现 M3.2/M3.3 完整提案、范围确认与原消息来源恢复
     candidate_session.py            M5.1 真实 user/完整目录证据的内部候选入口
@@ -152,12 +153,13 @@ E:\Retail-Agent\agent\
       model_gateway.py              已实现，真实 SDK＋fake 离线验证；真实联调保留
       client_api.py                 传输、路径编码、响应与错误规范化
       customer_api.py                t1 接口兼容；验证委托 read_api
-      customer_tools.py              t1 工具入口，继承 ReadTools/AddressTools/PaymentTools/CancellationTools/HandoffTools
+      customer_tools.py              t1 工具入口，继承 ReadTools/AddressTools/PaymentTools/CancellationTools/HandoffTools/ItemsTools
       read_api.py                    六只读端点、验证/归属/响应校验
       read_tools.py                  带独立验证依据的可重放只读工具
       address_tools.py               M4.1 内部地址 WRITE；可信 API 与共享认领表
       payment_tools.py               M4.2 内部支付 WRITE；复用同一 API/认领表
       cancellation_tools.py          M4.3 内部取消 WRITE；复用原会话/journal
+      items_tools.py                 M5.2 内部完整商品 WRITE；模型不可派发
       handoff_tools.py               M4.4 内部转接 WRITE；可信会话/证据摘要
       write_runtime.py               显式串行会话端点适配/稳定认领；默认工厂不注入
       business_tools.py              写工具声明（待 M3/M4/M5）
@@ -169,13 +171,14 @@ E:\Retail-Agent\agent\
       rules.py                       可解释 JSON 规则结果，非写入授权
       orders.py                      精确状态及一次性操作准入规则
       catalog.py                     选中规格/次数/价格解析，完整清单校验
+      items_intake.py                M5.2 原 user 条件/完整列表/方式有限解析
       candidate_selection.py         M5.1 纯候选筛选、显式偏好/回退与排序
       money.py                       已公开 float/round 算法的兼容估算
       policies.py                    支付资格/渠道时效与取消原因已接生产器
       task_graph.py                  M3.4 纯函数同单依赖、对称冲突和独立记录图
       write_receipts.py              M3.5 履约审查、回执及强读回效果；不证明到账
     workflows\
-      pending_order.py               待处理订单写流程（待 M4）
+      # 待处理写流程复用包根 address/payment/cancellation/items_session.py，不另建 pending_order.py
       returns_exchanges.py           已送达退换写流程（待 M5）
       # 人工转接复用包根 handoff_session.py，不另建 handoff.py
     policies\                       生效规则与编号（待按需整理）
@@ -234,7 +237,7 @@ M3.3 新 present_proposals 入口将同轮完整操作分别编号，真实 user
 
 ### 4.5 内部任务请求图
 
-M3.4 新增 plan_tasks / inspect_task_plan，按同单锁单依赖和互斥操作生成任务图，逐记录给出前置核实候选；原批 schema 4 且无业务流程调用者。当前 schema 8，地址/支付/取消生产器调用同一 present_task_plan 并由通用写前门消费诊断，其他业务生产器未实施。只持有一份可用提案集合；新展示遗漏的旧操作跨订单也会失效，重新纳入未变化项可保留原确认，不等于独立多展示上下文。已有未完成混合计划不得被地址或支付任务静默覆盖；已核实写完成须由原 task_completed 判定。M3.5 的发送/结果 journal 继续区分确认与完成；M4.1 接入两类地址的独立回执和强读回，不推断跨记录事务。历史范围见 [M3.4 交付](M3.4-DELIVERY.md)，当前调用方见 [M4.3 交付](M4.3-DELIVERY.md)。
+M3.4 新增 plan_tasks / inspect_task_plan，按同单锁单依赖和互斥操作生成任务图，逐记录给出前置核实候选；原批 schema 4 且无业务流程调用者。当前 schema 10，地址/支付/取消/商品生产器调用同一 present_task_plan 并由通用写前门消费诊断，其他业务生产器未实施。只持有一份可用提案集合；新展示遗漏的旧操作跨订单也会失效，重新纳入未变化项可保留原确认，不等于独立多展示上下文。已有未完成混合计划不得被地址或支付任务静默覆盖；已核实写完成须由原 task_completed 判定。M3.5 的发送/结果 journal 继续区分确认与完成；M4.1 接入两类地址的独立回执和强读回，不推断跨记录事务。历史范围见 [M3.4 交付](M3.4-DELIVERY.md)，当前商品调用方见 [M5.2 交付](M5.2-DELIVERY.md)。
 
 ## 5. API 覆盖与工具设计
 
@@ -343,7 +346,7 @@ M1 勾选范围是**当前仅有的客户查询工具与内部候选动作接口
 
 ### M3：通用提案、确认及规则引擎（P0，大）
 
-M3.1–M3.5 内部基础范围已完成；历史基线和保证范围见 [基础收尾](M0-M3-CLOSEOUT.md)。默认零 WRITE 是基础阶段边界；当前 M4.1–M4.4 已将地址、支付、取消与转接接入默认轮次及四个内部 WRITE，模型仍只读。通用身份、提案、任务、刷新、回执与 Unknown 原结构复用，商品和复杂组合/条件仍属后续范围。
+M3.1–M3.5 内部基础范围已完成；历史基线和保证范围见 [基础收尾](M0-M3-CLOSEOUT.md)。默认零 WRITE 是基础阶段边界；当前 M4.1–M4.4 与 M5.2 已将地址、支付、取消、转接和完整商品流程接入默认轮次及五个内部 WRITE，模型仍只读。通用身份、提案、任务、刷新、回执与 Unknown 原结构复用，退换及复杂组合/条件仍属后续范围。
 
 - [x] M3.1 可解释状态/规格/金额/支付规则完成，预计退货额按所选原价与次数精确合计并按项目显示规则舍入；保留公开 float 差价/余额算法。完整退货提案、来源/去向、确认/恢复/刷新/回执和履约矛盾已接通内部 M3.5 验收；不声称到账、后台合计公式或 M5 业务生产器完成。
 - [x] M3.2 实现提案版本，绑定完整目标、参数、金额及确认消息；不接受模型自报 confirmed。该批仅验收内部结构化提案与完整确认的离线范围（历史基线 176/176）；默认路由不自动构造业务提案，业务报价生产器待 M4/M5。收尾已补完整退货提案及原价预计额，不把预计额冒称后台结算公式。确认不是写入授权。
@@ -366,7 +369,7 @@ M3.1–M3.5 内部基础范围已完成；历史基线和保证范围见 [基础
 ### M5：商品修改、退货与换货（P1，大）
 
 - [x] M5.1 已实现结构化商品候选筛选：硬约束→库存→保留属性→显式偏好/回退→优先级排序；并列无决策依据询问。真实 user JSON/已接纳完整目录的内部应用入口已接线，默认购物对话与完整清单/提案/提交仍属 M5.2；最终全量验收见 [交付](M5.1-DELIVERY.md)。完整工作区实际 661/661，专项 59/59，零跳过、原生退出码 0；勾选限此内部结构化离线范围，候选不是提案/确认或写入授权。
-- [ ] M5.2 待处理商品修改收齐完整列表，计算差价，说明单次限制，完成最后补充询问并等待后一次提交。由可信生产器解析自然语言构造 criteria，保留真实 user 索引及相关原文，歧义先澄清，不伪造 user JSON；完整提案复述采纳条件、选用回退、完整清单和报价，条件/清单变化须重新展示并确认。此处仅确定来源与确认约定，尚未实现。
+- [x] M5.2 有限中英文明示单一自有订单/逐项条件/完整列表 JSON 的默认商品生产器，收齐完整列表、按原价/当前目标价重算差价、明示单次限制，最后补充询问并等待后一次真实 user 完整确认。条件原文/索引/选用回退与规格报价可恢复；追加、修正和刷新候选变化重新复述。一次 POST 和回执/自有强读回核实锁单；schema 10、真实 SDK＋fake API 完整回归 726/726，专项 65/65，见 [交付](M5.2-DELIVERY.md)。勾选限该有限默认离线范围，不声称全部自然语言、完整公开业务 AT、真实后台或跨进程去重。M5.3–M5.5 未开始。
 - [ ] M5.3 退货收齐完整 item 列表，以原成交价及次数计算预计额、明确显示规则，限制退款目的地并确认完整提案；请求只发送 item_ids/方式，不自行退款或写金额。没有后台结算公式不阻断合法原路申请；分开预计额、可见交易和实际到账，不从 OrderReturn 申请回执推断结算。礼品卡资格在流程起点冻结真实来源。
 - [ ] M5.4 换货核对同产品规格、完整列表和差价方式，提交后禁止追加或改变已选方式。
 - [ ] M5.5 覆盖同款多件/重复 item、同单退换冲突、零差价、礼品卡余额不足、取消一部分意图。
@@ -447,7 +450,7 @@ R1–R6 保留为验收控制，不因查明规则而标为已消除。2026-10-0
 
 每个实施批次保持可审查范围：规则及失败测试 → 最小实现 → 适配器/对话测试 → 本地回归 → 变更说明。不能为提高成绩而削弱禁止行为，不能按 case_id 特判，也不能修改评测脚本或测试范围来隐藏失败。
 
-M1 后可按任务分工推进领域规则/测试、API 适配器、业务工作流。`application.py`、`turns.py`、`read_session.py`、`address_session.py`、`payment_session.py`、`cancellation_session.py`、`handoff_session.py`、`candidate_session.py`、`workflow_boundary.py`、`workflow_limits.py`、`state.py`、`proposals.py`、`tasks.py`、`write_session.py`、`model_context.py`、`protocol.py` 是共享会话接口，必须由同一维护者协调；`read_api.py`、`read_tools.py`、`address_tools.py`、`payment_tools.py`、`cancellation_tools.py`、`handoff_tools.py`、`model_gateway.py` 与 `write_runtime.py` 的范围绑定/消息合同变更须一起审查。新增写流程时复用严格验证和完整批次约定，禁止另起一套身份、确认或状态结构。该约定不代表当前已开启多 agent 并行执行。
+M1 后可按任务分工推进领域规则/测试、API 适配器、业务工作流。`application.py`、`turns.py`、`read_session.py`、`address_session.py`、`payment_session.py`、`cancellation_session.py`、`handoff_session.py`、`candidate_session.py`、`items_session.py`、`workflow_boundary.py`、`workflow_limits.py`、`state.py`、`proposals.py`、`tasks.py`、`write_session.py`、`model_context.py`、`protocol.py` 是共享会话接口，必须由同一维护者协调；`read_api.py`、`read_tools.py`、`address_tools.py`、`payment_tools.py`、`cancellation_tools.py`、`handoff_tools.py`、`items_tools.py`、`model_gateway.py` 与 `write_runtime.py` 的范围绑定/消息合同变更须一起审查。新增写流程时复用严格验证和完整批次约定，禁止另起一套身份、确认或状态结构。该约定不代表当前已开启多 agent 并行执行。
 
 提交粒度建议对应上述阶段或独立可验收流程。是否创建开发分支在进入编码时依据当前工作区和协作需要决定；当前规划不创建分支、不修改绑定。任何 commit/push 前继续遵守用户的明确确认要求。
 
@@ -457,7 +460,7 @@ M1 后可按任务分工推进领域规则/测试、API 适配器、业务工作
 
 ## 11. 建议开始的第一批工作
 
-以下为 M0–M3 历史推进记录，当时默认只读或未启用业务表述不是当前状态；M4.1–M4.3 已接入有限地址/支付/取消，详见本计划顶部及 M4.3 交付。M4.3 分批推送后已完成 M4.4/M4.5 有限离线范围，随后按用户明确要求开始 M5.1，见当前交付；不进入 M5.2。
+以下为 M0–M3 历史推进记录，当时默认只读或未启用业务表述不是当前状态；M4.1–M4.3 已接入有限地址/支付/取消，详见本计划顶部及 M4.3 交付。M4.3 分批推送后已完成 M4.4/M4.5 有限离线范围，随后按用户明确要求完成 M5.1 并分批推送，再实施 M5.2；当前有限离线范围见顶部及交付，不进入 M5.3。
 
 已推送 **M0 和 M1** 的规则/接口基线、案例来源索引、协议与状态化测试底座；M2 三批源码各自 t1 1/1 接入。身份持久化、六端点只读服务与内部模型适配完成离线范围，真实网关未启用或联调。M3.1 源码 cd71a21、文档 9b323d3，M3.2 源码 610f488、文档 769bcee 均已推送；M3.2 工作流成功且报告正文计数未单独核实，见其交付记录。M3.3 的内部范围确认、改口与来源恢复已完成离线验收，历史基线 221/221；源码 abac040 已推送，自动工作流成功，报告正文计数未单独核实，见其交付记录。默认只读路由不自动产生业务提案，无业务写工具。随后 M3.4 内部任务依赖/冲突与独立记录候选已在源码提交后实跑 266/266，测试环境 53ee070、源码 2413049 已逐批推送；同一 t1 工作流成功，报告正文计数未单独核实，见其交付记录；M3.5 通用生命周期、显式串行会话端点、预计额与完整退货提案已完成内部范围；M3.1–M3.5 的内部范围完成，不承诺跨进程崩溃去重或后台结算到账。后续业务流程仍按“验证客户 → 读自有订单 → 确认订单地址 → 更新并核实”推进；M0.2 全量完整业务执行继续保留；M0.4 公开契约/固定 SDK 离线最小集成已完成。
 

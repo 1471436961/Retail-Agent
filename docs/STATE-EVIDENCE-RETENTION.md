@@ -100,3 +100,11 @@ schema 7 新增 payment_pending、payment_dispatch/result/unknown/abandoned、pa
 支付 choice/有限 fallback 只取真实 user，最近请求索引区分地址与支付 draft，地址字段里的品牌词不扩张意图。选定方式/整单原款/原退款去向纳入原完整 spec/facts/同意指纹；修正或余额/原款变化须重新复述。prepare 可以 abandoned/重试，迟到旧结果无权接纳新 prefix；execute 丢失保留 Unknown，两类路由及模型投影一起阻断。工具完整返回才接纳同一身份、原 prefix、诊断及合法新 journal，不把内部 session_json 递归存进 canonical history。
 
 共享 256 KiB/1 MiB UTF-8 参数/结果预算不裁剪来源；两类工具及新实例须共享可信进程内 SessionClaims。已核实旧业务完成才可替换旧任务，Unknown 或仅读成功不能释放它。没有独立多展示上下文、history 签名或 state/store 同时丢失后的分布式去重保证。当前 P 组件关联有限支付合成对话，完整公开业务 AT 执行数仍 0。
+
+## 2026-10-05 M5.2 完整商品来源
+
+schema 10 新增 items_pending 和 items_dispatch/result/unknown/abandoned/assessment/basis。旧 schema 1–9 拒绝新商品元数据，仅迁移空 slot；schema 9 fixture 用改动前 c318306 原函数生成，不修改新形状版本号冒充旧状态。商品事件复用 WorkflowBoundary 全局互斥、prepare 可安全放弃/迟到不接纳、execute 丢失保留 Unknown 的机制。转接与模型投影同步处理该 slot。
+
+items_basis 保存完整请求、每行真实 user 索引/原文、规范 criteria/实际回退、选定规格、原/新价及完整 spec。克隆与恢复按每条 basis 的历史前缀重新构造并比较全部字段与文本；不伪造 user JSON、不用助手摘要制造条件或确认。presentation_note 展示客户可读的完整条件/清单，原文与索引完整保留在 basis。商品单提案的可选 presentation_mode=items_last_call 由统一渲染将补充询问放在最后，恢复同时比较模式与文本；旧展示缺该模式时保持旧渲染，旧 schema 1–9 不得夹带该新模式。事实投影排除该展示元数据，不把它作为业务或身份事实。变更后重新展示并等待后一次完整确认。提交前刷新完整相关 product 目录并重跑筛选；新竞争候选也会使旧唯一选择停止发送。
+
+原始历史及身份/确认/Unknown 链完整保留，256 KiB 参数/1 MiB 结果和单请求 12 READ 是内部预算，超限前置阻断、不截断清单或拆分提交。历史真实性/送达、SessionClaims 表与 state 同时丢失后的跨进程去重仍不在本库保证内；元数据重放不是签名。
