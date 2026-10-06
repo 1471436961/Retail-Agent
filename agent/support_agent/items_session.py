@@ -246,7 +246,7 @@ def _prepare(state, api, notice='', *, kind='items'):
     if result['code'] != f'complete_{kind}_ready':
         return boundary.reply(state, result['code'], result['message'], decision_kind=result['decision'], selection=result['details'])
     attempted = {o['version'] for o in state['operations'] if o['mutates']}
-    if any(p['spec']['action'] != _action(kind) and p['version'] not in attempted for p in _current_records(state)) or unfinished_other_tasks(state, {_action(kind)}):
+    if any(p['spec']['action'] != _action(kind) and p['version'] not in attempted for p in _current_records(state)) or unfinished_other_tasks(state, {_action(kind)}, target=target):
         return boundary.reply(state, f'{kind}_mixed_plan_requires_review', 'Complete the existing address/payment task or clarify the whole plan before locking this order.')
     data = result['details']
     note = render_items_note(data, notice, kind=kind)

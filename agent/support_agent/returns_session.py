@@ -140,7 +140,7 @@ def _prepare(state, api, notice=''):
     if status != 'succeeded': return boundary.reply(state,'returns_order_read_failed','The owned order read failed; an old delivered status cannot replace it.')
     result = build_plan(state['history'])
     if result['decision'] != 'allow': return boundary.reply(state,result['code'],result['message'],decision_kind=result['decision'],**result['details'])
-    if unfinished_other_tasks(state,{'return'}) or any(p['spec']['action']!='return' and p['version'] not in {o['version'] for o in state['operations'] if o['mutates']} for p in _current_records(state)):
+    if unfinished_other_tasks(state,{'return'},target=result['details']['spec']['target']) or any(p['spec']['action']!='return' and p['version'] not in {o['version'] for o in state['operations'] if o['mutates']} for p in _current_records(state)):
         return boundary.reply(state,'returns_mixed_plan_requires_review','An unfinished different operation requires a final choice; it was not silently discarded.')
     data = result['details']; notes = [notice] if notice else []
     notes.append('Current order status: delivered. Complete return list (each row is one purchased unit):')

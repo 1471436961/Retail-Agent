@@ -221,7 +221,7 @@ def _prepare(state, api, *, notice="", prior_records=()):
         kind = "deny" if records and all(r["decision"] == "deny" for r in records) else "allow" if records and all(r["code"] == "address_unchanged" for r in records) else "needs_information"
         return _reply(state, code, "\n".join(notes) or "There are no eligible pending address targets to update. No address has been changed.", decision_kind=kind, records=records)
     from support_agent.workflow_boundary import unfinished_other_tasks
-    if unfinished_other_tasks(state, ADDRESS_ACTIONS):
+    if unfinished_other_tasks(state, ADDRESS_ACTIONS, target=[s['target'] for s in specs]):
         return _reply(state, "address_mixed_plan_requires_review", "An existing mixed operation plan needs clarification before replacing it with address tasks. No existing task has been discarded.")
     _, state = present_task_plan(state, [{"action": s["action"], "target": s["target"]} for s in specs])
     decision, state = present_proposals(state, specs, presentation_note="\n".join(notes))

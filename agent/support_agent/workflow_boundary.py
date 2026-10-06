@@ -202,11 +202,26 @@ def validate_workflows(state):
         raise ValueError("Workflow pending slots differ from original history")
 
 
-def unfinished_other_tasks(state, actions):
-    """Only verified journal completion permits replacing a foreign plan."""
+def unfinished_other_tasks(state, actions, *, target=None):
+    """Preserve unattempted tasks and same-record dependencies.
+
+An accepted attempted journal on another record is retained in history, not
+declared complete. It need not block a fresh explicit peer-record proposal.
+Unresolved global workflow reservations are blocked before this function.
+"""
     if not any(n["action"] not in actions for n in state["tasks"]):
         return False
     from support_agent.tasks import inspect_task_plan
     assessment = inspect_task_plan(state)
-    return any(n["action"] not in actions and n["assessment"]["code"] != "task_completed"
-               for n in assessment["details"].get("tasks", [])) or "tasks" not in assessment["details"]
+    if "tasks" not in assessment["details"]:
+        return True
+    targets = target if isinstance(target, list) else [target] if isinstance(target, dict) else []
+    for node in assessment["details"]["tasks"]:
+        if node['action'] in actions or node['assessment']['code'] == 'task_completed':
+            continue
+        if targets and all(node['target'] != record for record in targets) and any(
+                o['mutates'] and o['spec']['target'] == node['target'] and o['spec']['action'] == node['action']
+                and o['sent_index'] > node['plan_index'] for o in state['operations']):
+            continue
+        return True
+    return False

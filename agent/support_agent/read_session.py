@@ -270,6 +270,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                     return emit(state, *intent)
                 except (InvalidAction, ValueError):
                     return reply(state, "I cannot read that order outside your verified references. Please provide an order ID from your own profile.")
+        from support_agent.amount_summary import route_summary
+        summary = route_summary(state, after_reads=True)
+        if summary is not None:
+            return summary
         return reply(state, format_reads(records))
 
     text = turn.content if isinstance(turn.content, str) else ""
@@ -352,6 +356,10 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         return emit(state, name, args)
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
+    from support_agent.amount_summary import route_summary
+    summary = route_summary(state)
+    if summary is not None:
+        return summary
     from support_agent.exchange_session import route_exchange
     exchange = route_exchange(state, text)
     if exchange is not None:

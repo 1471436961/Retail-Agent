@@ -7,6 +7,7 @@ from support_agent.domain.addresses import order_ids, starts_address_request
 from support_agent.domain.payment_intake import starts_payment_request, method_label
 from support_agent.domain.policies import cancellation_refund_basis, _methods, refund_timing_rule
 from support_agent.domain.rules import allow, need
+from support_agent.domain.money import display_exact_amount as _display
 
 
 def starts_cancellation_request(text):
@@ -109,12 +110,6 @@ def request_from_history(history):
         if _partial_order_scope(text):
             request = {**request, "error": "cancellation_whole_order_required", "request_index": index}
     return request
-
-
-def _display(value):
-    text = format(value, "f")
-    whole, separator, fraction = text.partition(".")
-    return whole + "." + fraction.ljust(2, "0")
 
 
 def refund_recap_rule(payments, methods):

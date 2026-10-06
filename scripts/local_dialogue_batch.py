@@ -12,6 +12,7 @@ from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / 'tests/fixtures/m6_dialogues.json'
+COMBINATION_FIXTURE = ROOT / 'tests/fixtures/m6_combinations.json'
 WRAPPER = 'test_m6_dialogues.NativeDialogueBatchTests.test_default_sdk_dialogue_batch_matches_fixed_oracles'
 SCOPE = 'synthetic requirement-linked dialogues; not complete public business ATs'
 RUNNER = 'tests/sdk_m6_checks.py'
@@ -148,8 +149,10 @@ def validate_manifest(manifest, requirements):
 
 
 def load_manifest():
-    return validate_manifest(json.loads(FIXTURE.read_text(encoding='utf-8')),
-                             (ROOT/'docs/CASE-REQUIREMENTS.md').read_text(encoding='utf-8'))
+    requirements = (ROOT/'docs/CASE-REQUIREMENTS.md').read_text(encoding='utf-8')
+    primary = validate_manifest(json.loads(FIXTURE.read_text(encoding='utf-8')), requirements)
+    combinations = validate_manifest(json.loads(COMBINATION_FIXTURE.read_text(encoding='utf-8')), requirements)
+    return validate_manifest({**primary, 'scenarios': primary['scenarios'] + combinations['scenarios']}, requirements)
 
 
 def build_plan(requirements, manifest):
@@ -201,7 +204,7 @@ def _verify_scenario(scenario, result):
         if any((c['method'], c['path']) not in allowed_reads | expected_writes for c in actual['http_calls']):
             raise ValueError('Unexpected or cross-customer API call')
         if [c for c in actual['http_calls'] if c not in business_calls(actual['http_calls'])] != expected['reads']:
-            raise ValueError('Exact read trajectory mismatch')
+            raise ValueError(f"Exact read trajectory mismatch in {scenario['id']}: expected {expected['reads']!r}; observed {[c for c in actual['http_calls'] if c not in business_calls(actual['http_calls'])]!r}")
         if 'http_calls' in expected and actual['http_calls'] != expected['http_calls']:
             raise ValueError('Exact full trajectory mismatch')
     oracle = apply_patches(result['initial_backend'], scenario['final_patches'])

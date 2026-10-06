@@ -205,15 +205,24 @@ GROUP_LIMITATIONS = {
 }
 
 
-def source_digest(root=ROOT):
+def source_paths(root=ROOT):
     paths = sorted(list((root / "agent").rglob("*.py")) + list((root / "tests").rglob("*.py")) +
                    list((root / "tests" / "fixtures").glob("*.json")) +
                    [root / "agent" / "agent.json", root / "scripts" / "foundation_trace.py",
                     root / "scripts" / "local_dialogue_batch.py", root / "scripts" / "evidence_docs.py"])
+    return [path for path in paths if "__pycache__" not in path.parts]
+
+
+def source_file_hashes(root=ROOT):
+    """Reviewable file bytes; no Git, credentials or unselected docs required."""
+    return {p.relative_to(root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+            for p in source_paths(root)}
+
+
+def source_digest(root=ROOT):
     digest = hashlib.sha256()
-    for path in paths:
-        if "__pycache__" not in path.parts:
-            digest.update(path.relative_to(root).as_posix().encode() + b"\0" + path.read_bytes() + b"\0")
+    for path in source_paths(root):
+        digest.update(path.relative_to(root).as_posix().encode() + b"\0" + path.read_bytes() + b"\0")
     return digest.hexdigest()
 
 
@@ -228,6 +237,7 @@ def specification_snapshot(root=ROOT):
 def input_snapshot(root=ROOT):
     requirements = (root / "docs" / "CASE-REQUIREMENTS.md").read_text(encoding="utf-8")
     return {"source_sha256": source_digest(root),
+            "source_files": source_file_hashes(root),
             "requirements_sha256": hashlib.sha256(requirements.encode()).hexdigest(),
             **specification_snapshot(root)}
 
@@ -242,6 +252,11 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
             or report.get("failures") != 0 or report.get("errors") != 0
             or not isinstance(report.get("results"), dict)):
         raise ValueError("Trace requires a successful, unskipped run of the exact source workspace")
+    files = report.get('source_files')
+    if not isinstance(files, dict) or not files or any(
+            not isinstance(name, str) or not isinstance(value, str) or not re.fullmatch(r'[0-9a-f]{64}', value)
+            for name, value in files.items()):
+        raise ValueError('Trace requires per-file source hashes')
     for ids in groups.values():
         if not ids or any(report["results"].get(test_id) != "passed" for test_id in ids):
             raise ValueError("A referenced component test was not executed successfully")
@@ -270,6 +285,7 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
             "case_count": 134, "at_count": 522, "business_ats_executed": 0,
             "requirements_sha256": hashlib.sha256(requirements.encode()).hexdigest(),
             "run_source_sha256": expected_source_digest,
+            "source_files": files,
             "specification_sha256": expected_specification_digest,
             "specification_files": report["specification_files"],
             "groups": {code: {"test_ids": ids, "limitation": GROUP_LIMITATIONS.get(code, "Related component only.")}
@@ -289,7 +305,8 @@ def validate_evidence_pair(requirements, report, trace, *, snapshot, allow_oracl
     """Consumers must validate both artifacts, not a source hash alone."""
     expected = build_trace(requirements, report, expected_source_digest=snapshot["source_sha256"],
                            expected_specification_digest=snapshot["specification_sha256"], allow_oracle_control=allow_oracle_control)
-    if trace != expected or report["specification_files"] != snapshot["specification_files"]:
+    if (trace != expected or report["specification_files"] != snapshot["specification_files"]
+            or report['source_files'] != snapshot['source_files']):
         raise ValueError("Evidence is stale, invalid, or from a different run")
 
 
@@ -318,6 +335,8 @@ def publish_run(requirements, report, *, snapshot, report_path, trace_path):
     current_trace = None
     if report["status"] == "passed":
         try:
+            if report.get('source_files') != snapshot['source_files']:
+                raise ValueError('Per-file source hashes differ from current inputs')
             current_trace = build_trace(requirements, report,
                     expected_source_digest=snapshot["source_sha256"],
                     expected_specification_digest=snapshot["specification_sha256"])

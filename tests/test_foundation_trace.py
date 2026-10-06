@@ -22,6 +22,7 @@ class FoundationTraceTests(unittest.TestCase):
     def setUp(self):
         self.requirements = (ROOT / "docs" / "CASE-REQUIREMENTS.md").read_text(encoding="utf-8")
         self.snapshot = {"source_sha256":"fixture", "specification_sha256":"spec-fixture",
+                         "source_files":{"agent/fixture.py":hashlib.sha256(b'fixture').hexdigest()},
                          "specification_files":{"materials/public-contract":"fixture"},
                          "requirements_sha256":hashlib.sha256(self.requirements.encode()).hexdigest()}
         self.report = {**self.snapshot, "run_id":"current-run", "status":"passed",
@@ -175,7 +176,7 @@ class FoundationTraceTests(unittest.TestCase):
                                  'network_attempts':0,'results':[synthetic_result(s) for s in manifest['scenarios']]}
         with self.assertRaisesRegex(ValueError,'provenance'): self.build(report=report)
         result=self.build(report=report,allow_oracle_control=True)
-        self.assertEqual(result['local_dialogues']['dialogues_passed'],16)
+        self.assertEqual(result['local_dialogues']['dialogues_passed'],len(manifest['scenarios']))
         self.assertEqual(len(result['local_dialogues']['plan']),522)
         self.assertEqual(result['business_ats_executed'],0)
         self.assertTrue(all(r['business_result']=='not_executed' for r in result['records']))
@@ -243,3 +244,42 @@ class FoundationTraceTests(unittest.TestCase):
             self.assertIs(outer.PARENT_RUN,original_parent)
             self.assertIs(outer.BATCH_EVIDENCE,original_evidence)
             self.assertNotIn('dialogue_batch',json.loads(run_path.read_text()))
+
+    def test_per_file_hashes_match_bytes_and_detect_single_file_change_without_git(self):
+        paths = ('agent/agent.json', 'agent/core.py', 'tests/check.py', 'tests/fixtures/batch.json',
+                 'scripts/foundation_trace.py', 'scripts/local_dialogue_batch.py', 'scripts/evidence_docs.py')
+        with temporary_directory() as directory:
+            root = Path(directory)
+            for name in paths:
+                path = root / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(b'original\r\n')
+            original = trace.source_file_hashes(root)
+            self.assertEqual(set(original), set(paths))
+            self.assertTrue(all(v == hashlib.sha256(b'original\r\n').hexdigest() for v in original.values()))
+            (root / 'agent/core.py').write_bytes(b'changed\n')
+            changed = trace.source_file_hashes(root)
+            self.assertEqual([name for name in original if original[name] != changed[name]], ['agent/core.py'])
+            self.assertFalse((root / '.git').exists())
+
+    def test_tampered_per_file_maps_cannot_publish_or_validate_same_digest_evidence(self):
+        saved = self.build()
+        for files in ({}, {'agent/fixture.py':'malformed'}, {'agent/fixture.py':'0'*64}):
+            report = {**self.report, 'source_files':files}
+            with self.subTest(files=files), temporary_directory() as directory:
+                with self.assertRaises(ValueError):
+                    trace.validate_evidence_pair(self.requirements, report, saved, snapshot=self.snapshot)
+                self.assertEqual(trace.publish_run(self.requirements, report, snapshot=self.snapshot,
+                    report_path=Path(directory)/'run.json', trace_path=Path(directory)/'trace.json'), 1)
+
+    def test_fixed_baseline_manifest_records_original_fixture_bytes_but_not_push_authenticity(self):
+        baseline = json.loads((ROOT / 'tests/fixtures/m6_source_baseline.json').read_text(encoding='utf-8'))
+        self.assertEqual(baseline['schema_version'], 1)
+        original_fixture = 'tests/fixtures/m6_dialogues.json'
+        raw = (ROOT / original_fixture).read_bytes()
+        self.assertEqual(baseline['files'][original_fixture], hashlib.sha256(raw.replace(b'\r\n', b'\n')).hexdigest())
+        self.assertEqual(baseline['fixture_checkout']['git_blob_sha256'], baseline['files'][original_fixture])
+        self.assertIn(hashlib.sha256(raw).hexdigest(), (baseline['fixture_checkout']['workspace_sha256'], baseline['files'][original_fixture]))
+        self.assertIn('not a proof of remote push', baseline['scope'])
+        self.assertTrue(all(len(value) == 64 for value in baseline['files'].values()))
+        current = trace.source_file_hashes()
+        self.assertIn('tests/fixtures/m6_source_baseline.json', current)
+        self.assertNotEqual(baseline['files']['scripts/foundation_trace.py'], current['scripts/foundation_trace.py'])

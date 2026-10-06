@@ -140,7 +140,7 @@ class CancellationIntakeTests(unittest.TestCase):
         rows = [{"transaction_type": "payment", "payment_method_id": "card_a", "amount": amount} for amount in (0.005, 0.005, 2)]
         original = deepcopy(rows)
         result = refund_recap_rule(rows, [{"id": "card_a", "source": "paypal"}])
-        self.assertEqual(result["details"]["display_total"], "2.010")
+        self.assertEqual(result["details"]["display_total"], "2.01")
         self.assertEqual([r["display_amount"] for r in result["details"]["rows"]], ["0.005", "0.005", "2.00"])
         self.assertEqual(result["details"]["charges"], rows); self.assertEqual(rows, original)
         self.assertFalse(result["details"]["settlement_verified"])

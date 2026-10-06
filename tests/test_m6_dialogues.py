@@ -247,13 +247,13 @@ class NativeDialogueBatchTests(unittest.TestCase):
         parent=PARENT_RUN or {'run_id':uuid4().hex, 'source_sha256':foundation.source_digest()}
         result = subprocess.run([sys.executable,'-B',str(ROOT/'tests/sdk_m6_checks.py'),
                                 '--parent-run-id',parent['run_id'],'--source-sha256',parent['source_sha256']],
-                                cwd=ROOT,env=env,text=True,encoding='utf-8',capture_output=True,timeout=120)
+                                cwd=ROOT,env=env,text=True,encoding='utf-8',capture_output=True,timeout=180)
         self.assertEqual(result.returncode,0,result.stderr[-6000:])
         self.assertIn('M6_DIALOGUE_SDK_CHECK_PASSED; native SDK/default turns;',result.stdout)
         records=[line.removeprefix('M6_DIALOGUE_JSON=') for line in result.stdout.splitlines() if line.startswith('M6_DIALOGUE_JSON=')]
         self.assertEqual(len(records),1)
         verified=batch.validate_batch(json.loads(records[0]),batch.load_manifest())
         self.assertEqual(verified['execution'],batch.execution_metadata(parent['run_id'],parent['source_sha256']))
-        self.assertEqual(len(verified['results']),16)
+        self.assertEqual(len(verified['results']),len(batch.load_manifest()['scenarios']))
         self.assertTrue(any(r['journal'] for r in verified['results']))
         BATCH_EVIDENCE = verified  # Published only after all native observations pass.

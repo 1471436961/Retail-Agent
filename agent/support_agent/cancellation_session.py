@@ -103,7 +103,7 @@ def _prepare(state, api, notice=""):
     quote = refund_recap_rule(order["payments"],state["customer_record"]["payment_methods"])
     if quote["decision"] != "allow": return answer(quote)
     attempted = {o["version"] for o in state["operations"] if o["mutates"]}
-    if any(p["spec"]["action"] != "cancel" and p["version"] not in attempted for p in _current_records(state)) or unfinished_other_tasks(state,{"cancel"}):
+    if any(p["spec"]["action"] != "cancel" and p["version"] not in attempted for p in _current_records(state)) or unfinished_other_tasks(state,{"cancel"},target=target):
         return boundary.reply(state,"cancellation_mixed_plan_requires_review","An unfinished non-cancellation proposal needs a final choice. It was not silently discarded.")
     spec = normalize_spec({"action":"cancel","target":target,"parameters":{"reason":reason["details"]["reason"]},
                            "amount":{"kind":"per_charge_refunds","rows":quote["details"]["charges"]}})

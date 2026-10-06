@@ -1,0 +1,1790 @@
+{
+  "schema_version": 2,
+  "scope": "synthetic requirement-linked dialogues; not complete public business ATs",
+  "scenarios": [
+    {
+      "id": "address_then_complete_items",
+      "at_ids": [
+        "AT-A042-05",
+        "AT-A097-04"
+      ],
+      "coverage_note": "M6.2 fixed combination on synthetic records; independent next-user consent and full final-backend oracle, not full public case execution.",
+      "setup": [],
+      "turns": [
+        {
+          "user": "a@example.test",
+          "writes": [],
+          "identity": true,
+          "http_calls": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ],
+          "reads": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Change order #TEST1 address: {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+          "writes": [],
+          "assessment": {
+            "kind": "address",
+            "code": "address_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "PUT",
+              "path": "/v1/orders/%23TEST1/shipping-address",
+              "body": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "address",
+            "code": "address_updates_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Change order #TEST1 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+          "writes": [
+            {
+              "method": "PUT",
+              "path": "/v1/orders/%23TEST1/shipping-address",
+              "body": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "items",
+            "code": "items_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/catalog/products/product_mug",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "PUT",
+              "path": "/v1/orders/%23TEST1/shipping-address",
+              "body": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/item-modifications",
+              "body": {
+                "replacements": [
+                  {
+                    "existing_item_id": "item_blue",
+                    "replacement_item_id": "item_red"
+                  }
+                ],
+                "payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "items",
+            "code": "write_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/catalog/products/product_mug",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        }
+      ],
+      "final_patches": [
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "shipping_address"
+          ],
+          "value": {
+            "address_line_1": "42 Example Avenue",
+            "address_line_2": "Suite 2",
+            "city": "Sample City",
+            "region": "WA",
+            "country": "US",
+            "postal_code": "00123"
+          }
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "status"
+          ],
+          "value": "pending (items modified)"
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "items"
+          ],
+          "value": [
+            {
+              "item_id": "item_red",
+              "product_id": "product_mug",
+              "price": 15,
+              "name": "Synthetic mug",
+              "options": {
+                "color": "red",
+                "capacity": "500 ml",
+                "waterproof": "yes"
+              }
+            }
+          ]
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "payments"
+          ],
+          "value": [
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "card_a",
+              "amount": 12.5
+            },
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "card_a",
+              "amount": 2.5
+            }
+          ]
+        }
+      ],
+      "journal": [
+        {
+          "action": "shipping_address",
+          "status": "succeeded"
+        },
+        {
+          "action": "modify_items",
+          "status": "succeeded"
+        }
+      ],
+      "handoff": "not_requested",
+      "initial_sha256": "02fcf40958f67dec5438fb4029fd50f8ee03e7070ce7c9bf0c167753d3610f8c",
+      "context": {
+        "conversation_id": "offline-m6-address_then_complete_items",
+        "customer_id": "customer_a",
+        "order_ids": [
+          "#TEST1",
+          "#TEST3"
+        ],
+        "product_ids": [
+          "product_mug"
+        ]
+      }
+    },
+    {
+      "id": "two_orders_complete_items",
+      "at_ids": [
+        "AT-A111-05"
+      ],
+      "coverage_note": "M6.2 fixed combination on synthetic records; independent next-user consent and full final-backend oracle, not full public case execution.",
+      "setup": [],
+      "turns": [
+        {
+          "user": "a@example.test",
+          "writes": [],
+          "identity": true,
+          "http_calls": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ],
+          "reads": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Change order #TEST1 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+          "writes": [],
+          "assessment": {
+            "kind": "items",
+            "code": "items_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/catalog/products/product_mug",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/item-modifications",
+              "body": {
+                "replacements": [
+                  {
+                    "existing_item_id": "item_blue",
+                    "replacement_item_id": "item_red"
+                  }
+                ],
+                "payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "items",
+            "code": "write_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/catalog/products/product_mug",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Change order #TEST3 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/item-modifications",
+              "body": {
+                "replacements": [
+                  {
+                    "existing_item_id": "item_blue",
+                    "replacement_item_id": "item_red"
+                  }
+                ],
+                "payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "items",
+            "code": "items_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/catalog/products/product_mug",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/item-modifications",
+              "body": {
+                "replacements": [
+                  {
+                    "existing_item_id": "item_blue",
+                    "replacement_item_id": "item_red"
+                  }
+                ],
+                "payment_method_id": "card_a"
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST3/item-modifications",
+              "body": {
+                "replacements": [
+                  {
+                    "existing_item_id": "item_blue",
+                    "replacement_item_id": "item_red"
+                  }
+                ],
+                "payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "items",
+            "code": "write_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/catalog/products/product_mug",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            }
+          ]
+        }
+      ],
+      "final_patches": [
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "status"
+          ],
+          "value": "pending (items modified)"
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "items"
+          ],
+          "value": [
+            {
+              "item_id": "item_red",
+              "product_id": "product_mug",
+              "price": 15,
+              "name": "Synthetic mug",
+              "options": {
+                "color": "red",
+                "capacity": "500 ml",
+                "waterproof": "yes"
+              }
+            }
+          ]
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "payments"
+          ],
+          "value": [
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "card_a",
+              "amount": 12.5
+            },
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "card_a",
+              "amount": 2.5
+            }
+          ]
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "status"
+          ],
+          "value": "pending (items modified)"
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "items"
+          ],
+          "value": [
+            {
+              "item_id": "item_red",
+              "product_id": "product_mug",
+              "price": 15,
+              "name": "Synthetic mug",
+              "options": {
+                "color": "red",
+                "capacity": "500 ml",
+                "waterproof": "yes"
+              }
+            }
+          ]
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "payments"
+          ],
+          "value": [
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "card_a",
+              "amount": 12.5
+            },
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "card_a",
+              "amount": 2.5
+            }
+          ]
+        }
+      ],
+      "journal": [
+        {
+          "action": "modify_items",
+          "status": "succeeded"
+        },
+        {
+          "action": "modify_items",
+          "status": "succeeded"
+        }
+      ],
+      "handoff": "not_requested",
+      "initial_sha256": "02fcf40958f67dec5438fb4029fd50f8ee03e7070ce7c9bf0c167753d3610f8c",
+      "context": {
+        "conversation_id": "offline-m6-two_orders_complete_items",
+        "customer_id": "customer_a",
+        "order_ids": [
+          "#TEST1",
+          "#TEST3"
+        ],
+        "product_ids": [
+          "product_mug"
+        ]
+      }
+    },
+    {
+      "id": "two_orders_return_and_exchange",
+      "at_ids": [
+        "AT-A028-03",
+        "AT-A098-05"
+      ],
+      "coverage_note": "M6.2 fixed combination on synthetic records; independent next-user consent and full final-backend oracle, not full public case execution.",
+      "setup": [
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "status"
+          ],
+          "value": "delivered"
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "status"
+          ],
+          "value": "delivered"
+        }
+      ],
+      "turns": [
+        {
+          "user": "a@example.test",
+          "writes": [],
+          "identity": true,
+          "http_calls": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ],
+          "reads": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Return order #TEST1; items: item_blue; refund to card_a",
+          "writes": [],
+          "assessment": {
+            "kind": "returns",
+            "code": "returns_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/returns",
+              "body": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "returns",
+            "code": "write_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Exchange order #TEST3 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/returns",
+              "body": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "exchange",
+            "code": "exchange_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/catalog/products/product_mug",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/returns",
+              "body": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST3/exchanges",
+              "body": {
+                "replacements": [
+                  {
+                    "existing_item_id": "item_blue",
+                    "replacement_item_id": "item_red"
+                  }
+                ],
+                "payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "exchange",
+            "code": "write_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/catalog/products/product_mug",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            }
+          ]
+        }
+      ],
+      "final_patches": [
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "status"
+          ],
+          "value": "return requested"
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "return_request"
+          ],
+          "value": {
+            "item_ids": [
+              "item_blue"
+            ],
+            "refund_payment_method_id": "card_a"
+          }
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "status"
+          ],
+          "value": "exchange requested"
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "exchange"
+          ],
+          "value": {
+            "replacements": [
+              {
+                "existing_item_id": "item_blue",
+                "replacement_item_id": "item_red"
+              }
+            ],
+            "payment_method_id": "card_a",
+            "price_difference": 2.5
+          }
+        }
+      ],
+      "journal": [
+        {
+          "action": "return",
+          "status": "succeeded"
+        },
+        {
+          "action": "exchange",
+          "status": "succeeded"
+        }
+      ],
+      "handoff": "not_requested",
+      "initial_sha256": "e2a402435cf608d86174175696683f40b85fa4b0bf0946fa8d9a5ec3102620a9",
+      "context": {
+        "conversation_id": "offline-m6-two_orders_return_and_exchange",
+        "customer_id": "customer_a",
+        "order_ids": [
+          "#TEST1",
+          "#TEST3"
+        ],
+        "product_ids": [
+          "product_mug"
+        ]
+      }
+    },
+    {
+      "id": "blocked_order_then_other_address",
+      "at_ids": [
+        "AT-A071-04"
+      ],
+      "coverage_note": "M6.2 fixed combination on synthetic records; independent next-user consent and full final-backend oracle, not full public case execution.",
+      "setup": [
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "status"
+          ],
+          "value": "processed"
+        }
+      ],
+      "turns": [
+        {
+          "user": "a@example.test",
+          "writes": [],
+          "identity": true,
+          "http_calls": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ],
+          "reads": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Change order #TEST1 address: {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+          "writes": [],
+          "assessment": {
+            "kind": "address",
+            "code": "address_state_not_allowed"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Change order #TEST3 address: {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+          "writes": [],
+          "assessment": {
+            "kind": "address",
+            "code": "address_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "PUT",
+              "path": "/v1/orders/%23TEST3/shipping-address",
+              "body": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "address",
+            "code": "address_updates_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            }
+          ]
+        }
+      ],
+      "final_patches": [
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "shipping_address"
+          ],
+          "value": {
+            "address_line_1": "42 Example Avenue",
+            "address_line_2": "Suite 2",
+            "city": "Sample City",
+            "region": "WA",
+            "country": "US",
+            "postal_code": "00123"
+          }
+        }
+      ],
+      "journal": [
+        {
+          "action": "shipping_address",
+          "status": "succeeded"
+        }
+      ],
+      "handoff": "not_requested",
+      "initial_sha256": "78f8765cdb2c3a6b3a6ee96100a4293c0bfff6d4223b15d0635d1ada70114ae3",
+      "context": {
+        "conversation_id": "offline-m6-blocked_order_then_other_address",
+        "customer_id": "customer_a",
+        "order_ids": [
+          "#TEST1",
+          "#TEST3"
+        ],
+        "product_ids": [
+          "product_mug"
+        ]
+      }
+    },
+    {
+      "id": "same_order_return_exchange_conflict",
+      "at_ids": [
+        "AT-A027-01"
+      ],
+      "coverage_note": "M6.2 fixed combination on synthetic records; independent next-user consent and full final-backend oracle, not full public case execution.",
+      "setup": [
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "status"
+          ],
+          "value": "delivered"
+        }
+      ],
+      "turns": [
+        {
+          "user": "a@example.test",
+          "writes": [],
+          "identity": true,
+          "http_calls": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ],
+          "reads": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Return order #TEST1; items: item_blue; refund to card_a",
+          "writes": [],
+          "assessment": {
+            "kind": "returns",
+            "code": "returns_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/returns",
+              "body": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "returns",
+            "code": "write_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Exchange order #TEST1 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/returns",
+              "body": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "exchange",
+            "code": "return_exchange_already_requested"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        }
+      ],
+      "final_patches": [
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "status"
+          ],
+          "value": "return requested"
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "return_request"
+          ],
+          "value": {
+            "item_ids": [
+              "item_blue"
+            ],
+            "refund_payment_method_id": "card_a"
+          }
+        }
+      ],
+      "journal": [
+        {
+          "action": "return",
+          "status": "succeeded"
+        }
+      ],
+      "handoff": "not_requested",
+      "initial_sha256": "c5e220ee753be6c14d37fbe525f8b315a23fce8cd714dc1fb821feec0d8fd961",
+      "context": {
+        "conversation_id": "offline-m6-same_order_return_exchange_conflict",
+        "customer_id": "customer_a",
+        "order_ids": [
+          "#TEST1",
+          "#TEST3"
+        ],
+        "product_ids": [
+          "product_mug"
+        ]
+      }
+    },
+    {
+      "id": "default_and_order_address",
+      "at_ids": [
+        "AT-A041-04",
+        "AT-A110-05"
+      ],
+      "coverage_note": "M6.2 fixed combination on synthetic records; independent next-user consent and full final-backend oracle, not full public case execution.",
+      "setup": [],
+      "turns": [
+        {
+          "user": "a@example.test",
+          "writes": [],
+          "identity": true,
+          "http_calls": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ],
+          "reads": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Change default and order #TEST1 address: {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+          "writes": [],
+          "assessment": {
+            "kind": "address",
+            "code": "address_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "PUT",
+              "path": "/v1/orders/%23TEST1/shipping-address",
+              "body": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              }
+            },
+            {
+              "method": "PUT",
+              "path": "/v1/customers/customer_a/default-shipping-address",
+              "body": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "address",
+            "code": "address_updates_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ]
+        }
+      ],
+      "final_patches": [
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "shipping_address"
+          ],
+          "value": {
+            "address_line_1": "42 Example Avenue",
+            "address_line_2": "Suite 2",
+            "city": "Sample City",
+            "region": "WA",
+            "country": "US",
+            "postal_code": "00123"
+          }
+        },
+        {
+          "path": [
+            "customers",
+            "customer_a",
+            "default_shipping_address"
+          ],
+          "value": {
+            "address_line_1": "42 Example Avenue",
+            "address_line_2": "Suite 2",
+            "city": "Sample City",
+            "region": "WA",
+            "country": "US",
+            "postal_code": "00123"
+          }
+        }
+      ],
+      "journal": [
+        {
+          "action": "shipping_address",
+          "status": "succeeded"
+        },
+        {
+          "action": "default_shipping_address",
+          "status": "succeeded"
+        }
+      ],
+      "handoff": "not_requested",
+      "initial_sha256": "02fcf40958f67dec5438fb4029fd50f8ee03e7070ce7c9bf0c167753d3610f8c",
+      "context": {
+        "conversation_id": "offline-m6-default_and_order_address",
+        "customer_id": "customer_a",
+        "order_ids": [
+          "#TEST1",
+          "#TEST3"
+        ],
+        "product_ids": [
+          "product_mug"
+        ]
+      }
+    },
+    {
+      "id": "cancel_return_cross_order_summary",
+      "at_ids": [
+        "AT-A016-05",
+        "AT-A028-04"
+      ],
+      "coverage_note": "M6.2 fixed combination on synthetic records; independent next-user consent and full final-backend oracle, not full public case execution.",
+      "setup": [
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "status"
+          ],
+          "value": "delivered"
+        }
+      ],
+      "turns": [
+        {
+          "user": "a@example.test",
+          "writes": [],
+          "identity": true,
+          "http_calls": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ],
+          "reads": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Cancel order #TEST1 because no longer needed",
+          "writes": [],
+          "assessment": {
+            "kind": "cancellation",
+            "code": "cancellation_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/cancellations",
+              "body": {
+                "reason": "no longer needed"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "cancellation",
+            "code": "write_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Return order #TEST3; items: item_blue; refund to card_a",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/cancellations",
+              "body": {
+                "reason": "no longer needed"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "returns",
+            "code": "returns_confirmation_required"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "yes",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/cancellations",
+              "body": {
+                "reason": "no longer needed"
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST3/returns",
+              "body": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            }
+          ],
+          "assessment": {
+            "kind": "returns",
+            "code": "write_verified"
+          },
+          "reads": [
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            }
+          ]
+        },
+        {
+          "user": "Summarize order amounts: #TEST1, #TEST3",
+          "writes": [
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST1/cancellations",
+              "body": {
+                "reason": "no longer needed"
+              }
+            },
+            {
+              "method": "POST",
+              "path": "/v1/orders/%23TEST3/returns",
+              "body": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            }
+          ],
+          "reads": [
+            {
+              "method": "POST",
+              "path": "/v1/customers/search",
+              "body": {
+                "email": "a@example.test"
+              }
+            },
+            {
+              "method": "GET",
+              "path": "/v1/customers/customer_a",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST1",
+              "body": null
+            },
+            {
+              "method": "GET",
+              "path": "/v1/orders/%23TEST3",
+              "body": null
+            }
+          ],
+          "reply_contains": [
+            "Order amount summary:",
+            "Return display estimates total: 12.5",
+            "Cancellation original charges total: 12.5",
+            "Visible recorded refunds: 12.50 (1 rows).",
+            "Refund arrival: unknown."
+          ],
+          "identity": true,
+          "assessment": null
+        }
+      ],
+      "final_patches": [
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "status"
+          ],
+          "value": "cancelled"
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "payments"
+          ],
+          "value": [
+            {
+              "transaction_type": "payment",
+              "payment_method_id": "card_a",
+              "amount": 12.5
+            },
+            {
+              "transaction_type": "refund",
+              "payment_method_id": "card_a",
+              "amount": 12.5
+            }
+          ]
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST1",
+            "cancellation"
+          ],
+          "value": {
+            "reason": "no longer needed"
+          }
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "status"
+          ],
+          "value": "return requested"
+        },
+        {
+          "path": [
+            "orders",
+            "#TEST3",
+            "return_request"
+          ],
+          "value": {
+            "item_ids": [
+              "item_blue"
+            ],
+            "refund_payment_method_id": "card_a"
+          }
+        }
+      ],
+      "journal": [
+        {
+          "action": "cancel",
+          "status": "succeeded"
+        },
+        {
+          "action": "return",
+          "status": "succeeded"
+        }
+      ],
+      "handoff": "not_requested",
+      "initial_sha256": "c208f9a73586e8a579ed604bd19b1af5e99e50d51fe58b0b1b95fc0baf3178be",
+      "context": {
+        "conversation_id": "offline-m6-cancel_return_cross_order_summary",
+        "customer_id": "customer_a",
+        "order_ids": [
+          "#TEST1",
+          "#TEST3"
+        ],
+        "product_ids": [
+          "product_mug"
+        ]
+      }
+    }
+  ]
+}

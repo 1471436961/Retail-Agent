@@ -8,6 +8,20 @@ from __future__ import annotations
 
 import math
 from collections.abc import Iterable
+from decimal import Decimal
+
+
+def display_exact_amount(value: Decimal | str) -> str:
+    """Display an exact decimal with at least two places, without rounding.
+
+    Extra significant fractional digits survive; only insignificant trailing
+    zeros are removed. This formatting does not compute any settlement amount.
+    """
+    number = value if isinstance(value, Decimal) else Decimal(value)
+    if not number.is_finite():
+        raise ValueError("Expected a finite exact decimal")
+    whole, _, fraction = format(number, "f").partition(".")
+    return whole + "." + fraction.rstrip("0").ljust(2, "0")
 
 
 def _finite_float(value: int | float) -> float:
