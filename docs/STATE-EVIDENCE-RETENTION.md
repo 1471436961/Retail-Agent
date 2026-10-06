@@ -135,3 +135,7 @@ M5.5 评审收尾：明确保留/排除商品的 keep/retain/leave、except/excl
 [M6.2 交付](M6.2-DELIVERY.md)无新状态 schema：汇总重建最近接纳的逐单快照和提案／发送前历史前缀，失败／缺结果不沿用旧读取。相同退款行保留次数，重复快照及回执不额外计数。另一记录已尝试的 Unknown 可保留而不阻断新独立提案；原 journal 不被完成／清除／重发，全局丢失执行 reservation 仍阻断。来源索引不是历史签名或到账凭证。
 
 M6.2 评审修订：差价／退货／取消缺证据金额为 null，真实零值须有正 evidence_count；顾客金额格式与精确来源字符串分离。超过列表保护范围时只读取本次选定订单，必须从本次 user 后的成功调用重建刷新证据。配对运行保存 source_files 原始字节哈希；固定基线分别记录 Git LF 和工作区 CRLF，不以行尾归一替代原始字节记录，也不以哈希冒充历史认证。
+
+## M6.3 恢复与重放
+
+[原生重放](M6.3-DELIVERY.md)继续执行使用完整 JSON state，clone 须全字典等价；history 单独重建核对身份、提案、任务、journal 和 pending，不声称恢复全部运行时计数。已接纳 Unknown 可调查，原 mutating journal 不变；丢失 execute bundle 保留 Unknown reservation，晚到有效结果也不能清除。重建 toolkit 共用原 SessionClaims、合成后台状态门故障注入后不得二次发送；新空表或跨进程崩溃仍不在保证内。

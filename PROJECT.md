@@ -87,10 +87,13 @@ tests/test_m5_matrix.py    # M5.5 商品/退货/换货与支付/取消/转接交
 tests/test_m6_dialogues.py # M6.1 固定轨迹/完整后台 oracle 与原生 SDK 批次包装
 tests/test_m6_combinations.py # M6.2 组合默认对话、分单确认与跨单金额证据
 tests/sdk_m6_checks.py     # 本地真实 SDK 默认对话 worker，合成 transport、禁用网络
+tests/test_m6_replays.py   # M6.3 重放反向 oracle 和真实 SDK 包装
+tests/sdk_m6_replay_checks.py # 新工具/同初始后台、恢复与八动作重复/中断
 tests/fixtures/m6_dialogues.json # 完整 AT 计划中的首批固定合成对话预期
 tests/fixtures/m6_combinations.json # 独立 M6.2 组合 oracle，M6.1 原夹具保持原字节
 tests/fixtures/m6_source_baseline.json # 固定 M6.1 Git blob 哈希及原夹具工作区行尾证据
 scripts/local_dialogue_batch.py # 134/522 计划、夹具上下文/精确轨迹/来源校验
+scripts/local_replay_batch.py # 独立重放来源/固定结果/恢复点/故障计数校验
 scripts/evidence_docs.py    # 单一当前证据生成与六份入口链接校验，不随 agent 部署
 scripts/foundation_trace.py # 逐方法/原生对话/逐文件哈希证据及同 run/source/spec 配对发布
 pyproject.toml             # 本地 package 元数据

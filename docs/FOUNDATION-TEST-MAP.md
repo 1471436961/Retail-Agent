@@ -122,3 +122,7 @@ M5.5 评审收尾：明确保留/排除商品的 keep/retain/leave、except/excl
 [M6.2 交付](M6.2-DELIVERY.md)包含组合专项的全部实际方法映射；[独立组合 oracle](../tests/fixtures/m6_combinations.json)与 M6.1 原夹具分别验证后合并原生执行。报告收录各方法结果，不以对话或 HTTP 数增加 unittest 数，不把 AT 关联算完整执行。
 
 评审修订的新增组合方法与来源清单拒绝篡改方法均须有实际 passed 结果；冻结运行发布后更新交付表和单一当前证据。原始 Decimal 表示和显示格式分别断言，真实零与无证据分别断言，模型门传入可观察 adapter；不以未派发的准备阶段代替旧订单禁止重发的诊断证据。
+
+## M6.3 重放验收方法
+
+[交付完整映射](M6.3-DELIVERY.md)对应[专项实际方法](../tests/test_m6_replays.py)；纯 oracle 控制不能发布原生观察，唯一原生包装要求完成 marker、成功退出和逐场景验证。固定 oracle 拒绝两遍相同错误，轨迹／恢复点和工具库存分别核对；重复与中断的全动作子场景由同一真实 SDK 包装执行，不额外增加 unittest 或完整 AT 数量。
