@@ -136,6 +136,7 @@ E:\Retail-Agent\agent\
     application.py                  轮次控制与模型建议审核
     turns.py                        不依赖 tau2 的轮次薄入口
     read_session.py                 身份范围、只读路由、批次登记/消费
+    amount_summary.py               M6.2 默认只读跨单金额来源与分类合计
     address_session.py              M4.1 地址 producer、内部调度和完整结果接纳
     payment_session.py              M4.2 支付 producer、选择/复述及提交
     cancellation_session.py         M4.3 原因/逐 charge 复述、确认与提交
@@ -379,14 +380,14 @@ M3.1–M3.5 内部基础范围已完成；历史基线和保证范围见 [基础
 - [x] M5.2 有限中英文明示单一自有订单/逐项条件/完整列表 JSON 的默认商品生产器，收齐完整列表、按原价/当前目标价重算差价、明示单次限制，最后补充询问并等待后一次真实 user 完整确认。条件原文/索引/选用回退与规格报价可恢复；追加、修正和刷新候选变化重新复述。一次 POST 和回执/自有强读回核实锁单；schema 10、真实 SDK＋fake API 完整回归 726/726，专项 65/65，见 [交付](M5.2-DELIVERY.md)。勾选限该有限默认离线范围，不声称全部自然语言、完整公开业务 AT、真实后台或跨进程去重。M5.3/M5.4 当前交付见后续行；M5.5 当前交付见后续行。
 - [x] M5.3 有限中英文明示单一自有 delivered 订单的默认完整退货申请；原商品次数/价格预计额及规则明示、原路或起点合格已有礼品卡选择、完整提案与后一次真实确认。一次 POST 仅 item_ids/refund_payment_method_id；写前刷新、回执与自有强读回只证明申请。schema 11 与真实 schema 10 迁移夹具、来源前缀重算；完整工作区 791/791、专项 65/65，见 [交付](M5.3-DELIVERY.md)。勾选限有限默认离线范围，不证明后台结算/到账、任意自然语言、完整业务 AT、课堂实测或跨进程去重。
 - [x] M5.4 有限中英文明示单一自有 delivered 订单的默认完整换货；同产品库存/保留属性/偏好回退筛选、真实来源条件、完整原新清单、有符号公开差价及客户已有方式，后一次真实完整确认后单个 POST。写前完整目录/候选唯一性刷新、替换对及次数回执/自有强读回只证明申请；提交后不追加或改方式。schema 12、真实 schema 11 迁移及真实 SDK＋fake transport；完整工作区 850/850、专项 59/59，见 [交付](M5.4-DELIVERY.md)。勾选限该默认离线范围，不证明任意语言、后台扣退款/到账或新件发货、完整业务 AT、课堂实测或跨进程去重。M5.5 当前交付见后续行。
-- [x] M5.5 默认轮次交互矩阵覆盖同款多件/重复次数和原实例歧义、同单退换冲突、零差价与方式要求、整份正差价礼品卡不足/余额变化、部分取消意图不扩大为整单。三商品端点成功/拒绝/改口/Unknown、共享认领与恢复接入现有证据；完整工作区 888/888，专项 38/38，零跳过、退出码 0，见 [交付](M5.5-DELIVERY.md)。勾选限有限合成记录的默认离线范围，不代表完整业务 AT、任意语言、真实后台账务/到账或跨进程去重。M5 基本完成；M6.1 当前交付见后续行，M6.2–M6.7/M7 保留。
+- [x] M5.5 默认轮次交互矩阵覆盖同款多件/重复次数和原实例歧义、同单退换冲突、零差价与方式要求、整份正差价礼品卡不足/余额变化、部分取消意图不扩大为整单。三商品端点成功/拒绝/改口/Unknown、共享认领与恢复接入现有证据；完整工作区 888/888，专项 38/38，零跳过、退出码 0，见 [交付](M5.5-DELIVERY.md)。勾选限有限合成记录的默认离线范围，不代表完整业务 AT、任意语言、真实后台账务/到账或跨进程去重。M5 基本完成；M6 当前交付与后续范围见后续行。
 
 **验收**：全部 14 端点已纳入契约测试；相关业务流程各有成功、拒绝、改口、结果不确定四类测试；ID 120/125 的后续追加原则、105/119 的重复商品原则覆盖。
 
 ### M6：组合对话、故障与成本回归（P1，大）
 
-- [x] M6.1 交付完整追踪解析与首批有限原生 SDK 合成对话证据基础设施：固定起点/最终后台、逐轮读取/业务轨迹和次数、当前诊断、自有目标读回及 journal。夹具显式上下文、来源元数据、失败拒绝与单一当前文档入口见 [交付](M6.1-DELIVERY.md)；实际计数统一见 [当前证据](CURRENT-EVIDENCE.md)。勾选不表示全量业务 AT 完成；所有原子要求的完整本地执行由 M6.7 收口，M6.2–M6.7/M7 未实施。
-- [ ] M6.2 重点回归地址＋商品、默认地址＋订单地址、同单退换、多订单混合请求和跨单金额汇总。退款汇总覆盖所选次数、原成交价、合计舍入边界、不重复累计回执及预计额/后台交易/到账的证据区分；无可见退款记录时不编造已退款金额。差价保留 money.py 的公开口径，退货预计额保留原价精确合计及既有显示规则，取消保留原 charge；跨单按证据类型分别汇总，不混合预计额、可见交易与到账，也不把差价算法推广为通用退款公式。
+- [x] M6.1 交付完整追踪解析与首批有限原生 SDK 合成对话证据基础设施：固定起点/最终后台、逐轮读取/业务轨迹和次数、当前诊断、自有目标读回及 journal。夹具显式上下文、来源元数据、失败拒绝与单一当前文档入口见 [交付](M6.1-DELIVERY.md)；实际计数统一见 [当前证据](CURRENT-EVIDENCE.md)。勾选不表示全量业务 AT 完成；所有原子要求的完整本地执行由 M6.7 收口；M6.2 当前交付及剩余范围见下一行。
+- [x] M6.2 重点回归地址＋商品、默认地址＋订单地址、同单退换、多订单混合请求和跨单金额汇总。退款汇总覆盖所选次数、原成交价、合计舍入边界、不重复累计回执及预计额/后台交易/到账的证据区分；无可见退款记录时不编造已退款金额。差价保留 money.py 的公开口径，退货预计额保留原价精确合计及既有显示规则，取消保留原 charge；跨单按证据类型分别汇总，不混合预计额、可见交易与到账，也不把差价算法推广为通用退款公式。 已交付有限默认组合／逐记录新确认与只读跨单分类汇总，修复另一记录已接纳 Unknown 的旧任务全局阻断；丢失执行批次仍全局阻断。原 M6.1 夹具不变，独立组合 oracle 及实际方法映射见 [交付](M6.2-DELIVERY.md)，当前计数统一见 [当前证据](CURRENT-EVIDENCE.md)。不声称任意语言自动组合调度、按订单多确认上下文或完整业务 AT；M6.3–M6.7/M7 保留，M0.2 未勾选。
 - [ ] M6.3 新工具实例＋相同初始后端重放完整工具轨迹；覆盖恢复、重复回执和中断后的未知结果。
 - [ ] M6.4 测试畸形响应、超限、模型非法参数、工具内容中的无关指令；业务数据不能授予新权限。
 - [ ] M6.5 检查包大小、文件数、路径依赖、日志与密钥；在可获得计量信息时建立实测成本基线。
@@ -460,7 +461,7 @@ R1–R6 保留为验收控制，不因查明规则而标为已消除。2026-10-0
 
 每个实施批次保持可审查范围：规则及失败测试 → 最小实现 → 适配器/对话测试 → 本地回归 → 变更说明。不能为提高成绩而削弱禁止行为，不能按 case_id 特判，也不能修改评测脚本或测试范围来隐藏失败。
 
-M1 后可按任务分工推进领域规则/测试、API 适配器、业务工作流。`application.py`、`turns.py`、`read_session.py`、`address_session.py`、`payment_session.py`、`cancellation_session.py`、`handoff_session.py`、`candidate_session.py`、`items_session.py`、`returns_session.py`、`exchange_session.py`、`workflow_boundary.py`、`workflow_registry.py`、`workflow_limits.py`、`state.py`、`proposals.py`、`tasks.py`、`write_session.py`、`model_context.py`、`protocol.py` 是共享会话接口，必须由同一维护者协调；`read_api.py`、`read_tools.py`、`address_tools.py`、`payment_tools.py`、`cancellation_tools.py`、`handoff_tools.py`、`items_tools.py`、`returns_tools.py`、`exchange_tools.py`、`model_gateway.py` 与 `write_runtime.py` 的范围绑定/消息合同变更须一起审查。新增写流程时复用严格验证和完整批次约定，禁止另起一套身份、确认或状态结构。该约定不代表当前已开启多 agent 并行执行。
+M1 后可按任务分工推进领域规则/测试、API 适配器、业务工作流。`application.py`、`turns.py`、`read_session.py`、`address_session.py`、`payment_session.py`、`cancellation_session.py`、`handoff_session.py`、`candidate_session.py`、`items_session.py`、`returns_session.py`、`exchange_session.py`、`workflow_boundary.py`、`workflow_registry.py`、`workflow_limits.py`、`state.py`、`proposals.py`、`tasks.py`、`write_session.py`、`model_context.py`、`amount_summary.py`、`protocol.py` 是共享会话接口，必须由同一维护者协调；`read_api.py`、`read_tools.py`、`address_tools.py`、`payment_tools.py`、`cancellation_tools.py`、`handoff_tools.py`、`items_tools.py`、`returns_tools.py`、`exchange_tools.py`、`model_gateway.py` 与 `write_runtime.py` 的范围绑定/消息合同变更须一起审查。新增写流程时复用严格验证和完整批次约定，禁止另起一套身份、确认或状态结构。该约定不代表当前已开启多 agent 并行执行。
 
 提交粒度建议对应上述阶段或独立可验收流程。是否创建开发分支在进入编码时依据当前工作区和协作需要决定；当前规划不创建分支、不修改绑定。任何 commit/push 前继续遵守用户的明确确认要求。
 

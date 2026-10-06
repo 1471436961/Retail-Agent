@@ -18,6 +18,7 @@ agent/
     application.py          # 决定下一轮回答或工具调用
     turns.py                # 轮次入口，复用身份、读取及地址/支付/取消/商品/退货/换货工作流
     read_session.py         # 身份范围、读取批次及地址/支付/取消/商品/退货/换货调度
+    amount_summary.py       # M6.2 默认只读跨单摘要，分开预计额/原款/差价/可见交易/到账
     address_session.py      # M4.1 地址收集、复述和提交
     payment_session.py      # M4.2 单一已有支付方式的整单切换
     cancellation_session.py # M4.3 取消原因、逐 charge 复述与确认提交
@@ -84,11 +85,14 @@ tests/test_m5_candidates.py # M5.1 纯筛选与真实请求/读取事实验收
 tests/test_m4_matrix.py    # M4.5 五端点故障、改口与实际发送矩阵
 tests/test_m5_matrix.py    # M5.5 商品/退货/换货与支付/取消/转接交互
 tests/test_m6_dialogues.py # M6.1 固定轨迹/完整后台 oracle 与原生 SDK 批次包装
+tests/test_m6_combinations.py # M6.2 组合默认对话、分单确认与跨单金额证据
 tests/sdk_m6_checks.py     # 本地真实 SDK 默认对话 worker，合成 transport、禁用网络
 tests/fixtures/m6_dialogues.json # 完整 AT 计划中的首批固定合成对话预期
+tests/fixtures/m6_combinations.json # 独立 M6.2 组合 oracle，M6.1 原夹具保持原字节
+tests/fixtures/m6_source_baseline.json # 固定 M6.1 Git blob 哈希及原夹具工作区行尾证据
 scripts/local_dialogue_batch.py # 134/522 计划、夹具上下文/精确轨迹/来源校验
 scripts/evidence_docs.py    # 单一当前证据生成与六份入口链接校验，不随 agent 部署
-scripts/foundation_trace.py # 实际逐方法/原生对话证据及同 run/source/spec 配对发布
+scripts/foundation_trace.py # 逐方法/原生对话/逐文件哈希证据及同 run/source/spec 配对发布
 pyproject.toml             # 本地 package 元数据
 ```
 
