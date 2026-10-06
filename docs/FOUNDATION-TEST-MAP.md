@@ -130,3 +130,9 @@ M5.5 评审收尾：明确保留/排除商品的 keep/retain/leave、except/excl
 ## M6.4 权限与故障边界
 
 [M6.4 交付](M6.4-DELIVERY.md)给出全部实际方法映射；[固定原生矩阵](../scripts/local_boundary_batch.py)与[SDK worker](../tests/sdk_m6_boundary_checks.py)分别是预期和观察。回执／网关子场景与 unittest、原对话、重放及业务 AT 分开计数，完整业务 AT 仍由 M6.7 收口。
+
+## M6.5 包体与隔离执行方法
+
+[包体专项](../tests/test_m6_package.py)验证数量／UTF-8／完整 JSON 边界、凭证 canary、导入／路径／日志负控、真实收集器及原生隔离观察。实际方法映射见 [交付](M6.5-DELIVERY.md)。纯验证器控制不作为执行证据；包装 passed 但无观察必须拒绝发布。
+
+评审修订使用路径不变／字节变化的负控核对复制包；缺／多文件分别隔离，不能靠前一场景失败掩护。原生观察中的复制字节哈希必须完整匹配；无引号凭据、普通文本和 builtin compile／re.compile 正反两侧均检查，junction 另断言收集器未加载。

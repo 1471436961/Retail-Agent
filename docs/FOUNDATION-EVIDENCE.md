@@ -109,3 +109,7 @@ M5.5 评审收尾：明确保留/排除商品的 keep/retain/leave、except/excl
 ## M6.4 权限与故障边界
 
 [M6.4 交付](M6.4-DELIVERY.md)与[专项](../tests/test_m6_boundaries.py)验证实际候选／绑定门、整批读结果接纳和六类完整工作流边界。新增真实 SDK worker 的逐场景观察进入 boundary_batch；缺观察／混配来源／额外发送／Unknown 提升拒绝发布。真实模型安全效果不是此证据的结论。
+
+## M6.5 部署与计量证据
+
+[交付](M6.5-DELIVERY.md)与[包体审计](../scripts/local_package_audit.py)检查两个实际收集器的文件集，加上 Node 独立内容／序列化对账；复制包在 SDK 运行前后核对全部实际字节哈希，再检查模块来源。[隔离 SDK worker](../tests/sdk_m6_package_checks.py)验证工具库存和受控错误脱敏。package_batch 保存有限实测观察，不证明任意裸 files[]、秘密形式、全部宿主日志或课堂接线；真实模型成本未实测，不能把 null 写成零。

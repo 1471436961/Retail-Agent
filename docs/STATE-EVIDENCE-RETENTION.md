@@ -143,3 +143,7 @@ M6.2 评审修订：差价／退货／取消缺证据金额为 null，真实零�
 ## M6.4 权限与故障边界
 
 [M6.4 交付](M6.4-DELIVERY.md)不裁剪 canonical 证据：非法前缀／伪 user／授权字段不接纳；prepare 结果不可用可放弃，发送后的 execute 结果不可用保留 Unknown reservation。新增原生观察、运行来源及输入文件哈希独立入报告，不是外部签名，整体伪造限制仍保留。
+
+## M6.5 包体证据
+
+[M6.5 交付](M6.5-DELIVERY.md)不改 state schema 或业务来源链。package_batch／local_package 保存实际收集的原始字节与上传文本哈希、两种完整提交 JSON 哈希和隔离模块／工具观察；评审修订另留存 SDK 执行后读取实际复制包得到的 copied_content_sha256，完整匹配上传哈希才可发布。真实模型费用及 token 为 null／not_measured，不写回业务 state，也不由合成 usage 对照改为实测。
