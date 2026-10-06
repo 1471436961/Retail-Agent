@@ -113,3 +113,7 @@ M5.5 评审收尾：明确保留/排除商品的 keep/retain/leave、except/excl
 ## M6.5 部署与计量证据
 
 [交付](M6.5-DELIVERY.md)与[包体审计](../scripts/local_package_audit.py)检查两个实际收集器的文件集，加上 Node 独立内容／序列化对账；复制包在 SDK 运行前后核对全部实际字节哈希，再检查模块来源。[隔离 SDK worker](../tests/sdk_m6_package_checks.py)验证工具库存和受控错误脱敏。package_batch 保存有限实测观察，不证明任意裸 files[]、秘密形式、全部宿主日志或课堂接线；真实模型成本未实测，不能把 null 写成零。
+
+## M6.6 根因闭环证据
+
+[交付](M6.6-DELIVERY.md)与[台账](../tests/fixtures/m6_defects.json)的 defect_closure 按本次实际通过方法与输入哈希派生；人工根因分类不是 AST 自动证明，历史修复不冒充本轮新增能力或旧版本重演。发布／读方还核查全部结果与严格方法总数，额外失败或虚增计数均不能沿用 valid。业务 AT 仍未完整执行。

@@ -147,3 +147,7 @@ M6.2 评审修订：差价／退货／取消缺证据金额为 null，真实零�
 ## M6.5 包体证据
 
 [M6.5 交付](M6.5-DELIVERY.md)不改 state schema 或业务来源链。package_batch／local_package 保存实际收集的原始字节与上传文本哈希、两种完整提交 JSON 哈希和隔离模块／工具观察；评审修订另留存 SDK 执行后读取实际复制包得到的 copied_content_sha256，完整匹配上传哈希才可发布。真实模型费用及 token 为 null／not_measured，不写回业务 state，也不由合成 usage 对照改为实测。
+
+## M6.6 闭环工件
+
+defect_closure 保存在 AT 追踪，从运行报告的逐方法结果／源哈希和固定台账重算，不另存手工闭环副本，未进入 Agent state。固定台账、选定历史交付说明、源码／测试符号和本次结果都受哈希与配对重算约束；元数据不是签名，不能识别整体伪造工件。[交付](M6.6-DELIVERY.md)保持生产 state schema／固定对话不变。
