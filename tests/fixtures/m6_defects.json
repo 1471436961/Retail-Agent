@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "scope": "finite reviewed defects and current regressions; not all historical failures or business ATs",
+  "incidents": [
+    {
+      "id": "M66-R01",
+      "category": "rule_understanding",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "部分商品取消曾被扩大为整单取消提案。",
+      "root_cause": "解析器只识别整单动作，没有先拒绝收窄范围。",
+      "fix": "首次、草稿修正及旧 execute 快照均先检查范围；原因数据不能派生范围。",
+      "origin": {
+        "path": "docs/M5.5-DELIVERY.md",
+        "contains": "可被解析成整单提案"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/domain/cancellation_intake.py",
+          "symbol": "_partial_order_scope"
+        }
+      ],
+      "tests": [
+        "test_m5_matrix.ProductInteractionMatrixTests.test_partial_cancellation_english_chinese_and_item_id_scope_never_become_whole_order_proposals",
+        "test_m5_matrix.ProductInteractionMatrixTests.test_retained_or_excluded_item_scope_cannot_be_promoted_to_whole_cancellation"
+      ]
+    },
+    {
+      "id": "M66-R02",
+      "category": "rule_understanding",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "条件文本曾落进规格值。",
+      "root_cause": "有限属性解析没有把未解析条件作为独立阻断。",
+      "fix": "先澄清未知条件，不忽略或当作目录属性。",
+      "origin": {
+        "path": "docs/M5.2-DELIVERY.md",
+        "contains": "条件短语被当成属性值"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/domain/items_intake.py",
+          "symbol": "criteria_for_line"
+        }
+      ],
+      "tests": [
+        "test_m5_items.ItemIntakeTests.test_unsupported_phrases_require_clarification_instead_of_being_ignored"
+      ]
+    },
+    {
+      "id": "M66-R03",
+      "category": "rule_understanding",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "取消与跨单汇总对同口径金额的顾客渲染不同。",
+      "root_cause": "精确来源与顾客显示混用并重复实现显示规则。",
+      "fix": "复用不舍入的 display_exact_amount，精确证据字符串仍保留。",
+      "origin": {
+        "path": "docs/M6.2-DELIVERY.md",
+        "contains": "精确来源字符串保持原精度"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/domain/money.py",
+          "symbol": "display_exact_amount"
+        },
+        {
+          "path": "agent/support_agent/amount_summary.py",
+          "symbol": "render_summary"
+        }
+      ],
+      "tests": [
+        "test_m6_combinations.CrossOrderSummaryTests.test_exact_display_is_shared_with_cancellation_and_does_not_round_or_change_evidence"
+      ]
+    },
+    {
+      "id": "M66-T01",
+      "category": "tool_parameters",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "退货新增事件未完整接入诊断与旧 schema 恢复。",
+      "root_cause": "工具工作流的新元数据与迁移校验接线遗漏。",
+      "fix": "补齐特定诊断和 schema 10 迁移，不允许旧 schema 夹带新同意。",
+      "origin": {
+        "path": "docs/M5.3-DELIVERY.md",
+        "contains": "诊断白名单和 schema 10 升级分支两处真实接线遗漏"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/state.py",
+          "symbol": "initial_state"
+        },
+        {
+          "path": "agent/support_agent/workflow_boundary.py",
+          "symbol": "WorkflowBoundary.validate_assessment"
+        }
+      ],
+      "tests": [
+        "test_m5_returns.ReturnFlowTests.test_malformed_saved_methods_preserve_specific_fact_diagnostic",
+        "test_m5_returns.ReturnRecoveryTests.test_real_schema10_fixture_migrates_without_inventing_return_consent"
+      ]
+    },
+    {
+      "id": "M66-T02",
+      "category": "tool_parameters",
+      "kind": "test_infrastructure",
+      "phase": "historical",
+      "symptom": "模型门旧测试使用不支持的 tool_call 形状，在名字门前被拒。",
+      "root_cause": "反例没有满足前置形状，未触达所声称的工作流门。",
+      "fix": "合法形状遍历所有工作流，同时执行绑定拒绝和合法 READ 对照。",
+      "origin": {
+        "path": "docs/M5.2-DELIVERY.md",
+        "contains": "合法 type=tool"
+      },
+      "fix_sites": [
+        {
+          "path": "tests/test_m5_items.py",
+          "symbol": "ItemEvidenceTests.test_all_registered_workflows_are_rejected_by_model_candidate_and_read_binding"
+        }
+      ],
+      "tests": [
+        "test_m5_items.ItemEvidenceTests.test_all_registered_workflows_are_rejected_by_model_candidate_and_read_binding"
+      ]
+    },
+    {
+      "id": "M66-T03",
+      "category": "tool_parameters",
+      "kind": "test_infrastructure",
+      "phase": "historical",
+      "symptom": "隔离复制包先前只断言路径集合，不能发现同路径错字节。",
+      "root_cause": "上传文本与隔离输入只对集合，没有字节核对。",
+      "fix": "SDK 前后读取实际复制字节，全图匹配并纳入配对证据。",
+      "origin": {
+        "path": "docs/M6.5-DELIVERY.md",
+        "contains": "不能由路径集合断言代替"
+      },
+      "fix_sites": [
+        {
+          "path": "scripts/local_package_audit.py",
+          "symbol": "verify_copied_package"
+        }
+      ],
+      "tests": [
+        "test_m6_package.PackageAuditTests.test_same_paths_with_changed_bytes_or_missing_extra_file_cannot_pass_copy_check",
+        "test_m6_package.PackagePublicationTests.test_copied_content_hash_observation_cannot_be_missing_or_tampered"
+      ]
+    },
+    {
+      "id": "M66-C01",
+      "category": "confirmation_flow",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "最后补充询问后又出现集合确认问题。",
+      "root_cause": "商品生产器 note 与通用集合渲染各自追加问题。",
+      "fix": "使用可恢复的 items_last_call 模式，整份复述仅一个生成的问题且在最后。",
+      "origin": {
+        "path": "docs/M5.2-DELIVERY.md",
+        "contains": "不再附加逐项或集合确认问题"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/proposals.py",
+          "symbol": "render_proposal_set"
+        }
+      ],
+      "tests": [
+        "test_m5_items.ItemFlowTests.test_natural_recap_last_call_next_consent_single_post_and_owned_readback"
+      ]
+    },
+    {
+      "id": "M66-C02",
+      "category": "confirmation_flow",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "无副作用 prepare 的结果丢失曾使会话永久未决。",
+      "root_cause": "prepare 和可能已发送的 execute 使用同一未知处置。",
+      "fix": "prepare 可显式放弃后重新完整复述和确认；execute 未知保持 reservation。",
+      "origin": {
+        "path": "docs/M4.1-DELIVERY.md",
+        "contains": "prepare"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/workflow_boundary.py",
+          "symbol": "WorkflowBoundary.accept"
+        }
+      ],
+      "tests": [
+        "test_m4_address_review.AddressReviewTests.test_failed_preparation_can_retry_recap_and_only_fresh_consent_sends"
+      ]
+    },
+    {
+      "id": "M66-C03",
+      "category": "confirmation_flow",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "新增渲染模式曾进入事实指纹，导致确认恢复失败。",
+      "root_cause": "展示元数据与已接纳业务事实投影未隔离。",
+      "fix": "投影排除展示元数据，模式与文本仍一起恢复校验。",
+      "origin": {
+        "path": "docs/M5.2-DELIVERY.md",
+        "contains": "presentation_mode 未从内部事实投影排除"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/proposals.py",
+          "symbol": "_clean_read_history"
+        }
+      ],
+      "tests": [
+        "test_m5_items.ItemEvidenceTests.test_last_call_mode_and_text_restore_together_and_tampering_is_rejected"
+      ]
+    },
+    {
+      "id": "M66-D01",
+      "category": "dialogue_omission",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "新商品路由接管混合取消请求，丢掉既有冲突诊断。",
+      "root_cause": "新增路由缺少与既有业务意图冲突的前置协调。",
+      "fix": "保留原冲突诊断并要求澄清，不选择一半执行。",
+      "origin": {
+        "path": "docs/M5.2-DELIVERY.md",
+        "contains": "新路由接管“取消并修改商品”混合请求"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/read_session.py",
+          "symbol": "advance"
+        },
+        {
+          "path": "agent/support_agent/items_session.py",
+          "symbol": "route_items"
+        }
+      ],
+      "tests": [
+        "test_m5_items.ItemFlowTests.test_mixed_cancel_and_items_preserves_existing_conflict_diagnostic"
+      ]
+    },
+    {
+      "id": "M66-D02",
+      "category": "dialogue_omission",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "另一自有订单的已接纳 Unknown 曾全局阻挡无关订单。",
+      "root_cause": "任务未完成与同记录写风险混用一个全局判断。",
+      "fix": "必须提供已验证 target 且旧 scope 已发送，才可对另一记录新复述；旧 journal 不变。",
+      "origin": {
+        "path": "docs/M6.2-DELIVERY.md",
+        "contains": "当成全局阻断"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/workflow_boundary.py",
+          "symbol": "unfinished_other_tasks"
+        }
+      ],
+      "tests": [
+        "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_on_one_order_allows_fresh_peer_order_but_never_completes_old_task",
+        "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_allows_fresh_peer_returns_and_modify_items_without_reusing_consent"
+      ]
+    },
+    {
+      "id": "M66-V01",
+      "category": "runtime_compatibility",
+      "kind": "production",
+      "phase": "historical",
+      "symptom": "支付工具未进入真实 SDK 库存。",
+      "root_cause": "mixin 继承没有遵循 SDK 工具发现机制。",
+      "fix": "继承真实 ClientAPIToolKitBase，真实 SDK 包装保持完整库存及类型断言。",
+      "origin": {
+        "path": "docs/M4.2-DELIVERY.md",
+        "contains": "原 mixin 没有经过 SDK 的 ToolKitType 继承发现链"
+      },
+      "fix_sites": [
+        {
+          "path": "agent/support_agent/adapters/payment_tools.py",
+          "symbol": "PaymentTools"
+        }
+      ],
+      "tests": [
+        "test_m3_proposals.ProposalRecoveryTests.test_model_projection_and_application_adapter_use_real_sdk_offline"
+      ]
+    },
+    {
+      "id": "M66-V02",
+      "category": "runtime_compatibility",
+      "kind": "test_infrastructure",
+      "phase": "historical",
+      "symptom": "独立重放因 SDK 自动创建时间不同而失败。",
+      "root_cause": "把墙上创建时间误当确定性业务轨迹。",
+      "fix": "只排除顶层 timestamp，保留 ID、参数、正文和其余字段。",
+      "origin": {
+        "path": "docs/M6.3-DELIVERY.md",
+        "contains": "SDK timestamp 不同"
+      },
+      "fix_sites": [
+        {
+          "path": "scripts/local_replay_batch.py",
+          "symbol": "message_data"
+        }
+      ],
+      "tests": [
+        "test_m6_replays.ReplayOracleTests.test_sdk_wall_time_is_excluded_but_id_arguments_and_text_are_compared"
+      ]
+    },
+    {
+      "id": "M66-V03",
+      "category": "runtime_compatibility",
+      "kind": "test_infrastructure",
+      "phase": "historical",
+      "symptom": "审计器新增 compile 拒绝误伤合法 re.compile。",
+      "root_cause": "按方法名粗略识别动态编译，没有区分正则编译。",
+      "fix": "内置 compile 和 builtins.compile 拒绝；re.compile 有实际通过正向对照。",
+      "origin": {
+        "path": "docs/M6.5-DELIVERY.md",
+        "contains": "误拒绝现有 re.compile"
+      },
+      "fix_sites": [
+        {
+          "path": "scripts/local_package_audit.py",
+          "symbol": "audit_files"
+        }
+      ],
+      "tests": [
+        "test_m6_package.PackageAuditTests.test_read_bytes_compile_pickle_and_existing_path_open_reach_exact_ast_rules"
+      ]
+    },
+    {
+      "id": "M66-V04",
+      "category": "runtime_compatibility",
+      "kind": "test_infrastructure",
+      "phase": "current",
+      "symptom": "报告额外失败或虚增 tests_run 仍可发布 valid。",
+      "root_cause": "发布校验只检查引用组与计数字段，遗漏全体实际结果及方法总数一致性。",
+      "fix": "所有结果均须 passed，正整数总数严格等于结果数；零计数不接受 bool/float，失败先废止旧配对。",
+      "origin": {
+        "path": "tests/test_foundation_trace.py",
+        "contains": "test_unreferenced_failed_error_or_skipped_outcome_cannot_become_valid"
+      },
+      "fix_sites": [
+        {
+          "path": "scripts/foundation_trace.py",
+          "symbol": "build_trace"
+        }
+      ],
+      "tests": [
+        "test_foundation_trace.FoundationTraceTests.test_unreferenced_failed_error_or_skipped_outcome_cannot_become_valid",
+        "test_foundation_trace.FoundationTraceTests.test_method_count_missing_inflated_bool_or_float_cannot_publish",
+        "test_foundation_trace.FoundationTraceTests.test_unreferenced_failure_invalidates_existing_pair_before_republication"
+      ]
+    }
+  ],
+  "notes": [
+    "每个 ID 一个主要根因分类；历史修复不重复计为本轮新增能力。接线同一批遗漏合并为一个记录，不按失败测试数量计缺陷。",
+    "分类和根因文字是人工审阅判断；AST 仅检查引用存在，当前回归通过不证明当时旧源码已独立重演。",
+    "文档机制描述、文件引用、历史包数字和当前状态漂移另在交付说明记录，不充作生产行为修复。",
+    "M3.5 D2、SDK 包不存在、F1 第37测试、载荷数字仅散文，以及 Path.open/junction 未拒绝等已否证项不列为待修缺陷。",
+    "真实 LLM/课堂行为、跨进程去重、到账、任意语言和完整134/522业务验收不因本台账关闭，继续按既定 M6.7/M7 与已知边界处理。"
+  ]
+}

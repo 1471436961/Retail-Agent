@@ -28,6 +28,7 @@ class FoundationTraceTests(unittest.TestCase):
         self.report = {**self.snapshot, "run_id":"current-run", "status":"passed",
                        "exit_code":0, "skipped":0, "failures":0, "errors":0,
                        "results":{name:"passed" for ids in trace.GROUP_TESTS.values() for name in ids}}
+        self.report['tests_run'] = len(self.report['results'])
 
     def build(self, requirements=None, report=None, *, allow_oracle_control=False):
         return trace.build_trace(self.requirements if requirements is None else requirements,
@@ -171,6 +172,7 @@ class FoundationTraceTests(unittest.TestCase):
         manifest=batch.load_manifest()
         report=deepcopy(self.report)
         report['results'][batch.WRAPPER]='passed'
+        report['tests_run']=len(report['results'])
         report['dialogue_batch']={'schema_version':2,'scope':batch.SCOPE,'fixture_sha256':batch.digest(manifest),
                                  'execution':batch.execution_metadata(report['run_id'],report['source_sha256'],mode='oracle_control'),
                                  'network_attempts':0,'results':[synthetic_result(s) for s in manifest['scenarios']]}
@@ -188,6 +190,7 @@ class FoundationTraceTests(unittest.TestCase):
     def test_missing_native_dialogue_observations_invalidate_publication_even_when_wrapper_passed(self):
         from test_m6_dialogues import batch
         report=deepcopy(self.report); report['results'][batch.WRAPPER]='passed'
+        report['tests_run']=len(report['results'])
         with temporary_directory() as directory:
             run_path, trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
             self.assertEqual(trace.publish_run(self.requirements,report,snapshot=self.snapshot,
@@ -199,6 +202,7 @@ class FoundationTraceTests(unittest.TestCase):
         from test_m6_dialogues import batch,synthetic_result
         manifest=batch.load_manifest(); report=deepcopy(self.report)
         report['results'][batch.WRAPPER]='passed'
+        report['tests_run']=len(report['results'])
         report['dialogue_batch']={'schema_version':2,'scope':batch.SCOPE,'fixture_sha256':batch.digest(manifest),
             'network_attempts':0,'execution':batch.execution_metadata(report['run_id'],report['source_sha256'],mode='oracle_control'),
             'results':[synthetic_result(s) for s in manifest['scenarios']]}
@@ -214,7 +218,7 @@ class FoundationTraceTests(unittest.TestCase):
     def test_source_digest_tracks_runner_oracle_and_fixture_but_not_unselected_docs_or_credentials(self):
         paths=('agent/agent.json','agent/core.py','tests/check.py','tests/fixtures/batch.json',
                'scripts/foundation_trace.py','scripts/local_dialogue_batch.py','scripts/evidence_docs.py','scripts/local_replay_batch.py','scripts/local_boundary_batch.py',
-               'scripts/local_package_audit.py','scripts/lab_eval.py','scripts/evaluate.mjs')
+               'scripts/local_package_audit.py','scripts/lab_eval.py','scripts/evaluate.mjs','scripts/defect_register.py')
         with temporary_directory() as directory:
             root=Path(directory)
             for name in paths:
@@ -249,7 +253,7 @@ class FoundationTraceTests(unittest.TestCase):
     def test_per_file_hashes_match_bytes_and_detect_single_file_change_without_git(self):
         paths = ('agent/agent.json', 'agent/core.py', 'tests/check.py', 'tests/fixtures/batch.json',
                  'scripts/foundation_trace.py', 'scripts/local_dialogue_batch.py', 'scripts/evidence_docs.py', 'scripts/local_replay_batch.py', 'scripts/local_boundary_batch.py',
-                 'scripts/local_package_audit.py','scripts/lab_eval.py','scripts/evaluate.mjs')
+                 'scripts/local_package_audit.py','scripts/lab_eval.py','scripts/evaluate.mjs','scripts/defect_register.py')
         with temporary_directory() as directory:
             root = Path(directory)
             for name in paths:
@@ -288,6 +292,7 @@ class FoundationTraceTests(unittest.TestCase):
 
     def test_missing_native_replay_observations_reject_pair_publication(self):
         report=deepcopy(self.report); report['results'][trace._replay_module.WRAPPER]='passed'
+        report['tests_run']=len(report['results'])
         with temporary_directory() as directory:
             run_path,trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
             self.assertEqual(trace.publish_run(self.requirements,report,snapshot=self.snapshot,
@@ -297,6 +302,7 @@ class FoundationTraceTests(unittest.TestCase):
 
     def test_missing_native_boundary_observations_reject_pair_publication(self):
         report=deepcopy(self.report); report['results'][trace._boundary_module.WRAPPER]='passed'
+        report['tests_run']=len(report['results'])
         with temporary_directory() as directory:
             run_path,trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
             self.assertEqual(trace.publish_run(self.requirements,report,snapshot=self.snapshot,
@@ -306,6 +312,7 @@ class FoundationTraceTests(unittest.TestCase):
 
     def test_missing_native_package_observations_reject_pair_publication(self):
         report=deepcopy(self.report); report['results'][trace._package_module.WRAPPER]='passed'
+        report['tests_run']=len(report['results'])
         with temporary_directory() as directory:
             run_path,trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
             self.assertEqual(trace.publish_run(self.requirements,report,snapshot=self.snapshot,
@@ -335,3 +342,35 @@ class FoundationTraceTests(unittest.TestCase):
         for name,module in modules.items():
             self.assertIs(module.PARENT_RUN,saved[name][0])
             self.assertIs(module.BATCH_EVIDENCE,saved[name][1])
+
+    def test_unreferenced_failed_error_or_skipped_outcome_cannot_become_valid(self):
+        self.assertEqual(self.build()['status'],'valid')
+        for status in ('failed','error','skipped','unknown'):
+            report=deepcopy(self.report)
+            report['results']['unreferenced.Case.test_bad']=status
+            report['tests_run']=len(report['results'])
+            with self.assertRaisesRegex(ValueError,'complete passed outcomes'): self.build(report=report)
+
+    def test_method_count_missing_inflated_bool_or_float_cannot_publish(self):
+        for count in (None,0,self.report['tests_run']+1,True,float(self.report['tests_run'])):
+            report=deepcopy(self.report); report['tests_run']=count
+            with self.assertRaisesRegex(ValueError,'complete passed outcomes'): self.build(report=report)
+
+    def test_zero_result_counters_require_exact_int_not_bool_or_float(self):
+        for key in ('exit_code','failures','errors','skipped'):
+            for zero in (False,0.0):
+                report=deepcopy(self.report); report[key]=zero
+                with self.assertRaisesRegex(ValueError,'complete passed outcomes'): self.build(report=report)
+
+    def test_unreferenced_failure_invalidates_existing_pair_before_republication(self):
+        with temporary_directory() as directory:
+            run_path,trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
+            self.assertEqual(trace.publish_run(self.requirements,self.report,snapshot=self.snapshot,
+                report_path=run_path,trace_path=trace_path),0)
+            report=deepcopy(self.report)
+            report['results']['unreferenced.Case.test_bad']='failed'
+            report['tests_run']=len(report['results'])
+            self.assertEqual(trace.publish_run(self.requirements,report,snapshot=self.snapshot,
+                report_path=run_path,trace_path=trace_path),1)
+            self.assertEqual(json.loads(run_path.read_text())['status'],'trace_rejected')
+            self.assertEqual(json.loads(trace_path.read_text())['status'],'invalid')

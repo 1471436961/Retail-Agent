@@ -30,6 +30,9 @@ _boundary_spec.loader.exec_module(_boundary_module)
 _package_spec = importlib.util.spec_from_file_location('local_package_audit', ROOT/'scripts/local_package_audit.py')
 _package_module = importlib.util.module_from_spec(_package_spec)
 _package_spec.loader.exec_module(_package_module)
+_defect_spec = importlib.util.spec_from_file_location('defect_register', ROOT/'scripts/defect_register.py')
+_defect_module = importlib.util.module_from_spec(_defect_spec)
+_defect_spec.loader.exec_module(_defect_module)
 SPECIFICATION_PATHS = (
     "materials/CLASSROOM.md", "materials/client_api/openapi.yaml",
     "materials/framework/agent_contract.md", "materials/framework/client_api_contract.md",
@@ -221,8 +224,9 @@ def source_paths(root=ROOT):
                     root / "scripts" / "local_dialogue_batch.py", root / "scripts" / "evidence_docs.py",
                     root / "scripts" / "local_replay_batch.py", root / "scripts" / "local_boundary_batch.py",
                     root / "scripts" / "local_package_audit.py", root / "scripts" / "lab_eval.py",
-                    root / "scripts" / "evaluate.mjs"])
-    return [path for path in paths if "__pycache__" not in path.parts]
+                    root / "scripts" / "evaluate.mjs", root / "scripts" / "defect_register.py"])
+    return sorted({path for path in paths + _defect_module.source_inputs(root)
+                   if "__pycache__" not in path.parts})
 
 
 def source_file_hashes(root=ROOT):
@@ -264,6 +268,12 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
             or report.get("failures") != 0 or report.get("errors") != 0
             or not isinstance(report.get("results"), dict)):
         raise ValueError("Trace requires a successful, unskipped run of the exact source workspace")
+    results = report['results']
+    if (type(report.get('tests_run')) is not int or report['tests_run'] <= 0
+            or report['tests_run'] != len(results)
+            or any(type(report.get(key)) is not int for key in ('exit_code', 'skipped', 'failures', 'errors'))
+            or any(not isinstance(name, str) or not name or value != 'passed' for name, value in results.items())):
+        raise ValueError('Trace requires complete passed outcomes matching the actual method count')
     files = report.get('source_files')
     if not isinstance(files, dict) or not files or any(
             not isinstance(name, str) or not isinstance(value, str) or not re.fullmatch(r'[0-9a-f]{64}', value)
@@ -319,6 +329,9 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
     package = _package_module.trace_package(report)
     if package is not None:
         result['local_package'] = package
+    defects = _defect_module.trace_defects(report)
+    if defects is not None:
+        result['defect_closure'] = defects
     return result
 
 

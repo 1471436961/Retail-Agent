@@ -79,3 +79,12 @@ class CurrentEvidenceTests(unittest.TestCase):
         self.assertIn('复制包逐文件字节在隔离 SDK 运行前后均核对',text)
         self.assertIn('真实模型成本未实测',text)
         self.assertIn('完整业务 AT 执行 **0**',text)
+
+    def test_defect_history_new_fix_and_regressions_remain_separate_from_business_execution(self):
+        self.trace['defect_closure']={'incident_count':15,'by_kind':{'production':10,'test_infrastructure':5},
+                                      'new_incidents':1,'unique_regressions':20}
+        text=docs.render_current(self.report,self.trace)
+        self.assertIn('生产缺陷 10、测试／证据基础设施 5',text)
+        self.assertIn('本轮新增修复 1 项',text)
+        self.assertIn('20 个不同回归方法',text)
+        self.assertIn('完整业务 AT 执行 **0**',text)
