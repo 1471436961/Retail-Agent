@@ -8,6 +8,7 @@ from copy import deepcopy
 from pathlib import Path
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 
 from temp_dirs import temporary_directory
 
@@ -27,10 +28,10 @@ class FoundationTraceTests(unittest.TestCase):
                        "exit_code":0, "skipped":0, "failures":0, "errors":0,
                        "results":{name:"passed" for ids in trace.GROUP_TESTS.values() for name in ids}}
 
-    def build(self, requirements=None, report=None):
+    def build(self, requirements=None, report=None, *, allow_oracle_control=False):
         return trace.build_trace(self.requirements if requirements is None else requirements,
                                  self.report if report is None else report,
-                                 expected_source_digest="fixture", expected_specification_digest="spec-fixture")
+                                 expected_source_digest="fixture", expected_specification_digest="spec-fixture", allow_oracle_control=allow_oracle_control)
 
     def test_all_atomic_ids_keep_business_and_remote_execution_explicitly_pending(self):
         result = self.build()
@@ -163,3 +164,82 @@ class FoundationTraceTests(unittest.TestCase):
             self.assertEqual(report["status"], "inputs_changed")
             self.assertEqual(report["results"]["<lambda>"], "passed")
             self.assertEqual(invalid["status"], "invalid")
+
+    def test_oracle_control_can_check_plan_without_becoming_native_publication(self):
+        from test_m6_dialogues import batch, synthetic_result
+        manifest=batch.load_manifest()
+        report=deepcopy(self.report)
+        report['results'][batch.WRAPPER]='passed'
+        report['dialogue_batch']={'schema_version':2,'scope':batch.SCOPE,'fixture_sha256':batch.digest(manifest),
+                                 'execution':batch.execution_metadata(report['run_id'],report['source_sha256'],mode='oracle_control'),
+                                 'network_attempts':0,'results':[synthetic_result(s) for s in manifest['scenarios']]}
+        with self.assertRaisesRegex(ValueError,'provenance'): self.build(report=report)
+        result=self.build(report=report,allow_oracle_control=True)
+        self.assertEqual(result['local_dialogues']['dialogues_passed'],16)
+        self.assertEqual(len(result['local_dialogues']['plan']),522)
+        self.assertEqual(result['business_ats_executed'],0)
+        self.assertTrue(all(r['business_result']=='not_executed' for r in result['records']))
+        self.assertEqual(next(r for r in result['records'] if r['at_id']=='AT-A017-03')['local_dialogue_ids'],['order_address','address_correction'])
+        tampered=deepcopy(result); tampered['local_dialogues']['dialogues_passed']=522
+        with self.assertRaises(ValueError):
+            trace.validate_evidence_pair(self.requirements,report,tampered,snapshot=self.snapshot,allow_oracle_control=True)
+
+    def test_missing_native_dialogue_observations_invalidate_publication_even_when_wrapper_passed(self):
+        from test_m6_dialogues import batch
+        report=deepcopy(self.report); report['results'][batch.WRAPPER]='passed'
+        with temporary_directory() as directory:
+            run_path, trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
+            self.assertEqual(trace.publish_run(self.requirements,report,snapshot=self.snapshot,
+                             report_path=run_path,trace_path=trace_path),1)
+            self.assertEqual(json.loads(run_path.read_text())['status'],'trace_rejected')
+            self.assertEqual(json.loads(trace_path.read_text())['status'],'invalid')
+
+    def test_oracle_mode_or_mismatched_parent_cannot_publish_a_native_trace(self):
+        from test_m6_dialogues import batch,synthetic_result
+        manifest=batch.load_manifest(); report=deepcopy(self.report)
+        report['results'][batch.WRAPPER]='passed'
+        report['dialogue_batch']={'schema_version':2,'scope':batch.SCOPE,'fixture_sha256':batch.digest(manifest),
+            'network_attempts':0,'execution':batch.execution_metadata(report['run_id'],report['source_sha256'],mode='oracle_control'),
+            'results':[synthetic_result(s) for s in manifest['scenarios']]}
+        for mode,run,source in (('oracle_control',report['run_id'],'fixture'),('native_sdk','old-run','fixture'),
+                                ('native_sdk',report['run_id'],'old-source')):
+            report['dialogue_batch']['execution'].update(mode=mode,parent_run_id=run,source_sha256=source)
+            with temporary_directory() as directory:
+                run_path,trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
+                self.assertEqual(trace.publish_run(self.requirements,report,snapshot=self.snapshot,
+                                                  report_path=run_path,trace_path=trace_path),1)
+                self.assertEqual(json.loads(trace_path.read_text())['status'],'invalid')
+
+    def test_source_digest_tracks_runner_oracle_and_fixture_but_not_unselected_docs_or_credentials(self):
+        paths=('agent/agent.json','agent/core.py','tests/check.py','tests/fixtures/batch.json',
+               'scripts/foundation_trace.py','scripts/local_dialogue_batch.py','scripts/evidence_docs.py')
+        with temporary_directory() as directory:
+            root=Path(directory)
+            for name in paths:
+                path=root/name; path.parent.mkdir(parents=True,exist_ok=True); path.write_text('baseline',encoding='utf-8')
+            baseline=trace.source_digest(root)
+            for name in paths:
+                path=root/name; path.write_text('changed',encoding='utf-8')
+                self.assertNotEqual(trace.source_digest(root),baseline,name)
+                path.write_text('baseline',encoding='utf-8')
+            (root/'docs').mkdir()
+            for name in ('docs/unselected.md','.env','Enterprise-AI.json'):
+                (root/name).write_text('synthetic sentinel, not a credential',encoding='utf-8')
+            self.assertEqual(trace.source_digest(root),baseline)
+
+    def test_nested_runner_restores_parent_context_and_does_not_reuse_outer_evidence(self):
+        outer=SimpleNamespace(PARENT_RUN={'run_id':'outer','source_sha256':'outer-source'},
+                              BATCH_EVIDENCE={'sentinel':'outer evidence'})
+        original_parent,original_evidence=outer.PARENT_RUN,outer.BATCH_EVIDENCE
+        def inner():
+            self.assertNotEqual(outer.PARENT_RUN,original_parent)
+            self.assertIsNone(outer.BATCH_EVIDENCE)
+        with temporary_directory() as directory, patch.dict(trace.sys.modules,{'test_m6_dialogues':outer}), \
+             patch.object(trace,'input_snapshot',return_value=self.snapshot), \
+             patch.object(trace.unittest.defaultTestLoader,'discover',return_value=unittest.TestSuite([unittest.FunctionTestCase(inner)])), \
+             redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            run_path,trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
+            trace.main(['--report',str(run_path),'--trace',str(trace_path)])
+            self.assertIs(outer.PARENT_RUN,original_parent)
+            self.assertIs(outer.BATCH_EVIDENCE,original_evidence)
+            self.assertNotIn('dialogue_batch',json.loads(run_path.read_text()))

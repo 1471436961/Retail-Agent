@@ -6,6 +6,7 @@ passing does not execute a complete public business AT or a remote evaluation.
 """
 import argparse
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
 import re
@@ -16,6 +17,10 @@ from uuid import uuid4
 
 
 ROOT = Path(__file__).resolve().parents[1]
+_dialogue_spec = importlib.util.spec_from_file_location('local_dialogue_batch', ROOT/'scripts/local_dialogue_batch.py')
+_dialogue_module = importlib.util.module_from_spec(_dialogue_spec)
+_dialogue_spec.loader.exec_module(_dialogue_module)
+trace_dialogues = _dialogue_module.trace_dialogues
 SPECIFICATION_PATHS = (
     "materials/CLASSROOM.md", "materials/client_api/openapi.yaml",
     "materials/framework/agent_contract.md", "materials/framework/client_api_contract.md",
@@ -203,7 +208,8 @@ GROUP_LIMITATIONS = {
 def source_digest(root=ROOT):
     paths = sorted(list((root / "agent").rglob("*.py")) + list((root / "tests").rglob("*.py")) +
                    list((root / "tests" / "fixtures").glob("*.json")) +
-                   [root / "agent" / "agent.json", root / "scripts" / "foundation_trace.py"])
+                   [root / "agent" / "agent.json", root / "scripts" / "foundation_trace.py",
+                    root / "scripts" / "local_dialogue_batch.py", root / "scripts" / "evidence_docs.py"])
     digest = hashlib.sha256()
     for path in paths:
         if "__pycache__" not in path.parts:
@@ -226,7 +232,7 @@ def input_snapshot(root=ROOT):
             **specification_snapshot(root)}
 
 
-def build_trace(requirements, report, *, expected_source_digest, expected_specification_digest, groups=None):
+def build_trace(requirements, report, *, expected_source_digest, expected_specification_digest, groups=None, allow_oracle_control=False):
     groups = GROUP_TESTS if groups is None else groups
     if (not isinstance(report.get("run_id"), str) or not report["run_id"]
             or report.get("status") != "passed" or report.get("source_sha256") != expected_source_digest
@@ -259,7 +265,7 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
     if (len(records) != 522 or len({r["at_id"] for r in records}) != 522
             or {r["case_id"] for r in records} != set(range(134))):
         raise ValueError("Expected the unchanged 134-case / 522-AT inventory")
-    return {"schema_version": 2, "status": "valid", "run_id": report["run_id"],
+    result = {"schema_version": 2, "status": "valid", "run_id": report["run_id"],
             "scope": "component association, not complete business-AT execution",
             "case_count": 134, "at_count": 522, "business_ats_executed": 0,
             "requirements_sha256": hashlib.sha256(requirements.encode()).hexdigest(),
@@ -268,12 +274,21 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
             "specification_files": report["specification_files"],
             "groups": {code: {"test_ids": ids, "limitation": GROUP_LIMITATIONS.get(code, "Related component only.")}
                        for code, ids in groups.items()}, "records": records}
+    dialogues = trace_dialogues(requirements, report, allow_oracle_control=allow_oracle_control)
+    if dialogues is not None:
+        result['local_dialogues'] = dialogues
+        links = {r['at_id']:r['dialogue_ids'] for r in dialogues['plan']}
+        for record in result['records']:
+            record['local_dialogue_ids'] = links[record['at_id']]
+            record['local_dialogue_result'] = ('related_synthetic_dialogues_passed'
+                                              if links[record['at_id']] else 'not_scheduled')
+    return result
 
 
-def validate_evidence_pair(requirements, report, trace, *, snapshot):
+def validate_evidence_pair(requirements, report, trace, *, snapshot, allow_oracle_control=False):
     """Consumers must validate both artifacts, not a source hash alone."""
     expected = build_trace(requirements, report, expected_source_digest=snapshot["source_sha256"],
-                           expected_specification_digest=snapshot["specification_sha256"])
+                           expected_specification_digest=snapshot["specification_sha256"], allow_oracle_control=allow_oracle_control)
     if trace != expected or report["specification_files"] != snapshot["specification_files"]:
         raise ValueError("Evidence is stale, invalid, or from a different run")
 
@@ -355,7 +370,20 @@ def main(argv=None):
                                     "exit_code": 1, **before})
     suite = unittest.defaultTestLoader.discover(str(ROOT / "tests"))
     started = time.monotonic()
-    result = unittest.TextTestRunner(verbosity=2, resultclass=EvidenceResult).run(suite)
+    native_module = sys.modules.get('test_m6_dialogues')
+    previous_parent = getattr(native_module, 'PARENT_RUN', None)
+    previous_evidence = getattr(native_module, 'BATCH_EVIDENCE', None)
+    native_evidence = None
+    if native_module is not None:
+        native_module.PARENT_RUN = {'run_id':run_id, 'source_sha256':before['source_sha256']}
+        native_module.BATCH_EVIDENCE = None
+    try:
+        result = unittest.TextTestRunner(verbosity=2, resultclass=EvidenceResult).run(suite)
+        native_evidence = getattr(native_module, 'BATCH_EVIDENCE', None)
+    finally:
+        if native_module is not None:
+            native_module.PARENT_RUN = previous_parent
+            native_module.BATCH_EVIDENCE = previous_evidence
     after = input_snapshot()
     success = (result.wasSuccessful() and not result.skipped and before == after
                and len(result.outcomes) == result.testsRun)
@@ -365,6 +393,8 @@ def main(argv=None):
               **before, "tests_run": result.testsRun, "skipped": len(result.skipped),
               "failures": len(result.failures), "errors": len(result.errors), "elapsed_seconds": round(time.monotonic()-started, 3),
               "exit_code": 0 if success else 1, "results": dict(sorted(result.outcomes.items()))}
+    if native_evidence is not None:
+        report['dialogue_batch'] = native_evidence
     exit_code = publish_run((ROOT / "docs" / "CASE-REQUIREMENTS.md").read_text(encoding="utf-8"), report,
                            snapshot=after, report_path=args.report, trace_path=args.trace)
     if exit_code: return exit_code
