@@ -105,3 +105,7 @@ M5.5 评审收尾：明确保留/排除商品的 keep/retain/leave、except/excl
 ## M6.3 重放与中断证据
 
 [交付](M6.3-DELIVERY.md)和[原生包装](../tests/test_m6_replays.py)对既有固定对话使用独立后台和新工具实例重放，两遍分别通过不变 oracle；第二遍在完整 JSON 恢复后继续，history 重建另核对可派生来源和 journal。八个变更动作的重复 bundle、丢失返回与写后超时单独计数；共享 store 的故障注入排除后台状态门后，必须直接见证认领拒绝。来源和实际结果进入 replay_batch，不据此声称跨进程去重或完整业务 AT。
+
+## M6.4 权限与故障边界
+
+[M6.4 交付](M6.4-DELIVERY.md)与[专项](../tests/test_m6_boundaries.py)验证实际候选／绑定门、整批读结果接纳和六类完整工作流边界。新增真实 SDK worker 的逐场景观察进入 boundary_batch；缺观察／混配来源／额外发送／Unknown 提升拒绝发布。真实模型安全效果不是此证据的结论。

@@ -126,3 +126,7 @@ M5.5 评审收尾：明确保留/排除商品的 keep/retain/leave、except/excl
 ## M6.3 重放验收方法
 
 [交付完整映射](M6.3-DELIVERY.md)对应[专项实际方法](../tests/test_m6_replays.py)；纯 oracle 控制不能发布原生观察，唯一原生包装要求完成 marker、成功退出和逐场景验证。固定 oracle 拒绝两遍相同错误，轨迹／恢复点和工具库存分别核对；重复与中断的全动作子场景由同一真实 SDK 包装执行，不额外增加 unittest 或完整 AT 数量。
+
+## M6.4 权限与故障边界
+
+[M6.4 交付](M6.4-DELIVERY.md)给出全部实际方法映射；[固定原生矩阵](../scripts/local_boundary_batch.py)与[SDK worker](../tests/sdk_m6_boundary_checks.py)分别是预期和观察。回执／网关子场景与 unittest、原对话、重放及业务 AT 分开计数，完整业务 AT 仍由 M6.7 收口。

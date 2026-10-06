@@ -139,3 +139,7 @@ M6.2 评审修订：差价／退货／取消缺证据金额为 null，真实零�
 ## M6.3 恢复与重放
 
 [原生重放](M6.3-DELIVERY.md)继续执行使用完整 JSON state，clone 须全字典等价；history 单独重建核对身份、提案、任务、journal 和 pending，不声称恢复全部运行时计数。已接纳 Unknown 可调查，原 mutating journal 不变；丢失 execute bundle 保留 Unknown reservation，晚到有效结果也不能清除。重建 toolkit 共用原 SessionClaims、合成后台状态门故障注入后不得二次发送；新空表或跨进程崩溃仍不在保证内。
+
+## M6.4 权限与故障边界
+
+[M6.4 交付](M6.4-DELIVERY.md)不裁剪 canonical 证据：非法前缀／伪 user／授权字段不接纳；prepare 结果不可用可放弃，发送后的 execute 结果不可用保留 Unknown reservation。新增原生观察、运行来源及输入文件哈希独立入报告，不是外部签名，整体伪造限制仍保留。
