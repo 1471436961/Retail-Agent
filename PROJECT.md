@@ -1,6 +1,7 @@
 # 工程结构与开发方式
 
-本轮 M5.5 默认商品交互矩阵已完成：完整工作区实际 888/888、专项 38/38，零跳过/失败/错误，原生退出码 0。schema 12、八 READ＋七个内部 WRITE、模型八 READ 门不变。见 [M5.5 交付](docs/M5.5-DELIVERY.md)。M5.4 已按源码 a0d2faa、证据 45123de、文档 182547f 三批推送；自动 t1 仅证明公开 lookup，正文案例数未单独核实。M5.5 实现/测试 c810947、规格/证据 9c726b9 已分批推送；本收口文档为第三批提交。源码推送对应自动 t1 工作流成功，报告正文案例数未单独核实。停留于 M5.5，不开始 M6。134 案例/522 AT 及完整业务 AT 执行数 0 不变；M5 基本完成仅指有限默认离线范围，M0.2/M6/M7 保留。850/850 与换货 59/59 为上一批历史基线。
+<!-- CURRENT-EVIDENCE:LINK -->
+当前运行、计数和证据范围统一见 [当前证据](docs/CURRENT-EVIDENCE.md)；本文件的里程碑记录保留对应历史范围。
 
 ## Python
 
@@ -81,6 +82,13 @@ tests/test_m5_returns.py    # M5.3 默认退货/起点礼品卡/Unknown/恢复
 tests/test_m5_items.py      # M5.2 完整列表/最后询问/确认/刷新/写后核实
 tests/test_m5_candidates.py # M5.1 纯筛选与真实请求/读取事实验收
 tests/test_m4_matrix.py    # M4.5 五端点故障、改口与实际发送矩阵
+tests/test_m5_matrix.py    # M5.5 商品/退货/换货与支付/取消/转接交互
+tests/test_m6_dialogues.py # M6.1 固定轨迹/完整后台 oracle 与原生 SDK 批次包装
+tests/sdk_m6_checks.py     # 本地真实 SDK 默认对话 worker，合成 transport、禁用网络
+tests/fixtures/m6_dialogues.json # 完整 AT 计划中的首批固定合成对话预期
+scripts/local_dialogue_batch.py # 134/522 计划、夹具上下文/精确轨迹/来源校验
+scripts/evidence_docs.py    # 单一当前证据生成与六份入口链接校验，不随 agent 部署
+scripts/foundation_trace.py # 实际逐方法/原生对话证据及同 run/source/spec 配对发布
 pyproject.toml             # 本地 package 元数据
 ```
 
@@ -100,7 +108,7 @@ pyproject.toml             # 本地 package 元数据
 
 ## 依赖与运行边界
 
-M0–M3 内部基础范围完成，353/353 为已推送基础快照；M4.1–M4.5 有限默认流程已完成。地址、支付、取消和转接已接入默认轮次；M5.1 纯筛选现由 M5.2 商品完整提案/提交生产器调用。SessionWriteRuntime 的稳定认领、严格 True、Unknown 不重发、回执＋自有强读回约定不变；所有业务 toolkit 共用一份可信进程内 SessionClaims，同一 live 后端重建 toolkit 时须显式复用可信 store，不能以新空表配丢失 journal 的旧 state 冒充跨进程去重。SDK 入口返回真实 AssistantMessage 与对应 state。M0.2 的 134/522 完整公开业务 AT 实际执行仍待组合批次补齐；本批合成流程通过不冒充公开 AT 或远程评测通过。
+M0–M3 内部基础范围完成，353/353 为已推送基础快照；M4.1–M4.5 有限默认流程已完成。地址、支付、取消和转接已接入默认轮次；M5.1 纯筛选现由 M5.2 商品完整提案/提交生产器调用。SessionWriteRuntime 的稳定认领、严格 True、Unknown 不重发、回执＋自有强读回约定不变；所有业务 toolkit 共用一份可信进程内 SessionClaims，同一 live 后端重建 toolkit 时须显式复用可信 store，不能以新空表配丢失 journal 的旧 state 冒充跨进程去重。SDK 入口返回真实 AssistantMessage 与对应 state。M0.2 的全量本地业务验收明确由 M6.7 承接；M7 课堂正式评分另列；本批合成流程通过不冒充公开 AT 或远程评测通过。
 
 Windows 本地离线测试可使用 `pwsh -NoProfile -File .\scripts\test-local.ps1`：使用项目解释器，临时目录限定在仓库内，原生退出码保留，调用方环境不变。两个测试文件的四处临时目录调用已通过共享 helper 避开 Windows 0o700 的特殊 ACL 设置，直接运行 unittest 也生效；其他系统保持标准临时目录行为。评审会话现已报告原命令在受限模式实跑 266/266、零跳过、退出码 0，无提权、无重定向或注入；本会话此前的启动失败和非受限通过保留来源区分，见 [本地测试入口](docs/LOCAL-TEST-RUNNER.md)。脚本是可选便利入口。
 

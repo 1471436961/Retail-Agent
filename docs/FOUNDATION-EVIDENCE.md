@@ -1,6 +1,7 @@
 # 离线运行与 AT 组件证据的有效性
 
-当前 M5.5 交互矩阵使用 schema 12、八 READ＋七个内部 WRITE，模型只读；完整工作区 888/888、专项 38/38。当前运行见 [M5.5 交付](M5.5-DELIVERY.md)；M5.4 的 850/850 和 59/59 是历史基线。业务 AT 执行仍为 0。
+<!-- CURRENT-EVIDENCE:LINK -->
+当前运行、计数和证据范围统一见 [当前证据](CURRENT-EVIDENCE.md)；本文件的里程碑记录保留对应历史范围。
 
 日期：2026-10-04。由 scripts/foundation_trace.py 生成 FOUNDATION-RUN.json / AT-TEST-TRACE.json；两者只是实际离线组件证据，不是完整业务 AT、远程评测或后台结算结果。业务范围始终 134 案例 / 522 AT。
 
@@ -16,7 +17,7 @@
 
 | 字段 | 范围 |
 |---|---|
-| source_sha256 | agent/**/*.py、tests/**/*.py、tests/fixtures/*.json、agent/agent.json 与生成脚本自身；包括相对路径和文件字节，不含缓存 |
+| source_sha256 | agent/**/*.py、tests/**/*.py、tests/fixtures/*.json、agent/agent.json、scripts/foundation_trace.py、scripts/local_dialogue_batch.py 与 scripts/evidence_docs.py；包括相对路径和文件字节，不含缓存 |
 | requirements_sha256 | CASE-REQUIREMENTS.md 的 UTF-8 读取文本，按文本换行规范化；保留原 AT 编号及来源 |
 | specification_sha256 / specification_files | 以下显式允许列表每个文件的字节 SHA-256，以及路径/摘要映射的总体 SHA-256 |
 
@@ -85,8 +86,12 @@ M4.4 评审收尾新增两条摘要文本隔离测试，断言伪造完成/身�
 [交付](M5.4-DELIVERY.md)与[换货专项](../tests/test_m5_exchanges.py)覆盖默认 delivered 清单、实际 user 条件/回退、同产品规格、原价→目标当前价有符号差价、已有方式、后一次完整确认、单个 POST、提交后限制、刷新唯一性、Unknown 及 schema 11→12 恢复。X 映射来自实际逐方法运行，不把申请核实登记为结算/到账/新件发货或完整业务 AT。SDK 包装另要求 M5_EXCHANGE marker；库存与共享名字、类型和参数 schema 由真实 SDK 子进程核对，仍使用 fake transport 拒绝网络。
 
 
-## M5.5 当前交互矩阵
+## M5.5 历史交互矩阵
 
 [交付](M5.5-DELIVERY.md)和[交互测试](../tests/test_m5_matrix.py)覆盖同款多件/重复次数、超次数与实例歧义、整组改口、同单退换冲突、零差价、整份礼品卡不足/刷新余额、部分取消范围、写后 Unknown 与丢失批次、共享认领和转接保留。完整工作区 888/888、专项 38/38。报告与追踪按 run_id/source/specification 摘要同时校验，I/T/X/C/W/H 引用实际方法；不是完整案例或 522 条业务 AT 的执行。真实 SDK 包装显式要求 M5_MATRIX marker，不额外累计内部检查。
 
 M5.5 评审收尾：明确保留/排除商品的 keep/retain/leave、except/exclude 及中文保留/除外措辞要求整单范围澄清；首次请求、活动草稿和旧执行快照均在私有读取/认领/发送前阻断。cancel item 和 cancel items 都表示范围收窄，原因数据中的相同词不改变范围。诊断助手仅查当前真实 user 轮次；已接纳 Unknown 的三商品路径允许档案调查读取，原 journal 仍未决且不重发。新增七个方法，完整工作区 888/888，专项 38/38；评审前 881/881、31/31 为历史基线。工具库存变更须检索全仓现在时计数，并与真实 SDK 注册/类型/schema 核对。
+
+## M6.1 本地对话批次
+
+批次结构、固定 oracle、来源元数据和方法映射见 [M6.1 交付](M6.1-DELIVERY.md)，当前运行统一见 [当前证据](CURRENT-EVIDENCE.md)。首批为有限语法／合成记录，完整本地业务覆盖由 M6.7 收口。源于真实 SDK 子进程的观察与纯 oracle 控制显式分开；元数据仅用于来源追溯和混配拒绝，不是签名。
