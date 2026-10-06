@@ -1,13 +1,126 @@
 {
   "schema_version": 2,
   "status": "valid",
-  "run_id": "abcc496e70834a60880f737573819a16",
+  "run_id": "37a6eb3c75f647f49450172e3350a5f1",
   "scope": "component association, not complete business-AT execution",
   "case_count": 134,
   "at_count": 522,
   "business_ats_executed": 0,
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
-  "run_source_sha256": "3c8b78944b5b5f1fc71f9a00b5def6a1d93014795fcc22b50f7be5ba1233d84c",
+  "run_source_sha256": "871a53472b1f736a382a757fe6c25deac36262a88aa58892127acad7c08b87be",
+  "source_files": {
+    "agent/agent.json": "7c8b0cb6c62e4ba39a16f827830ec530aa9ac9916fe52873c4a490bc4a9355c9",
+    "agent/agent.py": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
+    "agent/support_agent/__init__.py": "b945c22ad75d95e3672da9ec456c099e951fc059f8580e9ed07b3840b095770a",
+    "agent/support_agent/adapters/__init__.py": "22d3f8d91bb91ea0615860036b38771c962bc192dbafbcf0c5523171f6da1807",
+    "agent/support_agent/adapters/address_tools.py": "8196f3ca15d34f7444b771a904a3b2d9be18222a1a55e86a380b7565536fcc9e",
+    "agent/support_agent/adapters/cancellation_tools.py": "b723d2a2040bd1a91e8b85fe5505af1dfaecfa00d9d59aa7b80713d721b515b2",
+    "agent/support_agent/adapters/client_api.py": "6d21cdcbaec9ce19133a61c50860371e9e5efb1d3ab5f368b42e0bb05149a688",
+    "agent/support_agent/adapters/customer_api.py": "6eee5efe034bd9926682d4f4237bb5f97364794e4e0605c6db576ae254d16f74",
+    "agent/support_agent/adapters/customer_tools.py": "c3738a879ffc0d32c298528620035d56f4c6e584aa68a809a6dbe0bcdc3e5175",
+    "agent/support_agent/adapters/exchange_tools.py": "79c74d78c1d773d995880eff084641baaf08d39281cb35fe9c6f8be071ae2306",
+    "agent/support_agent/adapters/handoff_tools.py": "36a998554491028e0b7e18d2e4f2506145eb1327b93cd00a815df30eec9545ad",
+    "agent/support_agent/adapters/items_tools.py": "0a6bf5db8518c6db006ff3ba62ac030a8ab65fcead8c9f3425837bbec296aaef",
+    "agent/support_agent/adapters/model_gateway.py": "5aacf5d51a2e51d05344e75867e0ffdb82bf69fa7cefd073ec91310f3cd51759",
+    "agent/support_agent/adapters/payment_tools.py": "4059a70555d908b88ff159061bcfbb2e920ea68e8cebfb2a96abd6e8b61cd209",
+    "agent/support_agent/adapters/read_api.py": "16ec1a47c04224434686c39ae5449c0f08b2d8fcc92e09ad1ff5bd9e257fb744",
+    "agent/support_agent/adapters/read_tools.py": "71adab1bdcc7482a0a1ccfe99173a9f2badf0b44aed343af530b37ec22ebdf43",
+    "agent/support_agent/adapters/returns_tools.py": "ef5121b72c80be166de9e0ed3c978e8cd21bd866af2ad0e7e6273fa7f000972a",
+    "agent/support_agent/adapters/write_runtime.py": "1b7a801322b497ff698061b0e52ddb46384b3973fda43fab3721c33b9f2a2bd4",
+    "agent/support_agent/address_session.py": "228823f749fe875a1d7d4728cf453253c223b1781827d5a9b857c0d1d7c05079",
+    "agent/support_agent/amount_summary.py": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
+    "agent/support_agent/application.py": "e3b2a776a2ebc5e24804b7a49b6bd961edfcd51fb434736871b035bed4aae6c8",
+    "agent/support_agent/cancellation_session.py": "58ef2f4abd4a0864a2ef59fcdf4986132ea6447923fd29b8f4b17468dec7535e",
+    "agent/support_agent/candidate_session.py": "41c8bc7640bf76f06984db25274d607aa6e70b2903d5869acac3267d7d4c8cca",
+    "agent/support_agent/config.py": "bed92066063c625472fe3afe92d268b1330b89f18fed3efc97e8c42f073ebc22",
+    "agent/support_agent/domain/__init__.py": "fce2b1e04b26ebe9cbf5e0ba5a04b7aa2a5deb078461c0d810cb41143f1594f1",
+    "agent/support_agent/domain/addresses.py": "e9c1aa9dc9b88ae9f8315745af2d9af7921e939db8e20cbcb8a1400cef82fc91",
+    "agent/support_agent/domain/cancellation_intake.py": "5a5313bb444f00d4110d524248d461a6e68cd0aea35aa77e1bc2b75708f2d027",
+    "agent/support_agent/domain/candidate_selection.py": "3bb00adff57603a69146f400498612c8786187470018a476ad80908bf49f2fb2",
+    "agent/support_agent/domain/catalog.py": "c2fe0c7940ba78f33e7d3a181c5738671d457a03b93d7805b3892bdcb4aa2242",
+    "agent/support_agent/domain/customer.py": "1374bdd79d0602e266e0a08da2ce1269663125fe9140d0a6234f81099e5782e0",
+    "agent/support_agent/domain/identity.py": "f371c4ea0654699843809a080814a657b13cd508be32e19f43c9428e81f296ec",
+    "agent/support_agent/domain/items_intake.py": "43fdd799a876c9898816f23a2ab299ab61521f0c349fcb9157381b60aff98ea2",
+    "agent/support_agent/domain/money.py": "a698138a08fd1dc7083b3860c28577fc807a53a5aa9bf21339685a2f4498e388",
+    "agent/support_agent/domain/orders.py": "112bb2af986050dee03c61a642c42a18ffd4aa561cfe5afd8382f672c013fb40",
+    "agent/support_agent/domain/payment_intake.py": "f0273df2246f41e293741ee727353bf0654e4c4a7f6a50496cd832a00d01a44b",
+    "agent/support_agent/domain/policies.py": "43ef5c9ede59a5d9ef0053c907575a7b46f17656f528ccae089786469382d2c1",
+    "agent/support_agent/domain/returns_intake.py": "8806ba64a3cddd47f15afcc86794d0f81f8f4b19f7f98835460001c977352c16",
+    "agent/support_agent/domain/rules.py": "1ca3958a8e089d8372d2da213df693fbedbc54050f72f55bbe7d529f22e7cc4b",
+    "agent/support_agent/domain/task_graph.py": "c92a530b8c0092aa39ee864c432cd4ab02536999a9fcd581a3027b5ebead2120",
+    "agent/support_agent/domain/write_receipts.py": "5e509e10adaaa91671d346133bc5ff04d851a1871df89cce322e11bb3f031c17",
+    "agent/support_agent/exchange_session.py": "d7e640e922246374141bcb66b1794390f6959ac0e60c513e0afc78456ed2bf6d",
+    "agent/support_agent/handoff_session.py": "691e5ec5c73f54802d59e91f84b09206d787864c8a0e7e30ddf8b688bccf174a",
+    "agent/support_agent/items_session.py": "85fdaee33a84883f0cf8436fd359d391b88303edefd3b3c7999751bbcfd1fdee",
+    "agent/support_agent/model_context.py": "58983cb6cf9fbed8d91b0109d976f79b18f16b01e23b9a428b69c42e8a8b4eba",
+    "agent/support_agent/payment_session.py": "9c5339d21fb0c01587e1ea32d7f36b9abc9ff27973b15f9d4b2db94d56795874",
+    "agent/support_agent/proposals.py": "fc6d2eeeece7bcaa73e959c219df1316d6f22ac9a270100b302b267b4fb516d8",
+    "agent/support_agent/protocol.py": "6d80032f64f37b1d1cd3f832228d958b91a9ea024b9792f2bc134011cbc3e13a",
+    "agent/support_agent/read_session.py": "3fb50db07c385b8d90d002de9bb292d117a393b4b4b3ad7a46b3893f0704cc89",
+    "agent/support_agent/returns_session.py": "8e05659f3e7141c135286ce966cc0bb9dd60fd152858b485b2b0240370251dd6",
+    "agent/support_agent/state.py": "5330decb4ed88e17f61abf9a42ed706e1995be42dc067ec10e0fa5fee557a201",
+    "agent/support_agent/tasks.py": "d27e8e9a55099f0c2c9d3e9a5b54fa8b41052017fe61ae262ff44afebbc19ba1",
+    "agent/support_agent/turns.py": "fb158197d66dfa168c0762e86eb5ed5a2f5107209d94b70cc955ba30d09d8759",
+    "agent/support_agent/workflow_boundary.py": "31d228c05039d0217d0d9b04804adc01f77b16f76a2900e14a03931a6247924f",
+    "agent/support_agent/workflow_limits.py": "eb52a0ca6a262b756bc301692d97d8bf88b66c7abc533ed2b30db6d49453dc5c",
+    "agent/support_agent/workflow_registry.py": "6450ac44e5aca118aafa7ce27cb4a9a3c50b4a07ec547d39c54aaed14bf8da74",
+    "agent/support_agent/write_session.py": "46c84cdac54c8ddc1a32af7d9afe6149ec751816fbc950ed3751682437a295dd",
+    "agent/tools.py": "cd8fcc30f062bf8cf9d9237321e4bdc127665d96fe62190e2cc61b97a8fd9368",
+    "scripts/evidence_docs.py": "348196a32bd60555237337379078cb994046c14b26d656df66af8f8b10a731a7",
+    "scripts/foundation_trace.py": "d88bcd9728856bf433b4c395ce9fa4853354fafa17de54fdbf9feaed771115fc",
+    "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc",
+    "tests/fakes.py": "429edc15f8397324b3dae16890e2a36b370e349eaaaca10db0aef8ccc7a195fe",
+    "tests/fixtures/m3_schema1_state.json": "66bad55f73e641ab7968b0acc73647828eef4bea6309a6be43074912b0696b6f",
+    "tests/fixtures/m3_schema2_state.json": "faae137cc5dadd6dffe523d4f24d922af9c5b77c5aa39bf30d4a76311bf8a48f",
+    "tests/fixtures/m3_schema3_state.json": "490ccf812552575f4f2140f62764ea1065f1d13cacb21bc3eb69054016371b9d",
+    "tests/fixtures/m3_schema4_state.json": "259054408e14bb5e6ed2b9a5a0e9dbe57ef4003ef52ec3ab5b0e58fff0118350",
+    "tests/fixtures/m4_schema5_state.json": "f3e2c5efb48de16468d50a94eeb0415247c53c64fcd4534dbf3de43074f81573",
+    "tests/fixtures/m4_schema6_state.json": "b35f2817bb9b7b71c32349e54798fa44da7e605c7790b9e057e39caf7bf7bc7e",
+    "tests/fixtures/m4_schema7_state.json": "b07110c27b66b9f050d11dd42f3fcf5f516f8e5742ed146ae1ca1321536cbcc7",
+    "tests/fixtures/m4_schema8_state.json": "2206b94bde9ea2d8ea1cc28daf30e2cb020fda8544b1b6ee904527b3bf346270",
+    "tests/fixtures/m5_schema10_state.json": "2ac58c605e6355195579222c13ec30d3fbcb38b9abe73240f8381e29ee76629e",
+    "tests/fixtures/m5_schema11_state.json": "08beb6c2fdb848f38a0b8b6b8728eb9deb83633694a142523d49fdfb44a14ea7",
+    "tests/fixtures/m5_schema9_state.json": "256cc478f79432f36a7fd893cc276f44124b54dbae533b23acad3bd987ed2e88",
+    "tests/fixtures/m6_combinations.json": "fe8b468988a8e1692a5377ec966dad19a61f084fbeb9bcec302757905b2bb0fd",
+    "tests/fixtures/m6_dialogues.json": "57f42f4fd55591ca5cd8e62b41e5968cc80f3c659213e93d083e7f58615799fa",
+    "tests/fixtures/m6_source_baseline.json": "60740b0651b7c47ce23b05266a7f403c428da50b9848cc978fbf1b567212c5dd",
+    "tests/m2_fakes.py": "61f2b0b3a6d479872d9883672c970eae1e030bffcfb90221fc2baa80dc0d1f38",
+    "tests/sdk_m2_checks.py": "612608c2984eee57fb43554d9fdf26b57451655bbf21ae73fe002819a6d63830",
+    "tests/sdk_m3_checks.py": "34dfed53385ed6fa87180436ae5c4fbf6f03ee5a7113f896e6b8565630fa6c00",
+    "tests/sdk_m6_checks.py": "44425dcf50b4db538b4df694bf52d04884126bcab716b1cd54bc456d6b70b17f",
+    "tests/temp_dirs.py": "5b6d1c28f1d6be10de659339cf6b0b7e0ed9387187884edc6ac874c1d180a8eb",
+    "tests/test_case_trace.py": "ce54b09b99fd17d55e89429a620af183c18610459502100c0118886f9e28de69",
+    "tests/test_customer.py": "ed3bf9b5a2dbce55dbfe6ca4a59e92cb40fc8f602d889c4784cf9f329b9ba7c2",
+    "tests/test_evidence_docs.py": "58bacce22748d6fc67ac18141ca2bfb9975b169539aea6b36bfce86ac5b2d964",
+    "tests/test_foundation_trace.py": "1c9c550bc85e403e51f1024ce0a9bd88f80f7638b4d855267e3195d1c78fd122",
+    "tests/test_m0_contract.py": "895185129ebab1ffb79af1d09b26a60f80b95022e526d9939b26ba6dfb8c8f6f",
+    "tests/test_m1_adapter.py": "67236580c807cb2dd7704560ad5532626536238fc25df51fd750feb8dd2cf608",
+    "tests/test_m1_client_api.py": "3dba71d48e27480847a7c1061ab1614dabee65709b078ff5fd570b1ee2c995ce",
+    "tests/test_m1_state.py": "8d907b4badfd684fb89ed992a89b7048d0ffaf85a2a6dd47f5c22b2f7dc2d826",
+    "tests/test_m2_reads.py": "4bddc40163ac54b3ecc464da549fa447b777caab5e9f3fecef60faa998de87c8",
+    "tests/test_m2_sdk.py": "d8bf9f99c1e3230d7d433e9ed8789df897a045b52b5226658737e20e49ef8389",
+    "tests/test_m2_session.py": "0841060012701aea2b840a02e703d46f7fa13be06c09591e44725c515e5a90a4",
+    "tests/test_m3_completion.py": "ec02df32d58c232f9b055139500652008570b0747265b5af95132d7ddabd2676",
+    "tests/test_m3_proposals.py": "4ff4a4e142171f5cfad5628dce54ec21468c418142084374742ec1778c14871a",
+    "tests/test_m3_rules.py": "ba65e89927bf263add95054534950b101e5b8a39bfbaabe7f63fa54e219ef2a1",
+    "tests/test_m3_scoped_consent.py": "e1ea604b81da2f501199e0dd740c4b8a35b3fe8e91c0ba4ddee757837d134e84",
+    "tests/test_m3_tasks.py": "6d12496194294f62c365a7c9e8359d55461e7b2f932897a7ff000a718e559547",
+    "tests/test_m3_writes.py": "12a0c0eb1361ae6640c0496dec59611a4fc178d5da74b6c684f9c27c0098bf3a",
+    "tests/test_m4_address_review.py": "2f963c12c896f2eefeea5f6c18c5267bc67d73a48f9d6c412fc1b26dbd8cf22d",
+    "tests/test_m4_addresses.py": "64bbf4f3eef197fa0d9eef0a0afe42fc34772af59d3093393a00e2f58b523ed6",
+    "tests/test_m4_cancellations.py": "b9766b4f7dc6259620588c8e7c05d881cc3add6a28218e1a4369b4e40a833e0d",
+    "tests/test_m4_handoffs.py": "1bcc779c213ba3284f4533971991411351124d09a10309aef0f90e61cc3b94ce",
+    "tests/test_m4_matrix.py": "27656619f0c10adf7d7ebdcccad2f0156ad530cb300175a1e7937fe6695655f1",
+    "tests/test_m4_payments.py": "204657e6b890a3add08dd7d4e1ed827beda526e5b5143550bdb6ed935af94e26",
+    "tests/test_m5_candidates.py": "c050bcabc3faa6ec3164d6456a19559eb50d2dd701f6b10f5b3a92bd3446d83a",
+    "tests/test_m5_exchanges.py": "d4e242a4b028f3c2368508c2ca6e7025ad16daa7192144bd7b29d4e9f9b2abed",
+    "tests/test_m5_items.py": "3a8b0822b824565954c6ba31d4dbe7b51954270a77de0cb0196290f5be7b63c7",
+    "tests/test_m5_matrix.py": "db134111a594dcd7cf25b11f7686765ae8c7eda1de675352ecfa4cc99b23a677",
+    "tests/test_m5_returns.py": "4a01a1f33b6e89d6f3fcb61c4e0a3fa3bf624620d6177277558f044dada34f99",
+    "tests/test_m6_combinations.py": "60ca6bc1b4d50df2bd2c34ed13852c42440f552ff9e02f143de8c8904991a5f7",
+    "tests/test_m6_dialogues.py": "699802600c8cbb6b24ae35a3d4d3016c4367368b3e9f0c193418f567e24d2b8d",
+    "tests/test_money.py": "022ce5613f143d1b03f6929124d4859121e5539c24595c5dda772217e5fe95db"
+  },
   "specification_sha256": "b69229eb3c9487395f6b256729e5d2c37a700a95c968321ca502648a1de4032a",
   "specification_files": {
     "materials/CLASSROOM.md": "b02f4a2706a1c2c5c1e04d1b4209119c7f061b8a66240d36e17af1614fe62a5c",
@@ -1211,8 +1324,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "cancel_return_cross_order_summary"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A017-01",
@@ -1900,8 +2015,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "same_order_return_exchange_conflict"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A027-02",
@@ -1984,8 +2101,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "two_orders_return_and_exchange"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A028-04",
@@ -1999,8 +2118,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "cancel_return_cross_order_summary"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A029-01",
@@ -2891,8 +3012,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "default_and_order_address"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A041-05",
@@ -2989,8 +3112,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "address_then_complete_items"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A043-01",
@@ -4848,8 +4973,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "blocked_order_then_other_address"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A071-05",
@@ -6405,8 +6532,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "address_then_complete_items"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A098-01",
@@ -6486,8 +6615,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "two_orders_return_and_exchange"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A098-06",
@@ -7472,8 +7603,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "default_and_order_address"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A111-01",
@@ -7554,8 +7687,10 @@
       "business_result": "not_executed",
       "business_test_ids": [],
       "remote_result": "not_run",
-      "local_dialogue_ids": [],
-      "local_dialogue_result": "not_scheduled"
+      "local_dialogue_ids": [
+        "two_orders_complete_items"
+      ],
+      "local_dialogue_result": "related_synthetic_dialogues_passed"
     },
     {
       "at_id": "AT-A112-01",
@@ -8760,19 +8895,19 @@
   ],
   "local_dialogues": {
     "scope": "synthetic requirement-linked dialogues; not complete public business ATs",
-    "dialogues_passed": 16,
+    "dialogues_passed": 23,
     "execution": {
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_checks.py",
       "sdk_version": "1.0.1",
-      "parent_run_id": "abcc496e70834a60880f737573819a16",
-      "source_sha256": "3c8b78944b5b5f1fc71f9a00b5def6a1d93014795fcc22b50f7be5ba1233d84c",
+      "parent_run_id": "37a6eb3c75f647f49450172e3350a5f1",
+      "source_sha256": "871a53472b1f736a382a757fe6c25deac36262a88aa58892127acad7c08b87be",
       "runner_inputs": {
         "tests/sdk_m6_checks.py": "44425dcf50b4db538b4df694bf52d04884126bcab716b1cd54bc456d6b70b17f",
-        "scripts/local_dialogue_batch.py": "f32b864442d374b916859dbf71a1afeb3a69b14396ead12543fe833bc794734d"
+        "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc"
       }
     },
-    "fixture_sha256": "8c6131d6a856bfb71b6fe19e0abc8785fe52dbdfa47abde070823fb33b735052",
+    "fixture_sha256": "9c04cc0c97e90d4c3953d8897c33003f9c38d6b7bb5ba116ac9e9d18ba7a8433",
     "wrapper_test_id": "test_m6_dialogues.NativeDialogueBatchTests.test_default_sdk_dialogue_batch_matches_fixed_oracles",
     "complete_business_ats_executed": 0,
     "plan": [
@@ -9649,7 +9784,9 @@
           "M"
         ],
         "requirement": "汇总实际允许范围的取消退款与手表退货预计额，分项与总额一致；不重复累计同一回执或宣称已到账。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "cancel_return_cross_order_summary"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -10274,7 +10411,9 @@
           "X"
         ],
         "requirement": "同时收集水管/背包退货及靴子换货，核对同单的申请互斥。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "same_order_return_exchange_conflict"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -10349,7 +10488,9 @@
           "F"
         ],
         "requirement": "按客户指定的可行跨单次序确认退货；同一订单不得拆成多次申请，冲突时先解释/澄清。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "two_orders_return_and_exchange"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -10363,7 +10504,9 @@
           "M"
         ],
         "requirement": "汇总实际退货范围预计额，不将未取消水管计入，不重复累计回执。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "cancel_return_cross_order_summary"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -11176,7 +11319,9 @@
           "D"
         ],
         "requirement": "档案默认地址独立确认并修改，不能因订单地址更新自动假设已同步。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "default_and_order_address"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -11264,7 +11409,9 @@
           "M"
         ],
         "requirement": "使用客户默认已有 PayPal，地址先于锁单商品修改，完整清单确认后一次提交。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "address_then_complete_items"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -12968,7 +13115,9 @@
           "A"
         ],
         "requirement": "独立确认后先完成仍可改的订单地址，不能先商品锁单。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "blocked_order_then_other_address"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -14377,7 +14526,9 @@
           "M"
         ],
         "requirement": "地址结果核实后一次商品修改；实际确认须覆盖最终清单和方式，不能由句子顺序决定写顺序。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "address_then_complete_items"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -14451,7 +14602,9 @@
           "X"
         ],
         "requirement": "各换货订单分别收齐清单确认后一次申请，不跨单复用授权。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "two_orders_return_and_exchange"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -15344,7 +15497,9 @@
           "F"
         ],
         "requirement": "收齐目标单清单/差价/方式，地址先于同单锁单修改，逐项核实两个地址与商品结果。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "default_and_order_address"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"
@@ -15418,7 +15573,9 @@
           "M"
         ],
         "requirement": "商品按实际所属 pending 单收齐完整替换列表、差价与方式，一次修改；综合业务条目拆成地址和商品两个可独立检查的结果。",
-        "dialogue_ids": [],
+        "dialogue_ids": [
+          "two_orders_complete_items"
+        ],
         "coverage_milestone": "M6.7",
         "business_result": "not_executed",
         "remote_result": "not_run"

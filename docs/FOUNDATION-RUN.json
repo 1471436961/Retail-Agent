@@ -1,9 +1,122 @@
 {
   "schema_version": 2,
-  "run_id": "abcc496e70834a60880f737573819a16",
+  "run_id": "37a6eb3c75f647f49450172e3350a5f1",
   "status": "passed",
   "scope": "offline workspace; fake API/gateway; SDK subprocesses included, not added",
-  "source_sha256": "3c8b78944b5b5f1fc71f9a00b5def6a1d93014795fcc22b50f7be5ba1233d84c",
+  "source_sha256": "871a53472b1f736a382a757fe6c25deac36262a88aa58892127acad7c08b87be",
+  "source_files": {
+    "agent/agent.json": "7c8b0cb6c62e4ba39a16f827830ec530aa9ac9916fe52873c4a490bc4a9355c9",
+    "agent/agent.py": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
+    "agent/support_agent/__init__.py": "b945c22ad75d95e3672da9ec456c099e951fc059f8580e9ed07b3840b095770a",
+    "agent/support_agent/adapters/__init__.py": "22d3f8d91bb91ea0615860036b38771c962bc192dbafbcf0c5523171f6da1807",
+    "agent/support_agent/adapters/address_tools.py": "8196f3ca15d34f7444b771a904a3b2d9be18222a1a55e86a380b7565536fcc9e",
+    "agent/support_agent/adapters/cancellation_tools.py": "b723d2a2040bd1a91e8b85fe5505af1dfaecfa00d9d59aa7b80713d721b515b2",
+    "agent/support_agent/adapters/client_api.py": "6d21cdcbaec9ce19133a61c50860371e9e5efb1d3ab5f368b42e0bb05149a688",
+    "agent/support_agent/adapters/customer_api.py": "6eee5efe034bd9926682d4f4237bb5f97364794e4e0605c6db576ae254d16f74",
+    "agent/support_agent/adapters/customer_tools.py": "c3738a879ffc0d32c298528620035d56f4c6e584aa68a809a6dbe0bcdc3e5175",
+    "agent/support_agent/adapters/exchange_tools.py": "79c74d78c1d773d995880eff084641baaf08d39281cb35fe9c6f8be071ae2306",
+    "agent/support_agent/adapters/handoff_tools.py": "36a998554491028e0b7e18d2e4f2506145eb1327b93cd00a815df30eec9545ad",
+    "agent/support_agent/adapters/items_tools.py": "0a6bf5db8518c6db006ff3ba62ac030a8ab65fcead8c9f3425837bbec296aaef",
+    "agent/support_agent/adapters/model_gateway.py": "5aacf5d51a2e51d05344e75867e0ffdb82bf69fa7cefd073ec91310f3cd51759",
+    "agent/support_agent/adapters/payment_tools.py": "4059a70555d908b88ff159061bcfbb2e920ea68e8cebfb2a96abd6e8b61cd209",
+    "agent/support_agent/adapters/read_api.py": "16ec1a47c04224434686c39ae5449c0f08b2d8fcc92e09ad1ff5bd9e257fb744",
+    "agent/support_agent/adapters/read_tools.py": "71adab1bdcc7482a0a1ccfe99173a9f2badf0b44aed343af530b37ec22ebdf43",
+    "agent/support_agent/adapters/returns_tools.py": "ef5121b72c80be166de9e0ed3c978e8cd21bd866af2ad0e7e6273fa7f000972a",
+    "agent/support_agent/adapters/write_runtime.py": "1b7a801322b497ff698061b0e52ddb46384b3973fda43fab3721c33b9f2a2bd4",
+    "agent/support_agent/address_session.py": "228823f749fe875a1d7d4728cf453253c223b1781827d5a9b857c0d1d7c05079",
+    "agent/support_agent/amount_summary.py": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
+    "agent/support_agent/application.py": "e3b2a776a2ebc5e24804b7a49b6bd961edfcd51fb434736871b035bed4aae6c8",
+    "agent/support_agent/cancellation_session.py": "58ef2f4abd4a0864a2ef59fcdf4986132ea6447923fd29b8f4b17468dec7535e",
+    "agent/support_agent/candidate_session.py": "41c8bc7640bf76f06984db25274d607aa6e70b2903d5869acac3267d7d4c8cca",
+    "agent/support_agent/config.py": "bed92066063c625472fe3afe92d268b1330b89f18fed3efc97e8c42f073ebc22",
+    "agent/support_agent/domain/__init__.py": "fce2b1e04b26ebe9cbf5e0ba5a04b7aa2a5deb078461c0d810cb41143f1594f1",
+    "agent/support_agent/domain/addresses.py": "e9c1aa9dc9b88ae9f8315745af2d9af7921e939db8e20cbcb8a1400cef82fc91",
+    "agent/support_agent/domain/cancellation_intake.py": "5a5313bb444f00d4110d524248d461a6e68cd0aea35aa77e1bc2b75708f2d027",
+    "agent/support_agent/domain/candidate_selection.py": "3bb00adff57603a69146f400498612c8786187470018a476ad80908bf49f2fb2",
+    "agent/support_agent/domain/catalog.py": "c2fe0c7940ba78f33e7d3a181c5738671d457a03b93d7805b3892bdcb4aa2242",
+    "agent/support_agent/domain/customer.py": "1374bdd79d0602e266e0a08da2ce1269663125fe9140d0a6234f81099e5782e0",
+    "agent/support_agent/domain/identity.py": "f371c4ea0654699843809a080814a657b13cd508be32e19f43c9428e81f296ec",
+    "agent/support_agent/domain/items_intake.py": "43fdd799a876c9898816f23a2ab299ab61521f0c349fcb9157381b60aff98ea2",
+    "agent/support_agent/domain/money.py": "a698138a08fd1dc7083b3860c28577fc807a53a5aa9bf21339685a2f4498e388",
+    "agent/support_agent/domain/orders.py": "112bb2af986050dee03c61a642c42a18ffd4aa561cfe5afd8382f672c013fb40",
+    "agent/support_agent/domain/payment_intake.py": "f0273df2246f41e293741ee727353bf0654e4c4a7f6a50496cd832a00d01a44b",
+    "agent/support_agent/domain/policies.py": "43ef5c9ede59a5d9ef0053c907575a7b46f17656f528ccae089786469382d2c1",
+    "agent/support_agent/domain/returns_intake.py": "8806ba64a3cddd47f15afcc86794d0f81f8f4b19f7f98835460001c977352c16",
+    "agent/support_agent/domain/rules.py": "1ca3958a8e089d8372d2da213df693fbedbc54050f72f55bbe7d529f22e7cc4b",
+    "agent/support_agent/domain/task_graph.py": "c92a530b8c0092aa39ee864c432cd4ab02536999a9fcd581a3027b5ebead2120",
+    "agent/support_agent/domain/write_receipts.py": "5e509e10adaaa91671d346133bc5ff04d851a1871df89cce322e11bb3f031c17",
+    "agent/support_agent/exchange_session.py": "d7e640e922246374141bcb66b1794390f6959ac0e60c513e0afc78456ed2bf6d",
+    "agent/support_agent/handoff_session.py": "691e5ec5c73f54802d59e91f84b09206d787864c8a0e7e30ddf8b688bccf174a",
+    "agent/support_agent/items_session.py": "85fdaee33a84883f0cf8436fd359d391b88303edefd3b3c7999751bbcfd1fdee",
+    "agent/support_agent/model_context.py": "58983cb6cf9fbed8d91b0109d976f79b18f16b01e23b9a428b69c42e8a8b4eba",
+    "agent/support_agent/payment_session.py": "9c5339d21fb0c01587e1ea32d7f36b9abc9ff27973b15f9d4b2db94d56795874",
+    "agent/support_agent/proposals.py": "fc6d2eeeece7bcaa73e959c219df1316d6f22ac9a270100b302b267b4fb516d8",
+    "agent/support_agent/protocol.py": "6d80032f64f37b1d1cd3f832228d958b91a9ea024b9792f2bc134011cbc3e13a",
+    "agent/support_agent/read_session.py": "3fb50db07c385b8d90d002de9bb292d117a393b4b4b3ad7a46b3893f0704cc89",
+    "agent/support_agent/returns_session.py": "8e05659f3e7141c135286ce966cc0bb9dd60fd152858b485b2b0240370251dd6",
+    "agent/support_agent/state.py": "5330decb4ed88e17f61abf9a42ed706e1995be42dc067ec10e0fa5fee557a201",
+    "agent/support_agent/tasks.py": "d27e8e9a55099f0c2c9d3e9a5b54fa8b41052017fe61ae262ff44afebbc19ba1",
+    "agent/support_agent/turns.py": "fb158197d66dfa168c0762e86eb5ed5a2f5107209d94b70cc955ba30d09d8759",
+    "agent/support_agent/workflow_boundary.py": "31d228c05039d0217d0d9b04804adc01f77b16f76a2900e14a03931a6247924f",
+    "agent/support_agent/workflow_limits.py": "eb52a0ca6a262b756bc301692d97d8bf88b66c7abc533ed2b30db6d49453dc5c",
+    "agent/support_agent/workflow_registry.py": "6450ac44e5aca118aafa7ce27cb4a9a3c50b4a07ec547d39c54aaed14bf8da74",
+    "agent/support_agent/write_session.py": "46c84cdac54c8ddc1a32af7d9afe6149ec751816fbc950ed3751682437a295dd",
+    "agent/tools.py": "cd8fcc30f062bf8cf9d9237321e4bdc127665d96fe62190e2cc61b97a8fd9368",
+    "scripts/evidence_docs.py": "348196a32bd60555237337379078cb994046c14b26d656df66af8f8b10a731a7",
+    "scripts/foundation_trace.py": "d88bcd9728856bf433b4c395ce9fa4853354fafa17de54fdbf9feaed771115fc",
+    "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc",
+    "tests/fakes.py": "429edc15f8397324b3dae16890e2a36b370e349eaaaca10db0aef8ccc7a195fe",
+    "tests/fixtures/m3_schema1_state.json": "66bad55f73e641ab7968b0acc73647828eef4bea6309a6be43074912b0696b6f",
+    "tests/fixtures/m3_schema2_state.json": "faae137cc5dadd6dffe523d4f24d922af9c5b77c5aa39bf30d4a76311bf8a48f",
+    "tests/fixtures/m3_schema3_state.json": "490ccf812552575f4f2140f62764ea1065f1d13cacb21bc3eb69054016371b9d",
+    "tests/fixtures/m3_schema4_state.json": "259054408e14bb5e6ed2b9a5a0e9dbe57ef4003ef52ec3ab5b0e58fff0118350",
+    "tests/fixtures/m4_schema5_state.json": "f3e2c5efb48de16468d50a94eeb0415247c53c64fcd4534dbf3de43074f81573",
+    "tests/fixtures/m4_schema6_state.json": "b35f2817bb9b7b71c32349e54798fa44da7e605c7790b9e057e39caf7bf7bc7e",
+    "tests/fixtures/m4_schema7_state.json": "b07110c27b66b9f050d11dd42f3fcf5f516f8e5742ed146ae1ca1321536cbcc7",
+    "tests/fixtures/m4_schema8_state.json": "2206b94bde9ea2d8ea1cc28daf30e2cb020fda8544b1b6ee904527b3bf346270",
+    "tests/fixtures/m5_schema10_state.json": "2ac58c605e6355195579222c13ec30d3fbcb38b9abe73240f8381e29ee76629e",
+    "tests/fixtures/m5_schema11_state.json": "08beb6c2fdb848f38a0b8b6b8728eb9deb83633694a142523d49fdfb44a14ea7",
+    "tests/fixtures/m5_schema9_state.json": "256cc478f79432f36a7fd893cc276f44124b54dbae533b23acad3bd987ed2e88",
+    "tests/fixtures/m6_combinations.json": "fe8b468988a8e1692a5377ec966dad19a61f084fbeb9bcec302757905b2bb0fd",
+    "tests/fixtures/m6_dialogues.json": "57f42f4fd55591ca5cd8e62b41e5968cc80f3c659213e93d083e7f58615799fa",
+    "tests/fixtures/m6_source_baseline.json": "60740b0651b7c47ce23b05266a7f403c428da50b9848cc978fbf1b567212c5dd",
+    "tests/m2_fakes.py": "61f2b0b3a6d479872d9883672c970eae1e030bffcfb90221fc2baa80dc0d1f38",
+    "tests/sdk_m2_checks.py": "612608c2984eee57fb43554d9fdf26b57451655bbf21ae73fe002819a6d63830",
+    "tests/sdk_m3_checks.py": "34dfed53385ed6fa87180436ae5c4fbf6f03ee5a7113f896e6b8565630fa6c00",
+    "tests/sdk_m6_checks.py": "44425dcf50b4db538b4df694bf52d04884126bcab716b1cd54bc456d6b70b17f",
+    "tests/temp_dirs.py": "5b6d1c28f1d6be10de659339cf6b0b7e0ed9387187884edc6ac874c1d180a8eb",
+    "tests/test_case_trace.py": "ce54b09b99fd17d55e89429a620af183c18610459502100c0118886f9e28de69",
+    "tests/test_customer.py": "ed3bf9b5a2dbce55dbfe6ca4a59e92cb40fc8f602d889c4784cf9f329b9ba7c2",
+    "tests/test_evidence_docs.py": "58bacce22748d6fc67ac18141ca2bfb9975b169539aea6b36bfce86ac5b2d964",
+    "tests/test_foundation_trace.py": "1c9c550bc85e403e51f1024ce0a9bd88f80f7638b4d855267e3195d1c78fd122",
+    "tests/test_m0_contract.py": "895185129ebab1ffb79af1d09b26a60f80b95022e526d9939b26ba6dfb8c8f6f",
+    "tests/test_m1_adapter.py": "67236580c807cb2dd7704560ad5532626536238fc25df51fd750feb8dd2cf608",
+    "tests/test_m1_client_api.py": "3dba71d48e27480847a7c1061ab1614dabee65709b078ff5fd570b1ee2c995ce",
+    "tests/test_m1_state.py": "8d907b4badfd684fb89ed992a89b7048d0ffaf85a2a6dd47f5c22b2f7dc2d826",
+    "tests/test_m2_reads.py": "4bddc40163ac54b3ecc464da549fa447b777caab5e9f3fecef60faa998de87c8",
+    "tests/test_m2_sdk.py": "d8bf9f99c1e3230d7d433e9ed8789df897a045b52b5226658737e20e49ef8389",
+    "tests/test_m2_session.py": "0841060012701aea2b840a02e703d46f7fa13be06c09591e44725c515e5a90a4",
+    "tests/test_m3_completion.py": "ec02df32d58c232f9b055139500652008570b0747265b5af95132d7ddabd2676",
+    "tests/test_m3_proposals.py": "4ff4a4e142171f5cfad5628dce54ec21468c418142084374742ec1778c14871a",
+    "tests/test_m3_rules.py": "ba65e89927bf263add95054534950b101e5b8a39bfbaabe7f63fa54e219ef2a1",
+    "tests/test_m3_scoped_consent.py": "e1ea604b81da2f501199e0dd740c4b8a35b3fe8e91c0ba4ddee757837d134e84",
+    "tests/test_m3_tasks.py": "6d12496194294f62c365a7c9e8359d55461e7b2f932897a7ff000a718e559547",
+    "tests/test_m3_writes.py": "12a0c0eb1361ae6640c0496dec59611a4fc178d5da74b6c684f9c27c0098bf3a",
+    "tests/test_m4_address_review.py": "2f963c12c896f2eefeea5f6c18c5267bc67d73a48f9d6c412fc1b26dbd8cf22d",
+    "tests/test_m4_addresses.py": "64bbf4f3eef197fa0d9eef0a0afe42fc34772af59d3093393a00e2f58b523ed6",
+    "tests/test_m4_cancellations.py": "b9766b4f7dc6259620588c8e7c05d881cc3add6a28218e1a4369b4e40a833e0d",
+    "tests/test_m4_handoffs.py": "1bcc779c213ba3284f4533971991411351124d09a10309aef0f90e61cc3b94ce",
+    "tests/test_m4_matrix.py": "27656619f0c10adf7d7ebdcccad2f0156ad530cb300175a1e7937fe6695655f1",
+    "tests/test_m4_payments.py": "204657e6b890a3add08dd7d4e1ed827beda526e5b5143550bdb6ed935af94e26",
+    "tests/test_m5_candidates.py": "c050bcabc3faa6ec3164d6456a19559eb50d2dd701f6b10f5b3a92bd3446d83a",
+    "tests/test_m5_exchanges.py": "d4e242a4b028f3c2368508c2ca6e7025ad16daa7192144bd7b29d4e9f9b2abed",
+    "tests/test_m5_items.py": "3a8b0822b824565954c6ba31d4dbe7b51954270a77de0cb0196290f5be7b63c7",
+    "tests/test_m5_matrix.py": "db134111a594dcd7cf25b11f7686765ae8c7eda1de675352ecfa4cc99b23a677",
+    "tests/test_m5_returns.py": "4a01a1f33b6e89d6f3fcb61c4e0a3fa3bf624620d6177277558f044dada34f99",
+    "tests/test_m6_combinations.py": "60ca6bc1b4d50df2bd2c34ed13852c42440f552ff9e02f143de8c8904991a5f7",
+    "tests/test_m6_dialogues.py": "699802600c8cbb6b24ae35a3d4d3016c4367368b3e9f0c193418f567e24d2b8d",
+    "tests/test_money.py": "022ce5613f143d1b03f6929124d4859121e5539c24595c5dda772217e5fe95db"
+  },
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
   "specification_sha256": "b69229eb3c9487395f6b256729e5d2c37a700a95c968321ca502648a1de4032a",
   "specification_files": {
@@ -18,11 +131,11 @@
     "docs/PLATFORM-CONTRACT-NOTES.md": "c2de04d798739b4d499525fd06a6fb13dbebcbd183f9b6e30ae9cc3cacf5486c",
     "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "41fa35e2d111e4106bc9e9650bb854b3c9ba7db3aafab59c6ae0487a08e35194"
   },
-  "tests_run": 924,
+  "tests_run": 961,
   "skipped": 0,
   "failures": 0,
   "errors": 0,
-  "elapsed_seconds": 318.531,
+  "elapsed_seconds": 413.219,
   "exit_code": 0,
   "results": {
     "test_case_trace.CaseTraceTests.test_business_requirement_count_is_pinned_to_materials_version": "passed",
@@ -41,6 +154,7 @@
     "test_evidence_docs.CurrentEvidenceTests.test_unique_atomic_links_and_relationship_count_are_rendered_separately": "passed",
     "test_foundation_trace.FoundationTraceTests.test_all_atomic_ids_keep_business_and_remote_execution_explicitly_pending": "passed",
     "test_foundation_trace.FoundationTraceTests.test_changed_inputs_cannot_publish_passing_trace": "passed",
+    "test_foundation_trace.FoundationTraceTests.test_fixed_baseline_manifest_records_original_fixture_bytes_but_not_push_authenticity": "passed",
     "test_foundation_trace.FoundationTraceTests.test_interrupted_report_publication_cannot_leave_old_trace_valid": "passed",
     "test_foundation_trace.FoundationTraceTests.test_main_failure_and_skip_invalidate_existing_trace_and_return_one": "passed",
     "test_foundation_trace.FoundationTraceTests.test_missing_atomic_requirement_or_unknown_rule_group_cannot_shrink_inventory": "passed",
@@ -48,10 +162,12 @@
     "test_foundation_trace.FoundationTraceTests.test_nested_runner_restores_parent_context_and_does_not_reuse_outer_evidence": "passed",
     "test_foundation_trace.FoundationTraceTests.test_oracle_control_can_check_plan_without_becoming_native_publication": "passed",
     "test_foundation_trace.FoundationTraceTests.test_oracle_mode_or_mismatched_parent_cannot_publish_a_native_trace": "passed",
+    "test_foundation_trace.FoundationTraceTests.test_per_file_hashes_match_bytes_and_detect_single_file_change_without_git": "passed",
     "test_foundation_trace.FoundationTraceTests.test_publication_binds_same_run_and_rejects_old_same_source_trace": "passed",
     "test_foundation_trace.FoundationTraceTests.test_source_digest_tracks_runner_oracle_and_fixture_but_not_unselected_docs_or_credentials": "passed",
     "test_foundation_trace.FoundationTraceTests.test_specification_snapshot_tracks_selected_doc_and_material_bytes": "passed",
     "test_foundation_trace.FoundationTraceTests.test_stale_source_failed_or_unexecuted_component_evidence_is_rejected": "passed",
+    "test_foundation_trace.FoundationTraceTests.test_tampered_per_file_maps_cannot_publish_or_validate_same_digest_evidence": "passed",
     "test_foundation_trace.FoundationTraceTests.test_trace_build_failure_publishes_failed_report_and_invalid_marker": "passed",
     "test_m0_contract.ContractBaselineTests.test_closed_values_match_the_contract": "passed",
     "test_m0_contract.ContractBaselineTests.test_item_lists_preserve_duplicates_without_line_or_quantity_fields": "passed",
@@ -915,6 +1031,40 @@
     "test_m5_returns.ReturnRecoveryTests.test_real_schema10_fixture_migrates_without_inventing_return_consent": "passed",
     "test_m5_returns.ReturnRecoveryTests.test_restore_and_clone_keep_sources_list_opening_and_completed_journal": "passed",
     "test_m5_returns.ReturnRecoveryTests.test_shared_business_kinds_restore_and_block_every_peer_without_handoff": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_allows_fresh_peer_returns_and_modify_items_without_reusing_consent": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_does_not_block_fresh_peer_address_payment_or_cancellation": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_on_one_order_allows_fresh_peer_order_but_never_completes_old_task": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_address_then_items_waits_for_two_real_confirmations_and_preserves_other_records": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_blocked_order_does_not_prevent_fresh_owned_other_order_address_confirmation": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_default_and_order_addresses_have_two_scopes_order_first_and_no_item_price_effect": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_lost_execute_bundle_still_blocks_peer_order_and_summary_until_review": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_mixed_address_items_message_is_clarified_before_reads_and_can_be_completed_in_order": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_order_address_success_does_not_synchronize_default_without_another_recap": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_peer_order_new_presentation_never_reuses_omitted_order_confirmation": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_return_then_exchange_on_distinct_orders_preserves_original_units_and_independent_consent": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_same_order_return_exchange_conflict_does_not_change_other_order_and_can_continue_there": "passed",
+    "test_m6_combinations.CombinationDialogueTests.test_two_order_item_requests_require_explicit_order_and_never_expand_into_two_writes": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_actual_zero_quotes_and_visible_rows_are_zero_with_positive_evidence_counts": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_arithmetic_exceptions_become_specific_safe_result_without_guessed_amount": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_cancel_original_charge_and_return_estimate_do_not_mix_with_visible_refunds_or_arrival": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_default_summary_refreshes_owned_orders_and_emits_no_business_or_model_call": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_exact_display_is_shared_with_cancellation_and_does_not_round_or_change_evidence": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_failed_application_does_not_enter_submitted_estimates": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_failed_order_read_blocks_summary_instead_of_using_prior_snapshot": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_filtered_latest_list_omission_invalidates_old_order_snapshot": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_foreign_summary_is_denied_before_any_private_read": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_invalid_order_inputs_pending_read_and_handoff_have_distinct_diagnostics": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_large_profile_excess_selection_returns_specific_budget_code_before_reading": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_large_profile_refreshes_only_selected_orders_using_existing_get_tools": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_missing_read_result_invalidates_old_snapshot_without_reclassifying_it_as_zero": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_no_visible_refunds_are_unknown_not_zero_or_the_sum_of_original_prices": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_signed_differences_communicate_net_without_combining_backend_charges": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_summary_is_deterministic_owned_json_and_independent_of_decimal_context": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_summary_parser_requires_explicit_ids_and_does_not_parse_instruction_data": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_two_equal_rows_count_twice_but_duplicate_reads_and_order_selection_do_not": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_two_returns_use_selected_original_occurrences_and_sum_per_order_display_values": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_unknown_write_has_estimate_and_visible_effect_but_no_completion_or_arrival": "passed",
+    "test_m6_combinations.CrossOrderSummaryTests.test_unverified_summary_never_reports_private_amounts": "passed",
     "test_m6_dialogues.DialogueOracleTests.test_batch_provenance_requires_exact_runner_sdk_and_input_hashes": "passed",
     "test_m6_dialogues.DialogueOracleTests.test_changed_initial_backend_cannot_be_used_to_excuse_an_unrelated_change": "passed",
     "test_m6_dialogues.DialogueOracleTests.test_complete_backend_oracle_detects_target_error_and_unrelated_side_effect": "passed",
@@ -953,16 +1103,16 @@
   "dialogue_batch": {
     "schema_version": 2,
     "scope": "synthetic requirement-linked dialogues; not complete public business ATs",
-    "fixture_sha256": "8c6131d6a856bfb71b6fe19e0abc8785fe52dbdfa47abde070823fb33b735052",
+    "fixture_sha256": "9c04cc0c97e90d4c3953d8897c33003f9c38d6b7bb5ba116ac9e9d18ba7a8433",
     "execution": {
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_checks.py",
       "sdk_version": "1.0.1",
-      "parent_run_id": "abcc496e70834a60880f737573819a16",
-      "source_sha256": "3c8b78944b5b5f1fc71f9a00b5def6a1d93014795fcc22b50f7be5ba1233d84c",
+      "parent_run_id": "37a6eb3c75f647f49450172e3350a5f1",
+      "source_sha256": "871a53472b1f736a382a757fe6c25deac36262a88aa58892127acad7c08b87be",
       "runner_inputs": {
         "tests/sdk_m6_checks.py": "44425dcf50b4db538b4df694bf52d04884126bcab716b1cd54bc456d6b70b17f",
-        "scripts/local_dialogue_batch.py": "f32b864442d374b916859dbf71a1afeb3a69b14396ead12543fe833bc794734d"
+        "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc"
       }
     },
     "network_attempts": 0,
@@ -9195,6 +9345,4366 @@
         "journal": [
           {
             "action": "shipping_address",
+            "status": "succeeded"
+          }
+        ],
+        "handoff": "not_requested"
+      },
+      {
+        "id": "address_then_complete_items",
+        "at_ids": [
+          "AT-A042-05",
+          "AT-A097-04"
+        ],
+        "status": "passed",
+        "context": {
+          "conversation_id": "offline-m6-address_then_complete_items",
+          "customer_id": "customer_a",
+          "order_ids": [
+            "#TEST1",
+            "#TEST3"
+          ],
+          "product_ids": [
+            "product_mug"
+          ]
+        },
+        "initial_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "turns": [
+          {
+            "user": "a@example.test",
+            "http_calls": [
+              {
+                "method": "POST",
+                "path": "/v1/customers/search",
+                "body": {
+                  "email": "a@example.test"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "lookup_customer",
+                "arguments_sha256": "4774d4a24c64149510eed62a7e38681179ee56d878544f4d026b2a298509ae7f",
+                "error": false
+              }
+            ],
+            "reply": "The customer email is a@example.test.",
+            "assessment": null,
+            "identity": true
+          },
+          {
+            "user": "Change order #TEST1 address: {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "address_workflow",
+                "arguments_sha256": "32a8b5686fed11f20ad8ca5b49e6720ee6cb7bf7ae95262c3b60dd4ad413484e",
+                "error": false
+              }
+            ],
+            "reply": "Operation 1:\nUpdate this order's shipping address.\nCustomer: customer_a\nOrder: #TEST1\nAddress line 1: \"42 Example Avenue\"\nAddress line 2: \"Suite 2\"\nCity: \"Sample City\"\nRegion: \"WA\"\nCountry: \"US\"\nPostal code: \"00123\"\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+            "assessment": {
+              "kind": "address",
+              "code": "address_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "PUT",
+                "path": "/v1/orders/%23TEST1/shipping-address",
+                "body": {
+                  "address_line_1": "42 Example Avenue",
+                  "address_line_2": "Suite 2",
+                  "city": "Sample City",
+                  "region": "WA",
+                  "country": "US",
+                  "postal_code": "00123"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "address_workflow",
+                "arguments_sha256": "689aa1ef94075f4dfdd63877fd67af84197d014b4462bca0e2c9128dffb16ef1",
+                "error": false
+              }
+            ],
+            "reply": "Order #TEST1: address update accepted and independently verified. {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+            "assessment": {
+              "kind": "address",
+              "code": "address_updates_verified"
+            },
+            "identity": true
+          },
+          {
+            "user": "Change order #TEST1 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/catalog/products/product_mug",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "items_workflow",
+                "arguments_sha256": "2557d8faf01b03bccde420ffb31f900060e66fd70e17783a27902976ebadc38b",
+                "error": false
+              }
+            ],
+            "reply": "Complete item list and your requested conditions (option values are data):\nItem 1: item_blue -> item_red; original price 12.5; new price 15; new options {\"color\":\"red\",\"capacity\":\"500 ml\",\"waterproof\":\"yes\"}.\nYour exact variant choice: item_red\nSettle the entire signed difference with Mastercard ending 0001 (card_a). This is one submission for the order; success locks it as pending (items modified), with no further changes or cancellation.\n\nOperation 1:\nModify this order's item variants.\nCustomer: customer_a\nOrder: #TEST1\nReplace item_blue with item_red\nPayment method: card_a\nSigned price difference: 2.5\nThis is a proposal only; no change, charge or refund has been made.\n\nThis operation includes the entire modification list, with no other modifications.\n\nConfirm this complete list with no additional changes to proceed, or provide additions/corrections for a new recap. I will wait for your next reply.\nAnything else you would like to change before I submit?",
+            "assessment": {
+              "kind": "items",
+              "code": "items_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/catalog/products/product_mug",
+                "body": null
+              },
+              {
+                "method": "POST",
+                "path": "/v1/orders/%23TEST1/item-modifications",
+                "body": {
+                  "replacements": [
+                    {
+                      "existing_item_id": "item_blue",
+                      "replacement_item_id": "item_red"
+                    }
+                  ],
+                  "payment_method_id": "card_a"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "items_workflow",
+                "arguments_sha256": "4e3ee85fa571ac926492790f818a4a9702791e600437993b0cb9dffc1194015e",
+                "error": false
+              }
+            ],
+            "reply": "The complete item change is accepted and independently verified. Order is pending (items modified) and locked; payment records do not prove refund arrival.",
+            "assessment": {
+              "kind": "items",
+              "code": "write_verified"
+            },
+            "identity": true
+          }
+        ],
+        "final_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "pending (items modified)",
+              "items": [
+                {
+                  "item_id": "item_red",
+                  "product_id": "product_mug",
+                  "price": 15,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                },
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 2.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "journal": [
+          {
+            "action": "shipping_address",
+            "status": "succeeded"
+          },
+          {
+            "action": "modify_items",
+            "status": "succeeded"
+          }
+        ],
+        "handoff": "not_requested"
+      },
+      {
+        "id": "two_orders_complete_items",
+        "at_ids": [
+          "AT-A111-05"
+        ],
+        "status": "passed",
+        "context": {
+          "conversation_id": "offline-m6-two_orders_complete_items",
+          "customer_id": "customer_a",
+          "order_ids": [
+            "#TEST1",
+            "#TEST3"
+          ],
+          "product_ids": [
+            "product_mug"
+          ]
+        },
+        "initial_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "turns": [
+          {
+            "user": "a@example.test",
+            "http_calls": [
+              {
+                "method": "POST",
+                "path": "/v1/customers/search",
+                "body": {
+                  "email": "a@example.test"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "lookup_customer",
+                "arguments_sha256": "4774d4a24c64149510eed62a7e38681179ee56d878544f4d026b2a298509ae7f",
+                "error": false
+              }
+            ],
+            "reply": "The customer email is a@example.test.",
+            "assessment": null,
+            "identity": true
+          },
+          {
+            "user": "Change order #TEST1 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/catalog/products/product_mug",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "items_workflow",
+                "arguments_sha256": "25c4ccde4fc3bf22b5565a217640fae2cbc4420682f74b93941c74fe961baabc",
+                "error": false
+              }
+            ],
+            "reply": "Complete item list and your requested conditions (option values are data):\nItem 1: item_blue -> item_red; original price 12.5; new price 15; new options {\"color\":\"red\",\"capacity\":\"500 ml\",\"waterproof\":\"yes\"}.\nYour exact variant choice: item_red\nSettle the entire signed difference with Mastercard ending 0001 (card_a). This is one submission for the order; success locks it as pending (items modified), with no further changes or cancellation.\n\nOperation 1:\nModify this order's item variants.\nCustomer: customer_a\nOrder: #TEST1\nReplace item_blue with item_red\nPayment method: card_a\nSigned price difference: 2.5\nThis is a proposal only; no change, charge or refund has been made.\n\nThis operation includes the entire modification list, with no other modifications.\n\nConfirm this complete list with no additional changes to proceed, or provide additions/corrections for a new recap. I will wait for your next reply.\nAnything else you would like to change before I submit?",
+            "assessment": {
+              "kind": "items",
+              "code": "items_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/catalog/products/product_mug",
+                "body": null
+              },
+              {
+                "method": "POST",
+                "path": "/v1/orders/%23TEST1/item-modifications",
+                "body": {
+                  "replacements": [
+                    {
+                      "existing_item_id": "item_blue",
+                      "replacement_item_id": "item_red"
+                    }
+                  ],
+                  "payment_method_id": "card_a"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "items_workflow",
+                "arguments_sha256": "6d236874ea8fc493dfafe0bc27353cb85b12cc15939a912bfa8c32c2542f72f9",
+                "error": false
+              }
+            ],
+            "reply": "The complete item change is accepted and independently verified. Order is pending (items modified) and locked; payment records do not prove refund arrival.",
+            "assessment": {
+              "kind": "items",
+              "code": "write_verified"
+            },
+            "identity": true
+          },
+          {
+            "user": "Change order #TEST3 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/catalog/products/product_mug",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "items_workflow",
+                "arguments_sha256": "2216e74d5fb8202704874570b578efec842cd2058456c9998a16827af63ba577",
+                "error": false
+              }
+            ],
+            "reply": "Complete item list and your requested conditions (option values are data):\nItem 1: item_blue -> item_red; original price 12.5; new price 15; new options {\"color\":\"red\",\"capacity\":\"500 ml\",\"waterproof\":\"yes\"}.\nYour exact variant choice: item_red\nSettle the entire signed difference with Mastercard ending 0001 (card_a). This is one submission for the order; success locks it as pending (items modified), with no further changes or cancellation.\n\nOperation 1:\nModify this order's item variants.\nCustomer: customer_a\nOrder: #TEST3\nReplace item_blue with item_red\nPayment method: card_a\nSigned price difference: 2.5\nThis is a proposal only; no change, charge or refund has been made.\n\nThis operation includes the entire modification list, with no other modifications.\n\nConfirm this complete list with no additional changes to proceed, or provide additions/corrections for a new recap. I will wait for your next reply.\nAnything else you would like to change before I submit?",
+            "assessment": {
+              "kind": "items",
+              "code": "items_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/catalog/products/product_mug",
+                "body": null
+              },
+              {
+                "method": "POST",
+                "path": "/v1/orders/%23TEST3/item-modifications",
+                "body": {
+                  "replacements": [
+                    {
+                      "existing_item_id": "item_blue",
+                      "replacement_item_id": "item_red"
+                    }
+                  ],
+                  "payment_method_id": "card_a"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "items_workflow",
+                "arguments_sha256": "c80ced6756645fd34abf585a355386083df477c8a3e64070d1b5bba2506eae59",
+                "error": false
+              }
+            ],
+            "reply": "The complete item change is accepted and independently verified. Order is pending (items modified) and locked; payment records do not prove refund arrival.",
+            "assessment": {
+              "kind": "items",
+              "code": "write_verified"
+            },
+            "identity": true
+          }
+        ],
+        "final_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "pending (items modified)",
+              "items": [
+                {
+                  "item_id": "item_red",
+                  "product_id": "product_mug",
+                  "price": 15,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                },
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 2.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending (items modified)",
+              "items": [
+                {
+                  "item_id": "item_red",
+                  "product_id": "product_mug",
+                  "price": 15,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                },
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 2.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "journal": [
+          {
+            "action": "modify_items",
+            "status": "succeeded"
+          },
+          {
+            "action": "modify_items",
+            "status": "succeeded"
+          }
+        ],
+        "handoff": "not_requested"
+      },
+      {
+        "id": "two_orders_return_and_exchange",
+        "at_ids": [
+          "AT-A028-03",
+          "AT-A098-05"
+        ],
+        "status": "passed",
+        "context": {
+          "conversation_id": "offline-m6-two_orders_return_and_exchange",
+          "customer_id": "customer_a",
+          "order_ids": [
+            "#TEST1",
+            "#TEST3"
+          ],
+          "product_ids": [
+            "product_mug"
+          ]
+        },
+        "initial_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "delivered",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "delivered",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "turns": [
+          {
+            "user": "a@example.test",
+            "http_calls": [
+              {
+                "method": "POST",
+                "path": "/v1/customers/search",
+                "body": {
+                  "email": "a@example.test"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "lookup_customer",
+                "arguments_sha256": "4774d4a24c64149510eed62a7e38681179ee56d878544f4d026b2a298509ae7f",
+                "error": false
+              }
+            ],
+            "reply": "The customer email is a@example.test.",
+            "assessment": null,
+            "identity": true
+          },
+          {
+            "user": "Return order #TEST1; items: item_blue; refund to card_a",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "returns_workflow",
+                "arguments_sha256": "fcd42010f15742719ab901a12749a75cf375a365dceddee0312ec2f3b13a63ce",
+                "error": false
+              }
+            ],
+            "reply": "Current order status: delivered. Complete return list (each row is one purchased unit):\nUnit 1: item_blue; Synthetic mug; original options {\"color\": \"blue\", \"capacity\": \"500 ml\", \"waterproof\": \"yes\"}; original price 12.5.\nExact selected original-price sum: 12.5. Estimated refund: 12.50 (decimal sum, half-up cents; project display rule, not backend settlement).\nRefund destination: Mastercard ending 0001 (card_a); channel policy after processing: 3-6 business days; This is channel policy, not evidence that money has arrived.\nThis submits one complete return request per order; after acceptance no items can be added. An accepted application does not prove refund execution, settlement or arrival.\n\nOperation 1:\nRequest a return of the complete selected list.\nCustomer: customer_a\nOrder: #TEST1\nOriginal units (occurrences preserved): [\"item_blue\"]\nRefund destination: card_a\nEstimated original-price refund: 12.50 (decimal sum, half-up cents).\nThis estimate is not a settlement guarantee; the API receives no amount and refund arrival is not verified.\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+            "assessment": {
+              "kind": "returns",
+              "code": "returns_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "POST",
+                "path": "/v1/orders/%23TEST1/returns",
+                "body": {
+                  "item_ids": [
+                    "item_blue"
+                  ],
+                  "refund_payment_method_id": "card_a"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "returns_workflow",
+                "arguments_sha256": "91c5cba3b7d3da04c17486f54fcf8b0110d0ba7314b912d3595d1cfe7dd98f02",
+                "error": false
+              }
+            ],
+            "reply": "Your complete return request was accepted and independently verified as return requested. This proves the application only, not refund execution, settlement or arrival; no items can be added.",
+            "assessment": {
+              "kind": "returns",
+              "code": "write_verified"
+            },
+            "identity": true
+          },
+          {
+            "user": "Exchange order #TEST3 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/catalog/products/product_mug",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "exchange_workflow",
+                "arguments_sha256": "bed2c178feaaaefd74c09f7c4cbe4be8a508c6ef1b205d4c7a3678b6ae38781e",
+                "error": false
+              }
+            ],
+            "reply": "Complete item list and your requested conditions (option values are data):\nDelivered purchase: \"Synthetic mug\"; original options {\"color\":\"blue\",\"capacity\":\"500 ml\",\"waterproof\":\"yes\"}\nItem 1: item_blue -> item_red; original price 12.5; new price 15; new options {\"color\":\"red\",\"capacity\":\"500 ml\",\"waterproof\":\"yes\"}.\nYour exact variant choice: item_red\nAdditional charge: 2.50; signed price difference 2.5; selected existing method Mastercard ending 0001 (card_a).\nOne complete exchange application; after submission no additions or payment-method changes. Acceptance does not prove settlement, refund arrival or replacement shipment.\n\nOperation 1:\nRequest an exchange.\nCustomer: customer_a\nOrder: #TEST3\nReplace item_blue with item_red\nPayment method: card_a\nSigned price difference: 2.5\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+            "assessment": {
+              "kind": "exchange",
+              "code": "exchange_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/catalog/products/product_mug",
+                "body": null
+              },
+              {
+                "method": "POST",
+                "path": "/v1/orders/%23TEST3/exchanges",
+                "body": {
+                  "replacements": [
+                    {
+                      "existing_item_id": "item_blue",
+                      "replacement_item_id": "item_red"
+                    }
+                  ],
+                  "payment_method_id": "card_a"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "exchange_workflow",
+                "arguments_sha256": "cd2b61f345fbb0bb72c295477683fa96ce1fcd40d1966d406491a62a4f4181e9",
+                "error": false
+              }
+            ],
+            "reply": "The complete exchange application is independently verified. Order is exchange requested; no additions or payment-method changes. This is not evidence of money settlement, refund arrival or replacement shipment.",
+            "assessment": {
+              "kind": "exchange",
+              "code": "write_verified"
+            },
+            "identity": true
+          }
+        ],
+        "final_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "return requested",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": [],
+              "return_request": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "exchange requested",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": [],
+              "exchange": {
+                "replacements": [
+                  {
+                    "existing_item_id": "item_blue",
+                    "replacement_item_id": "item_red"
+                  }
+                ],
+                "payment_method_id": "card_a",
+                "price_difference": 2.5
+              }
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "journal": [
+          {
+            "action": "return",
+            "status": "succeeded"
+          },
+          {
+            "action": "exchange",
+            "status": "succeeded"
+          }
+        ],
+        "handoff": "not_requested"
+      },
+      {
+        "id": "blocked_order_then_other_address",
+        "at_ids": [
+          "AT-A071-04"
+        ],
+        "status": "passed",
+        "context": {
+          "conversation_id": "offline-m6-blocked_order_then_other_address",
+          "customer_id": "customer_a",
+          "order_ids": [
+            "#TEST1",
+            "#TEST3"
+          ],
+          "product_ids": [
+            "product_mug"
+          ]
+        },
+        "initial_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "processed",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "turns": [
+          {
+            "user": "a@example.test",
+            "http_calls": [
+              {
+                "method": "POST",
+                "path": "/v1/customers/search",
+                "body": {
+                  "email": "a@example.test"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "lookup_customer",
+                "arguments_sha256": "4774d4a24c64149510eed62a7e38681179ee56d878544f4d026b2a298509ae7f",
+                "error": false
+              }
+            ],
+            "reply": "The customer email is a@example.test.",
+            "assessment": null,
+            "identity": true
+          },
+          {
+            "user": "Change order #TEST1 address: {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "address_workflow",
+                "arguments_sha256": "32a8b5686fed11f20ad8ca5b49e6720ee6cb7bf7ae95262c3b60dd4ad413484e",
+                "error": false
+              }
+            ],
+            "reply": "Order #TEST1: shipping address cannot be changed in status processed. No change will be sent for this record.",
+            "assessment": {
+              "kind": "address",
+              "code": "address_state_not_allowed"
+            },
+            "identity": true
+          },
+          {
+            "user": "Change order #TEST3 address: {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "address_workflow",
+                "arguments_sha256": "ef00f31da80790d82079055557371bfa2c7d275b0d79959f6a05ba6132154ba9",
+                "error": false
+              }
+            ],
+            "reply": "Operation 1:\nUpdate this order's shipping address.\nCustomer: customer_a\nOrder: #TEST3\nAddress line 1: \"42 Example Avenue\"\nAddress line 2: \"Suite 2\"\nCity: \"Sample City\"\nRegion: \"WA\"\nCountry: \"US\"\nPostal code: \"00123\"\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+            "assessment": {
+              "kind": "address",
+              "code": "address_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              },
+              {
+                "method": "PUT",
+                "path": "/v1/orders/%23TEST3/shipping-address",
+                "body": {
+                  "address_line_1": "42 Example Avenue",
+                  "address_line_2": "Suite 2",
+                  "city": "Sample City",
+                  "region": "WA",
+                  "country": "US",
+                  "postal_code": "00123"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "address_workflow",
+                "arguments_sha256": "9e3d544ef8beef5c47d446206c92f27938745e893b30d3dbcd782823ccbf5375",
+                "error": false
+              }
+            ],
+            "reply": "Order #TEST3: address update accepted and independently verified. {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+            "assessment": {
+              "kind": "address",
+              "code": "address_updates_verified"
+            },
+            "identity": true
+          }
+        ],
+        "final_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "processed",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "journal": [
+          {
+            "action": "shipping_address",
+            "status": "succeeded"
+          }
+        ],
+        "handoff": "not_requested"
+      },
+      {
+        "id": "same_order_return_exchange_conflict",
+        "at_ids": [
+          "AT-A027-01"
+        ],
+        "status": "passed",
+        "context": {
+          "conversation_id": "offline-m6-same_order_return_exchange_conflict",
+          "customer_id": "customer_a",
+          "order_ids": [
+            "#TEST1",
+            "#TEST3"
+          ],
+          "product_ids": [
+            "product_mug"
+          ]
+        },
+        "initial_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "delivered",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "turns": [
+          {
+            "user": "a@example.test",
+            "http_calls": [
+              {
+                "method": "POST",
+                "path": "/v1/customers/search",
+                "body": {
+                  "email": "a@example.test"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "lookup_customer",
+                "arguments_sha256": "4774d4a24c64149510eed62a7e38681179ee56d878544f4d026b2a298509ae7f",
+                "error": false
+              }
+            ],
+            "reply": "The customer email is a@example.test.",
+            "assessment": null,
+            "identity": true
+          },
+          {
+            "user": "Return order #TEST1; items: item_blue; refund to card_a",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "returns_workflow",
+                "arguments_sha256": "fcd42010f15742719ab901a12749a75cf375a365dceddee0312ec2f3b13a63ce",
+                "error": false
+              }
+            ],
+            "reply": "Current order status: delivered. Complete return list (each row is one purchased unit):\nUnit 1: item_blue; Synthetic mug; original options {\"color\": \"blue\", \"capacity\": \"500 ml\", \"waterproof\": \"yes\"}; original price 12.5.\nExact selected original-price sum: 12.5. Estimated refund: 12.50 (decimal sum, half-up cents; project display rule, not backend settlement).\nRefund destination: Mastercard ending 0001 (card_a); channel policy after processing: 3-6 business days; This is channel policy, not evidence that money has arrived.\nThis submits one complete return request per order; after acceptance no items can be added. An accepted application does not prove refund execution, settlement or arrival.\n\nOperation 1:\nRequest a return of the complete selected list.\nCustomer: customer_a\nOrder: #TEST1\nOriginal units (occurrences preserved): [\"item_blue\"]\nRefund destination: card_a\nEstimated original-price refund: 12.50 (decimal sum, half-up cents).\nThis estimate is not a settlement guarantee; the API receives no amount and refund arrival is not verified.\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+            "assessment": {
+              "kind": "returns",
+              "code": "returns_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "POST",
+                "path": "/v1/orders/%23TEST1/returns",
+                "body": {
+                  "item_ids": [
+                    "item_blue"
+                  ],
+                  "refund_payment_method_id": "card_a"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "returns_workflow",
+                "arguments_sha256": "91c5cba3b7d3da04c17486f54fcf8b0110d0ba7314b912d3595d1cfe7dd98f02",
+                "error": false
+              }
+            ],
+            "reply": "Your complete return request was accepted and independently verified as return requested. This proves the application only, not refund execution, settlement or arrival; no items can be added.",
+            "assessment": {
+              "kind": "returns",
+              "code": "write_verified"
+            },
+            "identity": true
+          },
+          {
+            "user": "Exchange order #TEST1 items: {\"replacements\": [{\"item_id\": \"item_blue\", \"replacement_item_id\": \"item_red\"}], \"payment_method_id\": \"card_a\"}",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "exchange_workflow",
+                "arguments_sha256": "529df2d8a1bcf36b61023d46aa79b2cd1d922fe6839bb55085904685ea6b689e",
+                "error": false
+              }
+            ],
+            "reply": "A submitted return/exchange cannot be appended or bypassed with another request.",
+            "assessment": {
+              "kind": "exchange",
+              "code": "return_exchange_already_requested"
+            },
+            "identity": true
+          }
+        ],
+        "final_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "return requested",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": [],
+              "return_request": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "journal": [
+          {
+            "action": "return",
+            "status": "succeeded"
+          }
+        ],
+        "handoff": "not_requested"
+      },
+      {
+        "id": "default_and_order_address",
+        "at_ids": [
+          "AT-A041-04",
+          "AT-A110-05"
+        ],
+        "status": "passed",
+        "context": {
+          "conversation_id": "offline-m6-default_and_order_address",
+          "customer_id": "customer_a",
+          "order_ids": [
+            "#TEST1",
+            "#TEST3"
+          ],
+          "product_ids": [
+            "product_mug"
+          ]
+        },
+        "initial_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "turns": [
+          {
+            "user": "a@example.test",
+            "http_calls": [
+              {
+                "method": "POST",
+                "path": "/v1/customers/search",
+                "body": {
+                  "email": "a@example.test"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "lookup_customer",
+                "arguments_sha256": "4774d4a24c64149510eed62a7e38681179ee56d878544f4d026b2a298509ae7f",
+                "error": false
+              }
+            ],
+            "reply": "The customer email is a@example.test.",
+            "assessment": null,
+            "identity": true
+          },
+          {
+            "user": "Change default and order #TEST1 address: {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "address_workflow",
+                "arguments_sha256": "5bc8dc7e079ec2bd87ff6731b1ed2c41285f0929efcfd92d8a4dca31c68c2dcd",
+                "error": false
+              }
+            ],
+            "reply": "Operation 1:\nUpdate this order's shipping address.\nCustomer: customer_a\nOrder: #TEST1\nAddress line 1: \"42 Example Avenue\"\nAddress line 2: \"Suite 2\"\nCity: \"Sample City\"\nRegion: \"WA\"\nCountry: \"US\"\nPostal code: \"00123\"\nThis is a proposal only; no change, charge or refund has been made.\n\nOperation 2:\nUpdate the customer's default shipping address.\nCustomer: customer_a\nAddress line 1: \"42 Example Avenue\"\nAddress line 2: \"Suite 2\"\nCity: \"Sample City\"\nRegion: \"WA\"\nCountry: \"US\"\nPostal code: \"00123\"\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+            "assessment": {
+              "kind": "address",
+              "code": "address_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "PUT",
+                "path": "/v1/orders/%23TEST1/shipping-address",
+                "body": {
+                  "address_line_1": "42 Example Avenue",
+                  "address_line_2": "Suite 2",
+                  "city": "Sample City",
+                  "region": "WA",
+                  "country": "US",
+                  "postal_code": "00123"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "PUT",
+                "path": "/v1/customers/customer_a/default-shipping-address",
+                "body": {
+                  "address_line_1": "42 Example Avenue",
+                  "address_line_2": "Suite 2",
+                  "city": "Sample City",
+                  "region": "WA",
+                  "country": "US",
+                  "postal_code": "00123"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "address_workflow",
+                "arguments_sha256": "b082f729512f3d8b04ecc298bc06e6fff22b86fb1a2a03ad7c231d8d72039b62",
+                "error": false
+              }
+            ],
+            "reply": "Order #TEST1: address update accepted and independently verified. {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}\nProfile default address: address update accepted and independently verified. {\"address_line_1\": \"42 Example Avenue\", \"address_line_2\": \"Suite 2\", \"city\": \"Sample City\", \"region\": \"WA\", \"country\": \"US\", \"postal_code\": \"00123\"}",
+            "assessment": {
+              "kind": "address",
+              "code": "address_updates_verified"
+            },
+            "identity": true
+          }
+        ],
+        "final_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "42 Example Avenue",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "journal": [
+          {
+            "action": "shipping_address",
+            "status": "succeeded"
+          },
+          {
+            "action": "default_shipping_address",
+            "status": "succeeded"
+          }
+        ],
+        "handoff": "not_requested"
+      },
+      {
+        "id": "cancel_return_cross_order_summary",
+        "at_ids": [
+          "AT-A016-05",
+          "AT-A028-04"
+        ],
+        "status": "passed",
+        "context": {
+          "conversation_id": "offline-m6-cancel_return_cross_order_summary",
+          "customer_id": "customer_a",
+          "order_ids": [
+            "#TEST1",
+            "#TEST3"
+          ],
+          "product_ids": [
+            "product_mug"
+          ]
+        },
+        "initial_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": []
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "delivered",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": []
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "turns": [
+          {
+            "user": "a@example.test",
+            "http_calls": [
+              {
+                "method": "POST",
+                "path": "/v1/customers/search",
+                "body": {
+                  "email": "a@example.test"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "lookup_customer",
+                "arguments_sha256": "4774d4a24c64149510eed62a7e38681179ee56d878544f4d026b2a298509ae7f",
+                "error": false
+              }
+            ],
+            "reply": "The customer email is a@example.test.",
+            "assessment": null,
+            "identity": true
+          },
+          {
+            "user": "Cancel order #TEST1 because no longer needed",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "cancellation_workflow",
+                "arguments_sha256": "eaf5cb4d29c0b254899eb6f80bc6f5fac3c05cac1c7a245144e548e05fe69291",
+                "error": false
+              }
+            ],
+            "reply": "Current order status: pending.\nOriginal charge total (sum of recorded amounts, not a net balance): 12.50.\nEach charge will be refunded separately in full to its own original method; no fees, withheld portion, new card or separate refund API.\nCharge 1: 12.50 to Mastercard ending 0001 (card_a); channel policy: 3-6 business days.\nCancellation should record cancelled and the per-charge refunds. Channel timing is policy, not proof of settlement or arrival.\n\nOperation 1:\nCancel this entire order.\nCustomer: customer_a\nOrder: #TEST1\nReason: no longer needed\nOriginal charge refund basis: 12.5 to card_a\nNo aggregate refund amount or arrival is verified.\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+            "assessment": {
+              "kind": "cancellation",
+              "code": "cancellation_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "POST",
+                "path": "/v1/orders/%23TEST1/cancellations",
+                "body": {
+                  "reason": "no longer needed"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "cancellation_workflow",
+                "arguments_sha256": "fdf9cc68aff1dce0cf6ab6aa4456b64fa2f1e3e0662a01fe09057a51e666a37f",
+                "error": false
+              }
+            ],
+            "reply": "Order #TEST1: cancellation accepted and independently verified: cancelled, with each full refund record to its original method. Channel policy: card_a: 3-6 business days. These records do not prove settlement or arrival; no separate refund or retry was requested.",
+            "assessment": {
+              "kind": "cancellation",
+              "code": "write_verified"
+            },
+            "identity": true
+          },
+          {
+            "user": "Return order #TEST3; items: item_blue; refund to card_a",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "returns_workflow",
+                "arguments_sha256": "0299ddde64c4bcedfdbf5ee53e91b70640be892fad3281ed8ce937f406a8f6c2",
+                "error": false
+              }
+            ],
+            "reply": "Current order status: delivered. Complete return list (each row is one purchased unit):\nUnit 1: item_blue; Synthetic mug; original options {\"color\": \"blue\", \"capacity\": \"500 ml\", \"waterproof\": \"yes\"}; original price 12.5.\nExact selected original-price sum: 12.5. Estimated refund: 12.50 (decimal sum, half-up cents; project display rule, not backend settlement).\nRefund destination: Mastercard ending 0001 (card_a); channel policy after processing: 3-6 business days; This is channel policy, not evidence that money has arrived.\nThis submits one complete return request per order; after acceptance no items can be added. An accepted application does not prove refund execution, settlement or arrival.\n\nOperation 1:\nRequest a return of the complete selected list.\nCustomer: customer_a\nOrder: #TEST3\nOriginal units (occurrences preserved): [\"item_blue\"]\nRefund destination: card_a\nEstimated original-price refund: 12.50 (decimal sum, half-up cents).\nThis estimate is not a settlement guarantee; the API receives no amount and refund arrival is not verified.\nThis is a proposal only; no change, charge or refund has been made.\n\nDo you confirm the remaining complete operations, or only specific numbered operations? A changed item list, payment method or condition requires a new complete recap.",
+            "assessment": {
+              "kind": "returns",
+              "code": "returns_confirmation_required"
+            },
+            "identity": true
+          },
+          {
+            "user": "yes",
+            "http_calls": [
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              },
+              {
+                "method": "POST",
+                "path": "/v1/orders/%23TEST3/returns",
+                "body": {
+                  "item_ids": [
+                    "item_blue"
+                  ],
+                  "refund_payment_method_id": "card_a"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "returns_workflow",
+                "arguments_sha256": "85e43078e47961b42334333c53e5597e137cfdc1bf1283b680f4b67ecd6e4053",
+                "error": false
+              }
+            ],
+            "reply": "Your complete return request was accepted and independently verified as return requested. This proves the application only, not refund execution, settlement or arrival; no items can be added.",
+            "assessment": {
+              "kind": "returns",
+              "code": "write_verified"
+            },
+            "identity": true
+          },
+          {
+            "user": "Summarize order amounts: #TEST1, #TEST3",
+            "http_calls": [
+              {
+                "method": "POST",
+                "path": "/v1/customers/search",
+                "body": {
+                  "email": "a@example.test"
+                }
+              },
+              {
+                "method": "GET",
+                "path": "/v1/customers/customer_a",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST1",
+                "body": null
+              },
+              {
+                "method": "GET",
+                "path": "/v1/orders/%23TEST3",
+                "body": null
+              }
+            ],
+            "tool_calls": [
+              {
+                "name": "list_customer_orders",
+                "arguments_sha256": "f8abce3b8f970a34862facaed9d13ac5ccebf95acc278accf677541849ab9833",
+                "error": false
+              }
+            ],
+            "reply": "Order amount summary:\n#TEST1: cancelled; original item prices total 12.50.\n  Cancellation original charge basis 12.50; application result: succeeded.\n#TEST3: return requested; original item prices total 12.50.\n  Return estimate 12.50 for selected units item_blue; exact original-price sum 12.5. Application result: succeeded; no settlement proof.\nReturn display estimates total: 12.50; exact selected original prices: 12.5.\nCancellation original charges total: 12.50 (not a net balance).\nVisible recorded refunds: 12.50 (1 rows).\nRefund arrival: unknown. Visible transactions and estimates do not prove refund arrival. No combined backend charge/refund was sent.",
+            "assessment": null,
+            "identity": true
+          }
+        ],
+        "final_backend": {
+          "customers": {
+            "customer_a": {
+              "customer_id": "customer_a",
+              "email": "a@example.test",
+              "name": {
+                "first_name": "Ada",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_a",
+                  "source": "credit_card",
+                  "brand": "Mastercard",
+                  "last_four": "0001"
+                },
+                {
+                  "id": "card_v",
+                  "source": "credit_card",
+                  "brand": "Visa",
+                  "last_four": "0002"
+                },
+                {
+                  "id": "paypal_a",
+                  "source": "paypal"
+                },
+                {
+                  "id": "gift_a",
+                  "source": "gift_card",
+                  "balance": 40.0
+                }
+              ],
+              "order_ids": [
+                "#TEST1",
+                "#TEST3"
+              ]
+            },
+            "customer_b": {
+              "customer_id": "customer_b",
+              "email": "b@example.test",
+              "name": {
+                "first_name": "Ben",
+                "last_name": "Example"
+              },
+              "default_shipping_address": {
+                "address_line_1": "9 Test St",
+                "city": "Othercity",
+                "region": "NY",
+                "country": "US",
+                "postal_code": "10001"
+              },
+              "payment_methods": [
+                {
+                  "id": "card_b",
+                  "source": "credit_card",
+                  "last_four": "0002"
+                }
+              ],
+              "order_ids": [
+                "#TEST2"
+              ]
+            }
+          },
+          "orders": {
+            "#TEST1": {
+              "order_id": "#TEST1",
+              "customer_id": "customer_a",
+              "status": "cancelled",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                },
+                {
+                  "transaction_type": "refund",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "1 Test St",
+                "city": "Testville",
+                "region": "CA",
+                "country": "US",
+                "postal_code": "90001"
+              },
+              "fulfillments": [],
+              "cancellation": {
+                "reason": "no longer needed"
+              }
+            },
+            "#TEST2": {
+              "order_id": "#TEST2",
+              "customer_id": "customer_b",
+              "status": "pending",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 10.0,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": []
+            },
+            "#TEST3": {
+              "order_id": "#TEST3",
+              "customer_id": "customer_a",
+              "status": "return requested",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "product_id": "product_mug",
+                  "price": 12.5,
+                  "name": "Synthetic mug",
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  }
+                }
+              ],
+              "payments": [
+                {
+                  "transaction_type": "payment",
+                  "payment_method_id": "card_a",
+                  "amount": 12.5
+                }
+              ],
+              "shipping_address": {
+                "address_line_1": "8 Source Street",
+                "address_line_2": "Suite 2",
+                "city": "Sample City",
+                "region": "WA",
+                "country": "US",
+                "postal_code": "00123"
+              },
+              "fulfillments": [],
+              "return_request": {
+                "item_ids": [
+                  "item_blue"
+                ],
+                "refund_payment_method_id": "card_a"
+              }
+            }
+          },
+          "products": {
+            "product_mug": {
+              "product_id": "product_mug",
+              "name": "Example mug",
+              "items": [
+                {
+                  "item_id": "item_blue",
+                  "price": 99,
+                  "options": {
+                    "color": "blue",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_red",
+                  "price": 15,
+                  "options": {
+                    "color": "red",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_green",
+                  "price": 10,
+                  "options": {
+                    "color": "green",
+                    "capacity": "500 ml",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                },
+                {
+                  "item_id": "item_large",
+                  "price": 20,
+                  "options": {
+                    "color": "red",
+                    "capacity": "1 l",
+                    "waterproof": "yes"
+                  },
+                  "available": true
+                }
+              ]
+            }
+          }
+        },
+        "journal": [
+          {
+            "action": "cancel",
+            "status": "succeeded"
+          },
+          {
+            "action": "return",
             "status": "succeeded"
           }
         ],
