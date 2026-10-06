@@ -24,6 +24,9 @@ trace_dialogues = _dialogue_module.trace_dialogues
 _replay_spec = importlib.util.spec_from_file_location('local_replay_batch', ROOT/'scripts/local_replay_batch.py')
 _replay_module = importlib.util.module_from_spec(_replay_spec)
 _replay_spec.loader.exec_module(_replay_module)
+_boundary_spec = importlib.util.spec_from_file_location('local_boundary_batch', ROOT/'scripts/local_boundary_batch.py')
+_boundary_module = importlib.util.module_from_spec(_boundary_spec)
+_boundary_spec.loader.exec_module(_boundary_module)
 SPECIFICATION_PATHS = (
     "materials/CLASSROOM.md", "materials/client_api/openapi.yaml",
     "materials/framework/agent_contract.md", "materials/framework/client_api_contract.md",
@@ -213,7 +216,7 @@ def source_paths(root=ROOT):
                    list((root / "tests" / "fixtures").glob("*.json")) +
                    [root / "agent" / "agent.json", root / "scripts" / "foundation_trace.py",
                     root / "scripts" / "local_dialogue_batch.py", root / "scripts" / "evidence_docs.py",
-                    root / "scripts" / "local_replay_batch.py"])
+                    root / "scripts" / "local_replay_batch.py", root / "scripts" / "local_boundary_batch.py"])
     return [path for path in paths if "__pycache__" not in path.parts]
 
 
@@ -305,6 +308,9 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
     replays = _replay_module.trace_replays(report, _dialogue_module.load_manifest(), allow_oracle_control=allow_oracle_control)
     if replays is not None:
         result['local_replays'] = replays
+    boundaries = _boundary_module.trace_boundaries(report)
+    if boundaries is not None:
+        result['local_boundaries'] = boundaries
     return result
 
 
@@ -397,7 +403,8 @@ def main(argv=None):
     suite = unittest.defaultTestLoader.discover(str(ROOT / "tests"))
     started = time.monotonic()
     native_modules = {key:sys.modules.get(name) for key,name in
-                      (('dialogue_batch','test_m6_dialogues'), ('replay_batch','test_m6_replays'))}
+                      (('dialogue_batch','test_m6_dialogues'), ('replay_batch','test_m6_replays'),
+                       ('boundary_batch','test_m6_boundaries'))}
     saved = {key:(getattr(module,'PARENT_RUN',None),getattr(module,'BATCH_EVIDENCE',None))
              for key,module in native_modules.items() if module is not None}
     native_evidence = {}

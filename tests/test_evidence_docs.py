@@ -63,3 +63,10 @@ class CurrentEvidenceTests(unittest.TestCase):
         self.assertIn('重建工具重放 **23** 对',text)
         self.assertIn('256 个 JSON／历史恢复检查点、24 个',text)
         self.assertIn('完整业务 AT 执行 **0**',text)
+
+    def test_boundary_subscenarios_are_separate_from_dialogue_and_business_at_counts(self):
+        self.trace['local_boundaries']={'receipt_scenarios':32,'gateway_scenarios':16}
+        text=docs.render_current(self.report,self.trace)
+        self.assertIn('原生 SDK＋合成后台对话 **1** 组',text)
+        self.assertIn('32 个回执场景、16 个假网关场景',text)
+        self.assertIn('完整业务 AT 执行 **0**',text)
