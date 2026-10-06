@@ -213,7 +213,7 @@ class FoundationTraceTests(unittest.TestCase):
 
     def test_source_digest_tracks_runner_oracle_and_fixture_but_not_unselected_docs_or_credentials(self):
         paths=('agent/agent.json','agent/core.py','tests/check.py','tests/fixtures/batch.json',
-               'scripts/foundation_trace.py','scripts/local_dialogue_batch.py','scripts/evidence_docs.py')
+               'scripts/foundation_trace.py','scripts/local_dialogue_batch.py','scripts/evidence_docs.py','scripts/local_replay_batch.py')
         with temporary_directory() as directory:
             root=Path(directory)
             for name in paths:
@@ -247,7 +247,7 @@ class FoundationTraceTests(unittest.TestCase):
 
     def test_per_file_hashes_match_bytes_and_detect_single_file_change_without_git(self):
         paths = ('agent/agent.json', 'agent/core.py', 'tests/check.py', 'tests/fixtures/batch.json',
-                 'scripts/foundation_trace.py', 'scripts/local_dialogue_batch.py', 'scripts/evidence_docs.py')
+                 'scripts/foundation_trace.py', 'scripts/local_dialogue_batch.py', 'scripts/evidence_docs.py', 'scripts/local_replay_batch.py')
         with temporary_directory() as directory:
             root = Path(directory)
             for name in paths:
@@ -283,3 +283,33 @@ class FoundationTraceTests(unittest.TestCase):
         current = trace.source_file_hashes()
         self.assertIn('tests/fixtures/m6_source_baseline.json', current)
         self.assertNotEqual(baseline['files']['scripts/foundation_trace.py'], current['scripts/foundation_trace.py'])
+
+    def test_missing_native_replay_observations_reject_pair_publication(self):
+        report=deepcopy(self.report); report['results'][trace._replay_module.WRAPPER]='passed'
+        with temporary_directory() as directory:
+            run_path,trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
+            self.assertEqual(trace.publish_run(self.requirements,report,snapshot=self.snapshot,
+                report_path=run_path,trace_path=trace_path),1)
+            self.assertEqual(json.loads(run_path.read_text())['status'],'trace_rejected')
+            self.assertEqual(json.loads(trace_path.read_text())['status'],'invalid')
+
+    def test_nested_runner_isolates_and_restores_both_native_evidence_modules(self):
+        modules={name:SimpleNamespace(PARENT_RUN={'run_id':'outer','source_sha256':'outer-source'},
+                                     BATCH_EVIDENCE={'sentinel':name})
+                 for name in ('test_m6_dialogues','test_m6_replays')}
+        saved={name:(m.PARENT_RUN,m.BATCH_EVIDENCE) for name,m in modules.items()}
+        def inner():
+            for module in modules.values():
+                self.assertNotEqual(module.PARENT_RUN['run_id'],'outer')
+                self.assertIsNone(module.BATCH_EVIDENCE)
+        with temporary_directory() as directory, patch.dict(trace.sys.modules,modules), \
+             patch.object(trace,'input_snapshot',return_value=self.snapshot), \
+             patch.object(trace.unittest.defaultTestLoader,'discover',return_value=unittest.TestSuite([unittest.FunctionTestCase(inner)])), \
+             redirect_stdout(io.StringIO()), redirect_stderr(io.StringIO()):
+            run_path,trace_path=Path(directory)/'run.json',Path(directory)/'trace.json'
+            trace.main(['--report',str(run_path),'--trace',str(trace_path)])
+            report=json.loads(run_path.read_text())
+            self.assertNotIn('dialogue_batch',report); self.assertNotIn('replay_batch',report)
+        for name,module in modules.items():
+            self.assertIs(module.PARENT_RUN,saved[name][0])
+            self.assertIs(module.BATCH_EVIDENCE,saved[name][1])

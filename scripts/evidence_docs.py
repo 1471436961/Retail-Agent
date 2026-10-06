@@ -26,6 +26,11 @@ def render_current(report, trace):
     turns = [t for r in report['dialogue_batch']['results'] for t in r['turns']]
     calls = [c for t in turns for c in t['http_calls']]
     writes = [c for c in calls if c['method'] in {'POST','PUT'} and c['path'] != '/v1/customers/search']
+    replay = trace.get('local_replays')
+    replay_text = (f'\n\n重建工具重放 **{replay["replay_pairs"]}** 对，'
+                   f'{replay["restoration_checkpoints"]} 个 JSON／历史恢复检查点、'
+                   f'{replay["fault_scenarios"]} 个重复／中断故障场景。'
+                   '重放与故障注入单独计数，不加到原批次对话或完整业务 AT 执行数。') if replay else ''
     return (f'实际完整回归 **{report["tests_run"]}/{report["tests_run"]}**，零跳过/失败/错误、退出码 0。'
             f'原生 SDK＋合成后台对话 **{trace["local_dialogues"]["dialogues_passed"]}** 组，'
             f'{len(turns)} 个 user 轮次、{len(calls)} 次 HTTP 调用、{len(writes)} 次业务发送。\n\n'
@@ -33,7 +38,7 @@ def render_current(report, trace):
             f'{len(plan)-unique} 条尚未关联首批对话。完整业务 AT 执行 **{trace["business_ats_executed"]}**；'
             '全部本地业务验收由 M6.7 收口，课堂正式评分由 M7 单列。\n\n'
             f'run_id `{report["run_id"]}`；source_sha256 `{report["source_sha256"]}`；'
-            f'specification_sha256 `{report["specification_sha256"]}`。')
+            f'specification_sha256 `{report["specification_sha256"]}`。'+replay_text)
 
 
 def update_current(root, report, trace):

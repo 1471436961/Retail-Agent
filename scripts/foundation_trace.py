@@ -21,6 +21,9 @@ _dialogue_spec = importlib.util.spec_from_file_location('local_dialogue_batch', 
 _dialogue_module = importlib.util.module_from_spec(_dialogue_spec)
 _dialogue_spec.loader.exec_module(_dialogue_module)
 trace_dialogues = _dialogue_module.trace_dialogues
+_replay_spec = importlib.util.spec_from_file_location('local_replay_batch', ROOT/'scripts/local_replay_batch.py')
+_replay_module = importlib.util.module_from_spec(_replay_spec)
+_replay_spec.loader.exec_module(_replay_module)
 SPECIFICATION_PATHS = (
     "materials/CLASSROOM.md", "materials/client_api/openapi.yaml",
     "materials/framework/agent_contract.md", "materials/framework/client_api_contract.md",
@@ -209,7 +212,8 @@ def source_paths(root=ROOT):
     paths = sorted(list((root / "agent").rglob("*.py")) + list((root / "tests").rglob("*.py")) +
                    list((root / "tests" / "fixtures").glob("*.json")) +
                    [root / "agent" / "agent.json", root / "scripts" / "foundation_trace.py",
-                    root / "scripts" / "local_dialogue_batch.py", root / "scripts" / "evidence_docs.py"])
+                    root / "scripts" / "local_dialogue_batch.py", root / "scripts" / "evidence_docs.py",
+                    root / "scripts" / "local_replay_batch.py"])
     return [path for path in paths if "__pycache__" not in path.parts]
 
 
@@ -298,6 +302,9 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
             record['local_dialogue_ids'] = links[record['at_id']]
             record['local_dialogue_result'] = ('related_synthetic_dialogues_passed'
                                               if links[record['at_id']] else 'not_scheduled')
+    replays = _replay_module.trace_replays(report, _dialogue_module.load_manifest(), allow_oracle_control=allow_oracle_control)
+    if replays is not None:
+        result['local_replays'] = replays
     return result
 
 
@@ -389,20 +396,22 @@ def main(argv=None):
                                     "exit_code": 1, **before})
     suite = unittest.defaultTestLoader.discover(str(ROOT / "tests"))
     started = time.monotonic()
-    native_module = sys.modules.get('test_m6_dialogues')
-    previous_parent = getattr(native_module, 'PARENT_RUN', None)
-    previous_evidence = getattr(native_module, 'BATCH_EVIDENCE', None)
-    native_evidence = None
-    if native_module is not None:
-        native_module.PARENT_RUN = {'run_id':run_id, 'source_sha256':before['source_sha256']}
-        native_module.BATCH_EVIDENCE = None
+    native_modules = {key:sys.modules.get(name) for key,name in
+                      (('dialogue_batch','test_m6_dialogues'), ('replay_batch','test_m6_replays'))}
+    saved = {key:(getattr(module,'PARENT_RUN',None),getattr(module,'BATCH_EVIDENCE',None))
+             for key,module in native_modules.items() if module is not None}
+    native_evidence = {}
+    for module in native_modules.values():
+        if module is not None:
+            module.PARENT_RUN = {'run_id':run_id, 'source_sha256':before['source_sha256']}
+            module.BATCH_EVIDENCE = None
     try:
         result = unittest.TextTestRunner(verbosity=2, resultclass=EvidenceResult).run(suite)
-        native_evidence = getattr(native_module, 'BATCH_EVIDENCE', None)
+        native_evidence = {key:getattr(module,'BATCH_EVIDENCE',None) for key,module in native_modules.items()}
     finally:
-        if native_module is not None:
-            native_module.PARENT_RUN = previous_parent
-            native_module.BATCH_EVIDENCE = previous_evidence
+        for key,module in native_modules.items():
+            if module is not None:
+                module.PARENT_RUN, module.BATCH_EVIDENCE = saved[key]
     after = input_snapshot()
     success = (result.wasSuccessful() and not result.skipped and before == after
                and len(result.outcomes) == result.testsRun)
@@ -412,8 +421,9 @@ def main(argv=None):
               **before, "tests_run": result.testsRun, "skipped": len(result.skipped),
               "failures": len(result.failures), "errors": len(result.errors), "elapsed_seconds": round(time.monotonic()-started, 3),
               "exit_code": 0 if success else 1, "results": dict(sorted(result.outcomes.items()))}
-    if native_evidence is not None:
-        report['dialogue_batch'] = native_evidence
+    for key, value in native_evidence.items():
+        if value is not None:
+            report[key] = value
     exit_code = publish_run((ROOT / "docs" / "CASE-REQUIREMENTS.md").read_text(encoding="utf-8"), report,
                            snapshot=after, report_path=args.report, trace_path=args.trace)
     if exit_code: return exit_code

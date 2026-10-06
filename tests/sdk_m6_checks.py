@@ -45,7 +45,7 @@ def backend_snapshot(api):
     return deepcopy({'customers': api.customers, 'orders': api.orders, 'products': api.products})
 
 
-def execute(scenario):
+def execute(scenario, *, observer=None, restore=False):
     backend = MatrixBackend()
     snapshot = apply_patches(backend_snapshot(backend), scenario['setup'])
     for key, value in snapshot.items():
@@ -55,19 +55,44 @@ def execute(scenario):
         response = backend.request(request['method'], request['path'], body=request.get('body'))
         return {'status_code': response.status_code, 'body': response.body, 'headers': {}, 'elapsed_seconds': 0.0}
     conversation = scenario['context']['conversation_id']
-    toolkit = Tools(ClientAPI(transport, context=ClientAPIContext(conversation_id=conversation)), claims=SessionClaims())
+    claims = SessionClaims()
+    def new_toolkit():
+        return Tools(ClientAPI(transport, context=ClientAPIContext(conversation_id=conversation)), claims=claims)
+    toolkit = new_toolkit()
     assert set(toolkit.get_tools()) == set(READ_TOOL_FIELDS) | WORKFLOW_TOOL_NAMES
     for name in WORKFLOW_TOOL_NAMES:
         assert toolkit.tool_type(name) == ToolType.WRITE
     agent = CustomerAgent()
     state = agent.get_init_state()
+    def checkpoint(current):
+        from support_agent.state import clone_state, initial_state
+        before_calls = deepcopy(backend.calls)
+        copied = clone_state(json.loads(json.dumps(current, allow_nan=False)))
+        restored = initial_state(deepcopy(current['history']))
+        # Derived evidence must be identical. Per-request counters are checked
+        # by clone_state; history restoration does not invent runtime counters.
+        for key in ('history', 'identity', 'identity_evidence', 'proposals', 'tasks',
+                    'operations', 'handoff', 'pending_calls', 'customer_record',
+                    'address_pending', 'payment_pending', 'cancellation_pending',
+                    'items_pending', 'returns_pending', 'exchange_pending'):
+            assert restored[key] == current[key], ('restored evidence mismatch', key)
+        assert copied == current and backend.calls == before_calls
+        if observer is not None:
+            observer('restore', None, copied, toolkit, backend)
+        return copied
     turns = []
     for turn in scenario['turns']:
+        if restore:
+            state, agent, toolkit = checkpoint(state), CustomerAgent(), new_toolkit()
         before = len(backend.calls)
         source = len(state['history'])
         message, state = agent.generate_next_message(UserMessage(role='user', content=turn['user']), state)
+        if observer is not None:
+            observer('user', message, state, toolkit, backend)
         tools = []
         while message.tool_calls:
+            if restore:
+                state, agent, toolkit = checkpoint(state), CustomerAgent(), new_toolkit()
             tool_step_allowed(len(tools), len(message.tool_calls))
             call = message.tool_calls[0]
             if call.name not in set(READ_TOOL_FIELDS) | WORKFLOW_TOOL_NAMES:
@@ -79,8 +104,12 @@ def execute(scenario):
                 # Platform-style failed tool outcome, never private diagnostics.
                 payload, error = {}, True
             tools.append({'name':call.name, 'arguments_sha256':digest(call.arguments), 'error':error})
+            if observer is not None:
+                observer('tool', call, payload, toolkit, backend)
             message, state = agent.generate_next_message(MultiToolMessage(role='tool', tool_messages=[
                 ToolMessage(role='tool', id=call.id, content=json.dumps(payload), error=error)]), state)
+            if observer is not None:
+                observer('result', message, state, toolkit, backend)
         assert isinstance(message, AssistantMessage) and message.content is not None
         # The diagnostic must originate after this actual user, never a prior turn.
         assessments = [{'kind': key.removesuffix('_assessment'), 'code': value['code']}
@@ -89,6 +118,10 @@ def execute(scenario):
         turns.append({'user':turn['user'], 'http_calls':[{'method':m,'path':p,'body':b} for m,p,b in backend.calls[before:]],
                       'tool_calls':tools, 'reply':message.content, 'assessment':assessments[-1] if assessments else None,
                       'identity':state['identity']['verified']})
+        if observer is not None:
+            observer('reply', message, state, toolkit, backend)
+        if restore:
+            state = checkpoint(state)
     result = {'id':scenario['id'], 'at_ids':scenario['at_ids'], 'status':'passed', 'context':deepcopy(scenario['context']), 'initial_backend':initial,
               'turns':turns, 'final_backend':backend_snapshot(backend),
               'journal':[{'action':o['spec']['action'],'status':o['status']} for o in state['operations'] if o['mutates']],

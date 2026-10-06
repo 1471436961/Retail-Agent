@@ -55,3 +55,11 @@ class CurrentEvidenceTests(unittest.TestCase):
         for changed in ({'status':'failed'},{'run_id':'old'},{'skipped':1}):
             report=deepcopy(self.report); report.update(changed)
             with self.assertRaises(ValueError): docs.render_current(report,self.trace)
+
+    def test_replay_pairs_checkpoints_and_faults_are_not_added_to_dialogue_or_at_counts(self):
+        self.trace['local_replays']={'replay_pairs':23,'restoration_checkpoints':256,'fault_scenarios':24}
+        text=docs.render_current(self.report,self.trace)
+        self.assertIn('原生 SDK＋合成后台对话 **1** 组',text)
+        self.assertIn('重建工具重放 **23** 对',text)
+        self.assertIn('256 个 JSON／历史恢复检查点、24 个',text)
+        self.assertIn('完整业务 AT 执行 **0**',text)
