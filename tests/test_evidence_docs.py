@@ -70,3 +70,12 @@ class CurrentEvidenceTests(unittest.TestCase):
         self.assertIn('原生 SDK＋合成后台对话 **1** 组',text)
         self.assertIn('32 个回执场景、16 个假网关场景',text)
         self.assertIn('完整业务 AT 执行 **0**',text)
+
+    def test_package_payload_and_unmeasured_cost_are_distinct_from_business_counts(self):
+        self.trace['local_package']={'package':{'file_count':57,'raw_source_bytes':464621,
+                                    'payload_bytes':{'manual_node':493813,'github_python':489068}}}
+        text=docs.render_current(self.report,self.trace)
+        self.assertIn('完整提交 JSON 字节',text)
+        self.assertIn('复制包逐文件字节在隔离 SDK 运行前后均核对',text)
+        self.assertIn('真实模型成本未实测',text)
+        self.assertIn('完整业务 AT 执行 **0**',text)

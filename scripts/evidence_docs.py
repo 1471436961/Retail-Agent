@@ -35,6 +35,12 @@ def render_current(report, trace):
     boundary_text = (f'\n\n真实 SDK 边界探针 {boundaries["receipt_scenarios"]} 个回执场景、'
                      f'{boundaries["gateway_scenarios"]} 个假网关场景；合成副作用与拒绝按固定预期核验，'
                      '这些场景单独计数，不增加完整业务 AT 执行数。') if boundaries else ''
+    package = trace.get('local_package')
+    package_text = (f'\n\n部署审计 {package["package"]["file_count"]} 个文件、'
+                    f'源码原始字节 {package["package"]["raw_source_bytes"]}；'
+                    f'完整提交 JSON 字节 {package["package"]["payload_bytes"]}。'
+                    '复制包逐文件字节在隔离 SDK 运行前后均核对；真实 SDK 导入／工具库存核查通过。'
+                    '真实模型成本未实测，token／费用为 unknown。') if package else ''
     return (f'实际完整回归 **{report["tests_run"]}/{report["tests_run"]}**，零跳过/失败/错误、退出码 0。'
             f'原生 SDK＋合成后台对话 **{trace["local_dialogues"]["dialogues_passed"]}** 组，'
             f'{len(turns)} 个 user 轮次、{len(calls)} 次 HTTP 调用、{len(writes)} 次业务发送。\n\n'
@@ -42,7 +48,7 @@ def render_current(report, trace):
             f'{len(plan)-unique} 条尚未关联首批对话。完整业务 AT 执行 **{trace["business_ats_executed"]}**；'
             '全部本地业务验收由 M6.7 收口，课堂正式评分由 M7 单列。\n\n'
             f'run_id `{report["run_id"]}`；source_sha256 `{report["source_sha256"]}`；'
-            f'specification_sha256 `{report["specification_sha256"]}`。'+replay_text+boundary_text)
+            f'specification_sha256 `{report["specification_sha256"]}`。'+replay_text+boundary_text+package_text)
 
 
 def update_current(root, report, trace):

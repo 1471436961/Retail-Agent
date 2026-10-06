@@ -27,6 +27,9 @@ _replay_spec.loader.exec_module(_replay_module)
 _boundary_spec = importlib.util.spec_from_file_location('local_boundary_batch', ROOT/'scripts/local_boundary_batch.py')
 _boundary_module = importlib.util.module_from_spec(_boundary_spec)
 _boundary_spec.loader.exec_module(_boundary_module)
+_package_spec = importlib.util.spec_from_file_location('local_package_audit', ROOT/'scripts/local_package_audit.py')
+_package_module = importlib.util.module_from_spec(_package_spec)
+_package_spec.loader.exec_module(_package_module)
 SPECIFICATION_PATHS = (
     "materials/CLASSROOM.md", "materials/client_api/openapi.yaml",
     "materials/framework/agent_contract.md", "materials/framework/client_api_contract.md",
@@ -216,7 +219,9 @@ def source_paths(root=ROOT):
                    list((root / "tests" / "fixtures").glob("*.json")) +
                    [root / "agent" / "agent.json", root / "scripts" / "foundation_trace.py",
                     root / "scripts" / "local_dialogue_batch.py", root / "scripts" / "evidence_docs.py",
-                    root / "scripts" / "local_replay_batch.py", root / "scripts" / "local_boundary_batch.py"])
+                    root / "scripts" / "local_replay_batch.py", root / "scripts" / "local_boundary_batch.py",
+                    root / "scripts" / "local_package_audit.py", root / "scripts" / "lab_eval.py",
+                    root / "scripts" / "evaluate.mjs"])
     return [path for path in paths if "__pycache__" not in path.parts]
 
 
@@ -311,6 +316,9 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
     boundaries = _boundary_module.trace_boundaries(report)
     if boundaries is not None:
         result['local_boundaries'] = boundaries
+    package = _package_module.trace_package(report)
+    if package is not None:
+        result['local_package'] = package
     return result
 
 
@@ -404,7 +412,7 @@ def main(argv=None):
     started = time.monotonic()
     native_modules = {key:sys.modules.get(name) for key,name in
                       (('dialogue_batch','test_m6_dialogues'), ('replay_batch','test_m6_replays'),
-                       ('boundary_batch','test_m6_boundaries'))}
+                       ('boundary_batch','test_m6_boundaries'), ('package_batch','test_m6_package'))}
     saved = {key:(getattr(module,'PARENT_RUN',None),getattr(module,'BATCH_EVIDENCE',None))
              for key,module in native_modules.items() if module is not None}
     native_evidence = {}
