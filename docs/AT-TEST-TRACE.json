@@ -1,13 +1,13 @@
 {
   "schema_version": 2,
   "status": "valid",
-  "run_id": "05efac94d5f9485881b51df513ac3c8e",
+  "run_id": "773f574cee014053a43f93d0eea90479",
   "scope": "component association, not complete business-AT execution",
   "case_count": 134,
   "at_count": 522,
   "business_ats_executed": 0,
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
-  "run_source_sha256": "e9d7d2e24cf7a4b98df29e95c68a484c6e2effea3288786287d985e07cd33d29",
+  "run_source_sha256": "6445cea7f0443ada5c1ecc63fec77f8ae3d4aa2143f75860a4f139da16ecfcf6",
   "source_files": {
     "agent/agent.json": "7c8b0cb6c62e4ba39a16f827830ec530aa9ac9916fe52873c4a490bc4a9355c9",
     "agent/agent.py": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
@@ -66,9 +66,18 @@
     "agent/support_agent/workflow_registry.py": "6450ac44e5aca118aafa7ce27cb4a9a3c50b4a07ec547d39c54aaed14bf8da74",
     "agent/support_agent/write_session.py": "46c84cdac54c8ddc1a32af7d9afe6149ec751816fbc950ed3751682437a295dd",
     "agent/tools.py": "cd8fcc30f062bf8cf9d9237321e4bdc127665d96fe62190e2cc61b97a8fd9368",
+    "docs/M4.1-DELIVERY.md": "a5b7bce0508cb8002d5a016eb5d39fcfa2aea9799c6727a68b82903a8a858668",
+    "docs/M4.2-DELIVERY.md": "eac0f13c1d8c365cd7514adf2bc13333157c6dd3dc108d7ec914353ee7537188",
+    "docs/M5.2-DELIVERY.md": "8e8b07681039b247ad2f08b9015959803ef5610c2d7d7305a27c8bc74032b035",
+    "docs/M5.3-DELIVERY.md": "9dc8935374ec914f6f2127acaba13e9ef486d217219a82ebdf9787c2eb165cc9",
+    "docs/M5.5-DELIVERY.md": "d24e3ae685febd39a5f5dbc5ada992872d68be24bbec9e6ebf1d8dd34b3717d0",
+    "docs/M6.2-DELIVERY.md": "03ea42c17a2c0ee7281b3af3df6dbabeef198bff9e4f627e5fe353b30e91d596",
+    "docs/M6.3-DELIVERY.md": "4f425ebf740e5d2a014f4cd610daf32256a04c7f7b42c7e162de36303333d3f9",
+    "docs/M6.5-DELIVERY.md": "de6075560605e2bcfa35a1f4abcfc37e7741f9760169277f31d6a2b84cce3721",
+    "scripts/defect_register.py": "1b82a23dd189661c957c4dc9cba1877d72e82165af9ce7d29069f361005b3a6b",
     "scripts/evaluate.mjs": "79d44b60f3f00dbcb4225cd20f7097c0a754ba8746c342dbb74083640568493c",
-    "scripts/evidence_docs.py": "6f2bc7e3ec2007f558756860779c17e35d724f0fecc753c6c57b8b4f466dd0ef",
-    "scripts/foundation_trace.py": "ceb8e7ca324b031d1bf6821d7768911c53ad40ff65154b3e67a7dbffdc29c0b3",
+    "scripts/evidence_docs.py": "cbf36f79a18bb22b71b0050d768c484d47d5f69c346b0550cc891256edfebe24",
+    "scripts/foundation_trace.py": "93d63c11f97ef194d54f634fcf59ea02eab0ca75c55e817978c3e3c0ef6e4cf4",
     "scripts/lab_eval.py": "0838c55871d062e48cf78ebfbab833709e3077c05860cca8c0446c1b5077dc0e",
     "scripts/local_boundary_batch.py": "84eb94a3e0dfb88d8455c2204ba8171bfdd35e06692e5d6f73e59c34c21eecb5",
     "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc",
@@ -88,6 +97,7 @@
     "tests/fixtures/m5_schema9_state.json": "256cc478f79432f36a7fd893cc276f44124b54dbae533b23acad3bd987ed2e88",
     "tests/fixtures/m6_3_source_baseline.json": "8978475df25a382239d927d53e2d34673fbb7608ac54bce154501a6a9d0265ba",
     "tests/fixtures/m6_combinations.json": "fe8b468988a8e1692a5377ec966dad19a61f084fbeb9bcec302757905b2bb0fd",
+    "tests/fixtures/m6_defects.json": "fd3c63d197a735d287c373a0703c3c8a61923ce02e21cff4b7281f46502a8678",
     "tests/fixtures/m6_dialogues.json": "57f42f4fd55591ca5cd8e62b41e5968cc80f3c659213e93d083e7f58615799fa",
     "tests/fixtures/m6_source_baseline.json": "60740b0651b7c47ce23b05266a7f403c428da50b9848cc978fbf1b567212c5dd",
     "tests/m2_fakes.py": "61f2b0b3a6d479872d9883672c970eae1e030bffcfb90221fc2baa80dc0d1f38",
@@ -100,8 +110,8 @@
     "tests/temp_dirs.py": "5b6d1c28f1d6be10de659339cf6b0b7e0ed9387187884edc6ac874c1d180a8eb",
     "tests/test_case_trace.py": "ce54b09b99fd17d55e89429a620af183c18610459502100c0118886f9e28de69",
     "tests/test_customer.py": "ed3bf9b5a2dbce55dbfe6ca4a59e92cb40fc8f602d889c4784cf9f329b9ba7c2",
-    "tests/test_evidence_docs.py": "33ffbbfd060438cf901cbb9abcd51b35eefcdea5c6702435597ecc10cb10f9d1",
-    "tests/test_foundation_trace.py": "31b1dce1bbd63e6fa44f0bcb016cd8a67272d12a01c8f0e06cfa0363ec930f16",
+    "tests/test_evidence_docs.py": "3094bb8bf543b6a602d8fe93eb6e2c9d88457da4fc4170769581257da4ee244c",
+    "tests/test_foundation_trace.py": "7b79034f2e95d9ecf5cb127417934618a7373bde5206006a6914ad580eea89d5",
     "tests/test_m0_contract.py": "895185129ebab1ffb79af1d09b26a60f80b95022e526d9939b26ba6dfb8c8f6f",
     "tests/test_m1_adapter.py": "67236580c807cb2dd7704560ad5532626536238fc25df51fd750feb8dd2cf608",
     "tests/test_m1_client_api.py": "3dba71d48e27480847a7c1061ab1614dabee65709b078ff5fd570b1ee2c995ce",
@@ -128,6 +138,7 @@
     "tests/test_m5_returns.py": "4a01a1f33b6e89d6f3fcb61c4e0a3fa3bf624620d6177277558f044dada34f99",
     "tests/test_m6_boundaries.py": "ae63296c7be54fa6986764a65a007cfd3cef9faa7a64a1311913a2cc69a80847",
     "tests/test_m6_combinations.py": "60ca6bc1b4d50df2bd2c34ed13852c42440f552ff9e02f143de8c8904991a5f7",
+    "tests/test_m6_defects.py": "8cab444541713b943568398456cdd4bb997adf09a6aab83bea7285f017ee72ac",
     "tests/test_m6_dialogues.py": "699802600c8cbb6b24ae35a3d4d3016c4367368b3e9f0c193418f567e24d2b8d",
     "tests/test_m6_package.py": "b0f21834d7f385d2a73a41679f7bfea9747a8585820249254a70cdf23f7eb64a",
     "tests/test_m6_replays.py": "37fd15307cbd4078e30befcbe8833d56bca9b58eed75ac6ee0f8c53eac628500",
@@ -8912,8 +8923,8 @@
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_checks.py",
       "sdk_version": "1.0.1",
-      "parent_run_id": "05efac94d5f9485881b51df513ac3c8e",
-      "source_sha256": "e9d7d2e24cf7a4b98df29e95c68a484c6e2effea3288786287d985e07cd33d29",
+      "parent_run_id": "773f574cee014053a43f93d0eea90479",
+      "source_sha256": "6445cea7f0443ada5c1ecc63fec77f8ae3d4aa2143f75860a4f139da16ecfcf6",
       "runner_inputs": {
         "tests/sdk_m6_checks.py": "17532f40d6a2bb44b64e32b6b264ba836f87cf609ea5bfbdada88fcf7cc16124",
         "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc"
@@ -16695,8 +16706,8 @@
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_replay_checks.py",
       "sdk_version": "1.0.1",
-      "parent_run_id": "05efac94d5f9485881b51df513ac3c8e",
-      "source_sha256": "e9d7d2e24cf7a4b98df29e95c68a484c6e2effea3288786287d985e07cd33d29",
+      "parent_run_id": "773f574cee014053a43f93d0eea90479",
+      "source_sha256": "6445cea7f0443ada5c1ecc63fec77f8ae3d4aa2143f75860a4f139da16ecfcf6",
       "runner_inputs": {
         "tests/sdk_m6_replay_checks.py": "d1247f81afafa9aafecb7dfff1ec2f37f67b14de32be46f4e3ffe27f206664a1",
         "tests/sdk_m6_checks.py": "17532f40d6a2bb44b64e32b6b264ba836f87cf609ea5bfbdada88fcf7cc16124",
@@ -16719,8 +16730,8 @@
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_boundary_checks.py",
       "sdk_version": "1.0.1",
-      "run_id": "05efac94d5f9485881b51df513ac3c8e",
-      "source_sha256": "e9d7d2e24cf7a4b98df29e95c68a484c6e2effea3288786287d985e07cd33d29",
+      "run_id": "773f574cee014053a43f93d0eea90479",
+      "source_sha256": "6445cea7f0443ada5c1ecc63fec77f8ae3d4aa2143f75860a4f139da16ecfcf6",
       "inputs": {
         "tests/sdk_m6_boundary_checks.py": "9432d2d878a013db03e63c5a01b484d179a68a315dfe9335b49ab09849669013",
         "scripts/local_boundary_batch.py": "84eb94a3e0dfb88d8455c2204ba8171bfdd35e06692e5d6f73e59c34c21eecb5",
@@ -16741,8 +16752,8 @@
     "execution": {
       "mode": "isolated_uploaded_package",
       "runner": "tests/sdk_m6_package_checks.py",
-      "run_id": "05efac94d5f9485881b51df513ac3c8e",
-      "source_sha256": "e9d7d2e24cf7a4b98df29e95c68a484c6e2effea3288786287d985e07cd33d29",
+      "run_id": "773f574cee014053a43f93d0eea90479",
+      "source_sha256": "6445cea7f0443ada5c1ecc63fec77f8ae3d4aa2143f75860a4f139da16ecfcf6",
       "inputs": {
         "tests/sdk_m6_package_checks.py": "df2146afe2a5a6bd1521a4ec36f5bade6e45e341ae3339b602f9a92679f23951",
         "scripts/local_package_audit.py": "18b59d8b79fe5436686678a99b6787f96b170ca1a966801006c6f29202020f9a",
@@ -17477,6 +17488,563 @@
       "token_total": null,
       "cost_total": null
     },
+    "complete_business_ats_executed": 0
+  },
+  "defect_closure": {
+    "scope": "finite reviewed defects and current regressions; not all historical failures or business ATs",
+    "run_id": "773f574cee014053a43f93d0eea90479",
+    "source_sha256": "6445cea7f0443ada5c1ecc63fec77f8ae3d4aa2143f75860a4f139da16ecfcf6",
+    "inputs": {
+      "agent/support_agent/adapters/payment_tools.py": "4059a70555d908b88ff159061bcfbb2e920ea68e8cebfb2a96abd6e8b61cd209",
+      "agent/support_agent/amount_summary.py": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
+      "agent/support_agent/domain/cancellation_intake.py": "5a5313bb444f00d4110d524248d461a6e68cd0aea35aa77e1bc2b75708f2d027",
+      "agent/support_agent/domain/items_intake.py": "43fdd799a876c9898816f23a2ab299ab61521f0c349fcb9157381b60aff98ea2",
+      "agent/support_agent/domain/money.py": "a698138a08fd1dc7083b3860c28577fc807a53a5aa9bf21339685a2f4498e388",
+      "agent/support_agent/items_session.py": "85fdaee33a84883f0cf8436fd359d391b88303edefd3b3c7999751bbcfd1fdee",
+      "agent/support_agent/proposals.py": "fc6d2eeeece7bcaa73e959c219df1316d6f22ac9a270100b302b267b4fb516d8",
+      "agent/support_agent/read_session.py": "3fb50db07c385b8d90d002de9bb292d117a393b4b4b3ad7a46b3893f0704cc89",
+      "agent/support_agent/state.py": "5330decb4ed88e17f61abf9a42ed706e1995be42dc067ec10e0fa5fee557a201",
+      "agent/support_agent/workflow_boundary.py": "31d228c05039d0217d0d9b04804adc01f77b16f76a2900e14a03931a6247924f",
+      "docs/M4.1-DELIVERY.md": "a5b7bce0508cb8002d5a016eb5d39fcfa2aea9799c6727a68b82903a8a858668",
+      "docs/M4.2-DELIVERY.md": "eac0f13c1d8c365cd7514adf2bc13333157c6dd3dc108d7ec914353ee7537188",
+      "docs/M5.2-DELIVERY.md": "8e8b07681039b247ad2f08b9015959803ef5610c2d7d7305a27c8bc74032b035",
+      "docs/M5.3-DELIVERY.md": "9dc8935374ec914f6f2127acaba13e9ef486d217219a82ebdf9787c2eb165cc9",
+      "docs/M5.5-DELIVERY.md": "d24e3ae685febd39a5f5dbc5ada992872d68be24bbec9e6ebf1d8dd34b3717d0",
+      "docs/M6.2-DELIVERY.md": "03ea42c17a2c0ee7281b3af3df6dbabeef198bff9e4f627e5fe353b30e91d596",
+      "docs/M6.3-DELIVERY.md": "4f425ebf740e5d2a014f4cd610daf32256a04c7f7b42c7e162de36303333d3f9",
+      "docs/M6.5-DELIVERY.md": "de6075560605e2bcfa35a1f4abcfc37e7741f9760169277f31d6a2b84cce3721",
+      "scripts/defect_register.py": "1b82a23dd189661c957c4dc9cba1877d72e82165af9ce7d29069f361005b3a6b",
+      "scripts/foundation_trace.py": "93d63c11f97ef194d54f634fcf59ea02eab0ca75c55e817978c3e3c0ef6e4cf4",
+      "scripts/local_package_audit.py": "18b59d8b79fe5436686678a99b6787f96b170ca1a966801006c6f29202020f9a",
+      "scripts/local_replay_batch.py": "b848a4e856fae2dd23bfb98e600e6e7c863caf7287667038fcb420350bcfec8e",
+      "tests/fixtures/m6_defects.json": "fd3c63d197a735d287c373a0703c3c8a61923ce02e21cff4b7281f46502a8678",
+      "tests/test_foundation_trace.py": "7b79034f2e95d9ecf5cb127417934618a7373bde5206006a6914ad580eea89d5",
+      "tests/test_m3_proposals.py": "4ff4a4e142171f5cfad5628dce54ec21468c418142084374742ec1778c14871a",
+      "tests/test_m4_address_review.py": "2f963c12c896f2eefeea5f6c18c5267bc67d73a48f9d6c412fc1b26dbd8cf22d",
+      "tests/test_m5_items.py": "3a8b0822b824565954c6ba31d4dbe7b51954270a77de0cb0196290f5be7b63c7",
+      "tests/test_m5_matrix.py": "db134111a594dcd7cf25b11f7686765ae8c7eda1de675352ecfa4cc99b23a677",
+      "tests/test_m5_returns.py": "4a01a1f33b6e89d6f3fcb61c4e0a3fa3bf624620d6177277558f044dada34f99",
+      "tests/test_m6_combinations.py": "60ca6bc1b4d50df2bd2c34ed13852c42440f552ff9e02f143de8c8904991a5f7",
+      "tests/test_m6_package.py": "b0f21834d7f385d2a73a41679f7bfea9747a8585820249254a70cdf23f7eb64a",
+      "tests/test_m6_replays.py": "37fd15307cbd4078e30befcbe8833d56bca9b58eed75ac6ee0f8c53eac628500"
+    },
+    "incident_count": 15,
+    "by_category": {
+      "rule_understanding": 3,
+      "tool_parameters": 3,
+      "confirmation_flow": 3,
+      "dialogue_omission": 2,
+      "runtime_compatibility": 4
+    },
+    "by_kind": {
+      "production": 10,
+      "test_infrastructure": 5
+    },
+    "new_incidents": 1,
+    "unique_regressions": 21,
+    "incidents": [
+      {
+        "id": "M66-R01",
+        "category": "rule_understanding",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "部分商品取消曾被扩大为整单取消提案。",
+        "root_cause": "解析器只识别整单动作，没有先拒绝收窄范围。",
+        "fix": "首次、草稿修正及旧 execute 快照均先检查范围；原因数据不能派生范围。",
+        "origin": {
+          "path": "docs/M5.5-DELIVERY.md",
+          "contains": "可被解析成整单提案"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/domain/cancellation_intake.py",
+            "symbol": "_partial_order_scope",
+            "line": 21
+          }
+        ],
+        "tests": [
+          "test_m5_matrix.ProductInteractionMatrixTests.test_partial_cancellation_english_chinese_and_item_id_scope_never_become_whole_order_proposals",
+          "test_m5_matrix.ProductInteractionMatrixTests.test_retained_or_excluded_item_scope_cannot_be_promoted_to_whole_cancellation"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m5_matrix.ProductInteractionMatrixTests.test_partial_cancellation_english_chinese_and_item_id_scope_never_become_whole_order_proposals",
+            "path": "tests/test_m5_matrix.py",
+            "line": 267
+          },
+          {
+            "test_id": "test_m5_matrix.ProductInteractionMatrixTests.test_retained_or_excluded_item_scope_cannot_be_promoted_to_whole_cancellation",
+            "path": "tests/test_m5_matrix.py",
+            "line": 289
+          }
+        ]
+      },
+      {
+        "id": "M66-R02",
+        "category": "rule_understanding",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "条件文本曾落进规格值。",
+        "root_cause": "有限属性解析没有把未解析条件作为独立阻断。",
+        "fix": "先澄清未知条件，不忽略或当作目录属性。",
+        "origin": {
+          "path": "docs/M5.2-DELIVERY.md",
+          "contains": "条件短语被当成属性值"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/domain/items_intake.py",
+            "symbol": "criteria_for_line",
+            "line": 125
+          }
+        ],
+        "tests": [
+          "test_m5_items.ItemIntakeTests.test_unsupported_phrases_require_clarification_instead_of_being_ignored"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m5_items.ItemIntakeTests.test_unsupported_phrases_require_clarification_instead_of_being_ignored",
+            "path": "tests/test_m5_items.py",
+            "line": 109
+          }
+        ]
+      },
+      {
+        "id": "M66-R03",
+        "category": "rule_understanding",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "取消与跨单汇总对同口径金额的顾客渲染不同。",
+        "root_cause": "精确来源与顾客显示混用并重复实现显示规则。",
+        "fix": "复用不舍入的 display_exact_amount，精确证据字符串仍保留。",
+        "origin": {
+          "path": "docs/M6.2-DELIVERY.md",
+          "contains": "精确来源字符串保持原精度"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/domain/money.py",
+            "symbol": "display_exact_amount",
+            "line": 14
+          },
+          {
+            "path": "agent/support_agent/amount_summary.py",
+            "symbol": "render_summary",
+            "line": 153
+          }
+        ],
+        "tests": [
+          "test_m6_combinations.CrossOrderSummaryTests.test_exact_display_is_shared_with_cancellation_and_does_not_round_or_change_evidence"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m6_combinations.CrossOrderSummaryTests.test_exact_display_is_shared_with_cancellation_and_does_not_round_or_change_evidence",
+            "path": "tests/test_m6_combinations.py",
+            "line": 336
+          }
+        ]
+      },
+      {
+        "id": "M66-T01",
+        "category": "tool_parameters",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "退货新增事件未完整接入诊断与旧 schema 恢复。",
+        "root_cause": "工具工作流的新元数据与迁移校验接线遗漏。",
+        "fix": "补齐特定诊断和 schema 10 迁移，不允许旧 schema 夹带新同意。",
+        "origin": {
+          "path": "docs/M5.3-DELIVERY.md",
+          "contains": "诊断白名单和 schema 10 升级分支两处真实接线遗漏"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/state.py",
+            "symbol": "initial_state",
+            "line": 106
+          },
+          {
+            "path": "agent/support_agent/workflow_boundary.py",
+            "symbol": "WorkflowBoundary.validate_assessment",
+            "line": 24
+          }
+        ],
+        "tests": [
+          "test_m5_returns.ReturnFlowTests.test_malformed_saved_methods_preserve_specific_fact_diagnostic",
+          "test_m5_returns.ReturnRecoveryTests.test_real_schema10_fixture_migrates_without_inventing_return_consent"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m5_returns.ReturnFlowTests.test_malformed_saved_methods_preserve_specific_fact_diagnostic",
+            "path": "tests/test_m5_returns.py",
+            "line": 239
+          },
+          {
+            "test_id": "test_m5_returns.ReturnRecoveryTests.test_real_schema10_fixture_migrates_without_inventing_return_consent",
+            "path": "tests/test_m5_returns.py",
+            "line": 454
+          }
+        ]
+      },
+      {
+        "id": "M66-T02",
+        "category": "tool_parameters",
+        "kind": "test_infrastructure",
+        "phase": "historical",
+        "symptom": "模型门旧测试使用不支持的 tool_call 形状，在名字门前被拒。",
+        "root_cause": "反例没有满足前置形状，未触达所声称的工作流门。",
+        "fix": "合法形状遍历所有工作流，同时执行绑定拒绝和合法 READ 对照。",
+        "origin": {
+          "path": "docs/M5.2-DELIVERY.md",
+          "contains": "合法 type=tool"
+        },
+        "fix_sites": [
+          {
+            "path": "tests/test_m5_items.py",
+            "symbol": "ItemEvidenceTests.test_all_registered_workflows_are_rejected_by_model_candidate_and_read_binding",
+            "line": 600
+          }
+        ],
+        "tests": [
+          "test_m5_items.ItemEvidenceTests.test_all_registered_workflows_are_rejected_by_model_candidate_and_read_binding"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m5_items.ItemEvidenceTests.test_all_registered_workflows_are_rejected_by_model_candidate_and_read_binding",
+            "path": "tests/test_m5_items.py",
+            "line": 600
+          }
+        ]
+      },
+      {
+        "id": "M66-T03",
+        "category": "tool_parameters",
+        "kind": "test_infrastructure",
+        "phase": "historical",
+        "symptom": "隔离复制包先前只断言路径集合，不能发现同路径错字节。",
+        "root_cause": "上传文本与隔离输入只对集合，没有字节核对。",
+        "fix": "SDK 前后读取实际复制字节，全图匹配并纳入配对证据。",
+        "origin": {
+          "path": "docs/M6.5-DELIVERY.md",
+          "contains": "不能由路径集合断言代替"
+        },
+        "fix_sites": [
+          {
+            "path": "scripts/local_package_audit.py",
+            "symbol": "verify_copied_package",
+            "line": 142
+          }
+        ],
+        "tests": [
+          "test_m6_package.PackageAuditTests.test_same_paths_with_changed_bytes_or_missing_extra_file_cannot_pass_copy_check",
+          "test_m6_package.PackagePublicationTests.test_copied_content_hash_observation_cannot_be_missing_or_tampered"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m6_package.PackageAuditTests.test_same_paths_with_changed_bytes_or_missing_extra_file_cannot_pass_copy_check",
+            "path": "tests/test_m6_package.py",
+            "line": 138
+          },
+          {
+            "test_id": "test_m6_package.PackagePublicationTests.test_copied_content_hash_observation_cannot_be_missing_or_tampered",
+            "path": "tests/test_m6_package.py",
+            "line": 231
+          }
+        ]
+      },
+      {
+        "id": "M66-C01",
+        "category": "confirmation_flow",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "最后补充询问后又出现集合确认问题。",
+        "root_cause": "商品生产器 note 与通用集合渲染各自追加问题。",
+        "fix": "使用可恢复的 items_last_call 模式，整份复述仅一个生成的问题且在最后。",
+        "origin": {
+          "path": "docs/M5.2-DELIVERY.md",
+          "contains": "不再附加逐项或集合确认问题"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/proposals.py",
+            "symbol": "render_proposal_set",
+            "line": 551
+          }
+        ],
+        "tests": [
+          "test_m5_items.ItemFlowTests.test_natural_recap_last_call_next_consent_single_post_and_owned_readback"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m5_items.ItemFlowTests.test_natural_recap_last_call_next_consent_single_post_and_owned_readback",
+            "path": "tests/test_m5_items.py",
+            "line": 259
+          }
+        ]
+      },
+      {
+        "id": "M66-C02",
+        "category": "confirmation_flow",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "无副作用 prepare 的结果丢失曾使会话永久未决。",
+        "root_cause": "prepare 和可能已发送的 execute 使用同一未知处置。",
+        "fix": "prepare 可显式放弃后重新完整复述和确认；execute 未知保持 reservation。",
+        "origin": {
+          "path": "docs/M4.1-DELIVERY.md",
+          "contains": "prepare"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/workflow_boundary.py",
+            "symbol": "WorkflowBoundary.accept",
+            "line": 124
+          }
+        ],
+        "tests": [
+          "test_m4_address_review.AddressReviewTests.test_failed_preparation_can_retry_recap_and_only_fresh_consent_sends"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m4_address_review.AddressReviewTests.test_failed_preparation_can_retry_recap_and_only_fresh_consent_sends",
+            "path": "tests/test_m4_address_review.py",
+            "line": 26
+          }
+        ]
+      },
+      {
+        "id": "M66-C03",
+        "category": "confirmation_flow",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "新增渲染模式曾进入事实指纹，导致确认恢复失败。",
+        "root_cause": "展示元数据与已接纳业务事实投影未隔离。",
+        "fix": "投影排除展示元数据，模式与文本仍一起恢复校验。",
+        "origin": {
+          "path": "docs/M5.2-DELIVERY.md",
+          "contains": "presentation_mode 未从内部事实投影排除"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/proposals.py",
+            "symbol": "_clean_read_history",
+            "line": 125
+          }
+        ],
+        "tests": [
+          "test_m5_items.ItemEvidenceTests.test_last_call_mode_and_text_restore_together_and_tampering_is_rejected"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m5_items.ItemEvidenceTests.test_last_call_mode_and_text_restore_together_and_tampering_is_rejected",
+            "path": "tests/test_m5_items.py",
+            "line": 482
+          }
+        ]
+      },
+      {
+        "id": "M66-D01",
+        "category": "dialogue_omission",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "新商品路由接管混合取消请求，丢掉既有冲突诊断。",
+        "root_cause": "新增路由缺少与既有业务意图冲突的前置协调。",
+        "fix": "保留原冲突诊断并要求澄清，不选择一半执行。",
+        "origin": {
+          "path": "docs/M5.2-DELIVERY.md",
+          "contains": "新路由接管“取消并修改商品”混合请求"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/read_session.py",
+            "symbol": "advance",
+            "line": 208
+          },
+          {
+            "path": "agent/support_agent/items_session.py",
+            "symbol": "route_items",
+            "line": 132
+          }
+        ],
+        "tests": [
+          "test_m5_items.ItemFlowTests.test_mixed_cancel_and_items_preserves_existing_conflict_diagnostic"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m5_items.ItemFlowTests.test_mixed_cancel_and_items_preserves_existing_conflict_diagnostic",
+            "path": "tests/test_m5_items.py",
+            "line": 220
+          }
+        ]
+      },
+      {
+        "id": "M66-D02",
+        "category": "dialogue_omission",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "另一自有订单的已接纳 Unknown 曾全局阻挡无关订单。",
+        "root_cause": "任务未完成与同记录写风险混用一个全局判断。",
+        "fix": "必须提供已验证 target 且旧 scope 已发送，才可对另一记录新复述；旧 journal 不变。",
+        "origin": {
+          "path": "docs/M6.2-DELIVERY.md",
+          "contains": "当成全局阻断"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/workflow_boundary.py",
+            "symbol": "unfinished_other_tasks",
+            "line": 205
+          }
+        ],
+        "tests": [
+          "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_on_one_order_allows_fresh_peer_order_but_never_completes_old_task",
+          "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_allows_fresh_peer_returns_and_modify_items_without_reusing_consent"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_on_one_order_allows_fresh_peer_order_but_never_completes_old_task",
+            "path": "tests/test_m6_combinations.py",
+            "line": 125
+          },
+          {
+            "test_id": "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_allows_fresh_peer_returns_and_modify_items_without_reusing_consent",
+            "path": "tests/test_m6_combinations.py",
+            "line": 142
+          }
+        ]
+      },
+      {
+        "id": "M66-V01",
+        "category": "runtime_compatibility",
+        "kind": "production",
+        "phase": "historical",
+        "symptom": "支付工具未进入真实 SDK 库存。",
+        "root_cause": "mixin 继承没有遵循 SDK 工具发现机制。",
+        "fix": "继承真实 ClientAPIToolKitBase，真实 SDK 包装保持完整库存及类型断言。",
+        "origin": {
+          "path": "docs/M4.2-DELIVERY.md",
+          "contains": "原 mixin 没有经过 SDK 的 ToolKitType 继承发现链"
+        },
+        "fix_sites": [
+          {
+            "path": "agent/support_agent/adapters/payment_tools.py",
+            "symbol": "PaymentTools",
+            "line": 10
+          }
+        ],
+        "tests": [
+          "test_m3_proposals.ProposalRecoveryTests.test_model_projection_and_application_adapter_use_real_sdk_offline"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m3_proposals.ProposalRecoveryTests.test_model_projection_and_application_adapter_use_real_sdk_offline",
+            "path": "tests/test_m3_proposals.py",
+            "line": 651
+          }
+        ]
+      },
+      {
+        "id": "M66-V02",
+        "category": "runtime_compatibility",
+        "kind": "test_infrastructure",
+        "phase": "historical",
+        "symptom": "独立重放因 SDK 自动创建时间不同而失败。",
+        "root_cause": "把墙上创建时间误当确定性业务轨迹。",
+        "fix": "只排除顶层 timestamp，保留 ID、参数、正文和其余字段。",
+        "origin": {
+          "path": "docs/M6.3-DELIVERY.md",
+          "contains": "SDK timestamp 不同"
+        },
+        "fix_sites": [
+          {
+            "path": "scripts/local_replay_batch.py",
+            "symbol": "message_data",
+            "line": 40
+          }
+        ],
+        "tests": [
+          "test_m6_replays.ReplayOracleTests.test_sdk_wall_time_is_excluded_but_id_arguments_and_text_are_compared"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m6_replays.ReplayOracleTests.test_sdk_wall_time_is_excluded_but_id_arguments_and_text_are_compared",
+            "path": "tests/test_m6_replays.py",
+            "line": 150
+          }
+        ]
+      },
+      {
+        "id": "M66-V03",
+        "category": "runtime_compatibility",
+        "kind": "test_infrastructure",
+        "phase": "historical",
+        "symptom": "审计器新增 compile 拒绝误伤合法 re.compile。",
+        "root_cause": "按方法名粗略识别动态编译，没有区分正则编译。",
+        "fix": "内置 compile 和 builtins.compile 拒绝；re.compile 有实际通过正向对照。",
+        "origin": {
+          "path": "docs/M6.5-DELIVERY.md",
+          "contains": "误拒绝现有 re.compile"
+        },
+        "fix_sites": [
+          {
+            "path": "scripts/local_package_audit.py",
+            "symbol": "audit_files",
+            "line": 49
+          }
+        ],
+        "tests": [
+          "test_m6_package.PackageAuditTests.test_read_bytes_compile_pickle_and_existing_path_open_reach_exact_ast_rules"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_m6_package.PackageAuditTests.test_read_bytes_compile_pickle_and_existing_path_open_reach_exact_ast_rules",
+            "path": "tests/test_m6_package.py",
+            "line": 119
+          }
+        ]
+      },
+      {
+        "id": "M66-V04",
+        "category": "runtime_compatibility",
+        "kind": "test_infrastructure",
+        "phase": "current",
+        "symptom": "报告额外失败或虚增 tests_run 仍可发布 valid。",
+        "root_cause": "发布校验只检查引用组与计数字段，遗漏全体实际结果及方法总数一致性。",
+        "fix": "所有结果均须 passed，正整数总数严格等于结果数；零计数不接受 bool/float，失败先废止旧配对。",
+        "origin": {
+          "path": "tests/test_foundation_trace.py",
+          "contains": "test_unreferenced_failed_error_or_skipped_outcome_cannot_become_valid"
+        },
+        "fix_sites": [
+          {
+            "path": "scripts/foundation_trace.py",
+            "symbol": "build_trace",
+            "line": 261
+          }
+        ],
+        "tests": [
+          "test_foundation_trace.FoundationTraceTests.test_unreferenced_failed_error_or_skipped_outcome_cannot_become_valid",
+          "test_foundation_trace.FoundationTraceTests.test_method_count_missing_inflated_bool_or_float_cannot_publish",
+          "test_foundation_trace.FoundationTraceTests.test_unreferenced_failure_invalidates_existing_pair_before_republication"
+        ],
+        "test_references": [
+          {
+            "test_id": "test_foundation_trace.FoundationTraceTests.test_unreferenced_failed_error_or_skipped_outcome_cannot_become_valid",
+            "path": "tests/test_foundation_trace.py",
+            "line": 346
+          },
+          {
+            "test_id": "test_foundation_trace.FoundationTraceTests.test_method_count_missing_inflated_bool_or_float_cannot_publish",
+            "path": "tests/test_foundation_trace.py",
+            "line": 354
+          },
+          {
+            "test_id": "test_foundation_trace.FoundationTraceTests.test_unreferenced_failure_invalidates_existing_pair_before_republication",
+            "path": "tests/test_foundation_trace.py",
+            "line": 365
+          }
+        ]
+      }
+    ],
     "complete_business_ats_executed": 0
   }
 }
