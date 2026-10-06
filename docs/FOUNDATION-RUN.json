@@ -1,9 +1,9 @@
 {
   "schema_version": 2,
-  "run_id": "84bd50bd79064ffdac93610bddaa3310",
+  "run_id": "143d2149611e487eacfa9039c2be831f",
   "status": "passed",
   "scope": "offline workspace; fake API/gateway; SDK subprocesses included, not added",
-  "source_sha256": "317983b96fbc0aad4f5d2a9fbecbf6bb852868ff505bbbb3673fe5abd2fbb7dd",
+  "source_sha256": "6a5ffa139cbf267f4f4dedfbe5a2b003299f4b31c43f0020e38e35dd83e65db4",
   "source_files": {
     "agent/agent.json": "7c8b0cb6c62e4ba39a16f827830ec530aa9ac9916fe52873c4a490bc4a9355c9",
     "agent/agent.py": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
@@ -62,8 +62,9 @@
     "agent/support_agent/workflow_registry.py": "6450ac44e5aca118aafa7ce27cb4a9a3c50b4a07ec547d39c54aaed14bf8da74",
     "agent/support_agent/write_session.py": "46c84cdac54c8ddc1a32af7d9afe6149ec751816fbc950ed3751682437a295dd",
     "agent/tools.py": "cd8fcc30f062bf8cf9d9237321e4bdc127665d96fe62190e2cc61b97a8fd9368",
-    "scripts/evidence_docs.py": "44e1a796856bce48dea7a55139a2c0caf8d45ae774ce74d2d842f55d9872ac7a",
-    "scripts/foundation_trace.py": "896e668345d6e7f5de6f1eea2d28bfe6e41b4b75906f249196aece20b026eac9",
+    "scripts/evidence_docs.py": "b098cb1bcfc162d7e7561949fc9cb843b8a69d8d12a84f867934ff02c9373b68",
+    "scripts/foundation_trace.py": "e7062f65e1df4979992bccd71673cce509e5a3f17c95be2004f16219ddd48144",
+    "scripts/local_boundary_batch.py": "84eb94a3e0dfb88d8455c2204ba8171bfdd35e06692e5d6f73e59c34c21eecb5",
     "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc",
     "scripts/local_replay_batch.py": "b848a4e856fae2dd23bfb98e600e6e7c863caf7287667038fcb420350bcfec8e",
     "tests/fakes.py": "429edc15f8397324b3dae16890e2a36b370e349eaaaca10db0aef8ccc7a195fe",
@@ -78,19 +79,21 @@
     "tests/fixtures/m5_schema10_state.json": "2ac58c605e6355195579222c13ec30d3fbcb38b9abe73240f8381e29ee76629e",
     "tests/fixtures/m5_schema11_state.json": "08beb6c2fdb848f38a0b8b6b8728eb9deb83633694a142523d49fdfb44a14ea7",
     "tests/fixtures/m5_schema9_state.json": "256cc478f79432f36a7fd893cc276f44124b54dbae533b23acad3bd987ed2e88",
+    "tests/fixtures/m6_3_source_baseline.json": "8978475df25a382239d927d53e2d34673fbb7608ac54bce154501a6a9d0265ba",
     "tests/fixtures/m6_combinations.json": "fe8b468988a8e1692a5377ec966dad19a61f084fbeb9bcec302757905b2bb0fd",
     "tests/fixtures/m6_dialogues.json": "57f42f4fd55591ca5cd8e62b41e5968cc80f3c659213e93d083e7f58615799fa",
     "tests/fixtures/m6_source_baseline.json": "60740b0651b7c47ce23b05266a7f403c428da50b9848cc978fbf1b567212c5dd",
     "tests/m2_fakes.py": "61f2b0b3a6d479872d9883672c970eae1e030bffcfb90221fc2baa80dc0d1f38",
     "tests/sdk_m2_checks.py": "612608c2984eee57fb43554d9fdf26b57451655bbf21ae73fe002819a6d63830",
     "tests/sdk_m3_checks.py": "34dfed53385ed6fa87180436ae5c4fbf6f03ee5a7113f896e6b8565630fa6c00",
+    "tests/sdk_m6_boundary_checks.py": "9432d2d878a013db03e63c5a01b484d179a68a315dfe9335b49ab09849669013",
     "tests/sdk_m6_checks.py": "17532f40d6a2bb44b64e32b6b264ba836f87cf609ea5bfbdada88fcf7cc16124",
     "tests/sdk_m6_replay_checks.py": "d1247f81afafa9aafecb7dfff1ec2f37f67b14de32be46f4e3ffe27f206664a1",
     "tests/temp_dirs.py": "5b6d1c28f1d6be10de659339cf6b0b7e0ed9387187884edc6ac874c1d180a8eb",
     "tests/test_case_trace.py": "ce54b09b99fd17d55e89429a620af183c18610459502100c0118886f9e28de69",
     "tests/test_customer.py": "ed3bf9b5a2dbce55dbfe6ca4a59e92cb40fc8f602d889c4784cf9f329b9ba7c2",
-    "tests/test_evidence_docs.py": "5bdd38fa1575f1d7ea9a12510ba90de6b964c0b91847e76bfcf3a28e16588507",
-    "tests/test_foundation_trace.py": "ee317dd3268c7dd0077a2fd5e33e921cf0ff2431a6bfff74463fcc5a85319ce1",
+    "tests/test_evidence_docs.py": "0e21b3face3fac8b65ccac0c81cf4aa638f09a83a2e4f44b86c990285834646b",
+    "tests/test_foundation_trace.py": "241977a126a7bd990877b5d52b154f6ab09ad54561ebd09c02b407f3851b56b5",
     "tests/test_m0_contract.py": "895185129ebab1ffb79af1d09b26a60f80b95022e526d9939b26ba6dfb8c8f6f",
     "tests/test_m1_adapter.py": "67236580c807cb2dd7704560ad5532626536238fc25df51fd750feb8dd2cf608",
     "tests/test_m1_client_api.py": "3dba71d48e27480847a7c1061ab1614dabee65709b078ff5fd570b1ee2c995ce",
@@ -115,6 +118,7 @@
     "tests/test_m5_items.py": "3a8b0822b824565954c6ba31d4dbe7b51954270a77de0cb0196290f5be7b63c7",
     "tests/test_m5_matrix.py": "db134111a594dcd7cf25b11f7686765ae8c7eda1de675352ecfa4cc99b23a677",
     "tests/test_m5_returns.py": "4a01a1f33b6e89d6f3fcb61c4e0a3fa3bf624620d6177277558f044dada34f99",
+    "tests/test_m6_boundaries.py": "ae63296c7be54fa6986764a65a007cfd3cef9faa7a64a1311913a2cc69a80847",
     "tests/test_m6_combinations.py": "60ca6bc1b4d50df2bd2c34ed13852c42440f552ff9e02f143de8c8904991a5f7",
     "tests/test_m6_dialogues.py": "699802600c8cbb6b24ae35a3d4d3016c4367368b3e9f0c193418f567e24d2b8d",
     "tests/test_m6_replays.py": "37fd15307cbd4078e30befcbe8833d56bca9b58eed75ac6ee0f8c53eac628500",
@@ -134,11 +138,11 @@
     "docs/PLATFORM-CONTRACT-NOTES.md": "c2de04d798739b4d499525fd06a6fb13dbebcbd183f9b6e30ae9cc3cacf5486c",
     "docs/REFUND-IMPLEMENTATION-EVIDENCE.md": "41fa35e2d111e4106bc9e9650bb854b3c9ba7db3aafab59c6ae0487a08e35194"
   },
-  "tests_run": 986,
+  "tests_run": 1026,
   "skipped": 0,
   "failures": 0,
   "errors": 0,
-  "elapsed_seconds": 328.344,
+  "elapsed_seconds": 568.219,
   "exit_code": 0,
   "results": {
     "test_case_trace.CaseTraceTests.test_business_requirement_count_is_pinned_to_materials_version": "passed",
@@ -150,6 +154,7 @@
     "test_customer.CustomerTests.test_transport_encodes_identifiers_and_checks_status": "passed",
     "test_customer.CustomerTests.test_transport_propagates_errors_without_retrying_writes": "passed",
     "test_customer.CustomerTests.test_verification_precedes_details_and_rejects_mismatch": "passed",
+    "test_evidence_docs.CurrentEvidenceTests.test_boundary_subscenarios_are_separate_from_dialogue_and_business_at_counts": "passed",
     "test_evidence_docs.CurrentEvidenceTests.test_current_block_update_and_six_reference_entries_validate": "passed",
     "test_evidence_docs.CurrentEvidenceTests.test_failed_or_mismatched_run_cannot_replace_current_evidence": "passed",
     "test_evidence_docs.CurrentEvidenceTests.test_missing_duplicate_or_wrong_current_reference_is_rejected": "passed",
@@ -162,9 +167,10 @@
     "test_foundation_trace.FoundationTraceTests.test_interrupted_report_publication_cannot_leave_old_trace_valid": "passed",
     "test_foundation_trace.FoundationTraceTests.test_main_failure_and_skip_invalidate_existing_trace_and_return_one": "passed",
     "test_foundation_trace.FoundationTraceTests.test_missing_atomic_requirement_or_unknown_rule_group_cannot_shrink_inventory": "passed",
+    "test_foundation_trace.FoundationTraceTests.test_missing_native_boundary_observations_reject_pair_publication": "passed",
     "test_foundation_trace.FoundationTraceTests.test_missing_native_dialogue_observations_invalidate_publication_even_when_wrapper_passed": "passed",
     "test_foundation_trace.FoundationTraceTests.test_missing_native_replay_observations_reject_pair_publication": "passed",
-    "test_foundation_trace.FoundationTraceTests.test_nested_runner_isolates_and_restores_both_native_evidence_modules": "passed",
+    "test_foundation_trace.FoundationTraceTests.test_nested_runner_isolates_and_restores_all_native_evidence_modules": "passed",
     "test_foundation_trace.FoundationTraceTests.test_nested_runner_restores_parent_context_and_does_not_reuse_outer_evidence": "passed",
     "test_foundation_trace.FoundationTraceTests.test_oracle_control_can_check_plan_without_becoming_native_publication": "passed",
     "test_foundation_trace.FoundationTraceTests.test_oracle_mode_or_mismatched_parent_cannot_publish_a_native_trace": "passed",
@@ -1037,6 +1043,44 @@
     "test_m5_returns.ReturnRecoveryTests.test_real_schema10_fixture_migrates_without_inventing_return_consent": "passed",
     "test_m5_returns.ReturnRecoveryTests.test_restore_and_clone_keep_sources_list_opening_and_completed_journal": "passed",
     "test_m5_returns.ReturnRecoveryTests.test_shared_business_kinds_restore_and_block_every_peer_without_handoff": "passed",
+    "test_m6_boundaries.BoundaryPublicationTests.test_changed_input_hash_parent_or_network_attempt_rejects_publication": "passed",
+    "test_m6_boundaries.BoundaryPublicationTests.test_derived_projection_case_is_required_independently_of_name_filter_case": "passed",
+    "test_m6_boundaries.BoundaryPublicationTests.test_fixed_validator_control_and_missing_native_observations_are_distinct": "passed",
+    "test_m6_boundaries.BoundaryPublicationTests.test_gateway_unauthorized_acceptance_exposure_and_api_calls_are_rejected": "passed",
+    "test_m6_boundaries.BoundaryPublicationTests.test_m63_baseline_hashes_match_agent_and_fixed_dialogue_bytes": "passed",
+    "test_m6_boundaries.BoundaryPublicationTests.test_malformed_observation_types_have_one_public_rejection_exception": "passed",
+    "test_m6_boundaries.BoundaryPublicationTests.test_missing_or_reordered_receipt_and_gateway_coverage_is_rejected": "passed",
+    "test_m6_boundaries.BoundaryPublicationTests.test_observations_without_their_executed_wrapper_cannot_publish": "passed",
+    "test_m6_boundaries.BoundaryPublicationTests.test_unknown_promotion_extra_send_and_retained_rejected_receipt_are_rejected": "passed",
+    "test_m6_boundaries.ModelScopeBoundaryTests.test_actual_read_budget_accepts_boundary_then_rejects_next_call_atomically": "passed",
+    "test_m6_boundaries.ModelScopeBoundaryTests.test_all_workflow_names_reach_name_guard_with_valid_tool_candidate_shape": "passed",
+    "test_m6_boundaries.ModelScopeBoundaryTests.test_extra_authority_arguments_are_rejected_not_cleaned": "passed",
+    "test_m6_boundaries.ModelScopeBoundaryTests.test_foreign_customer_and_order_fail_binding_after_candidate_shape_passes": "passed",
+    "test_m6_boundaries.ModelScopeBoundaryTests.test_injected_adapter_workflow_is_blocked_at_record_binding": "passed",
+    "test_m6_boundaries.ModelScopeBoundaryTests.test_multi_read_batch_is_atomic_when_later_scope_is_foreign": "passed",
+    "test_m6_boundaries.ModelScopeBoundaryTests.test_numeric_bool_and_container_read_arguments_are_rejected": "passed",
+    "test_m6_boundaries.ModelScopeBoundaryTests.test_valid_model_shape_and_read_binding_are_positive_controls": "passed",
+    "test_m6_boundaries.NativeBoundaryTests.test_sdk_receipts_and_model_adapter_with_fake_gateway": "passed",
+    "test_m6_boundaries.ReadDataBoundaryTests.test_malformed_read_json_object_and_nonfinite_fields_are_not_accepted": "passed",
+    "test_m6_boundaries.ReadDataBoundaryTests.test_mismatched_owner_with_permission_words_never_enters_history": "passed",
+    "test_m6_boundaries.ReadDataBoundaryTests.test_missing_duplicate_and_wrong_read_result_ids_reject_entire_batch": "passed",
+    "test_m6_boundaries.ReadDataBoundaryTests.test_one_valid_one_bad_read_body_does_not_partially_accept": "passed",
+    "test_m6_boundaries.ReadDataBoundaryTests.test_rejected_error_text_is_sanitized_before_history_and_customer_reply": "passed",
+    "test_m6_boundaries.ReadDataBoundaryTests.test_valid_read_data_with_permission_fields_does_not_create_consent_or_handoff": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_actual_workflow_result_byte_boundary_allows_complete_bundle_and_rejects_one_less": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_argument_overflow_precedes_dispatch_without_trimming_evidence": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_assistant_permission_text_is_not_real_user_confirmation": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_execute_bundle_extra_authority_keeps_unknown_reservation_after_actual_send": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_exhausted_prepare_read_budget_stops_before_profile_or_catalog_io": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_large_recap_refuses_whole_product_list_without_truncation_or_partial_send": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_order_and_catalog_instruction_text_remains_data_in_all_six_producers": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_prepare_bundle_cannot_append_fake_user_or_change_original_prefix": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_prepare_bundle_reply_mismatch_or_extra_authority_is_abandoned_for_all_kinds": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_result_overflow_prepare_vs_sent_execute_has_distinct_recovery": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_top_level_and_read_journal_authority_flags_are_rejected_on_restore": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_transfer_summary_keeps_injected_prior_user_text_as_json_data": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_transfer_summary_overflow_precedes_dispatch_and_post": "passed",
+    "test_m6_boundaries.WorkflowDataBoundaryTests.test_wire_argument_limit_counts_utf8_and_json_escaping_at_exact_boundary": "passed",
     "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_allows_fresh_peer_returns_and_modify_items_without_reusing_consent": "passed",
     "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_does_not_block_fresh_peer_address_payment_or_cancellation": "passed",
     "test_m6_combinations.CombinationDialogueTests.test_accepted_unknown_on_one_order_allows_fresh_peer_order_but_never_completes_old_task": "passed",
@@ -1136,8 +1180,8 @@
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_checks.py",
       "sdk_version": "1.0.1",
-      "parent_run_id": "84bd50bd79064ffdac93610bddaa3310",
-      "source_sha256": "317983b96fbc0aad4f5d2a9fbecbf6bb852868ff505bbbb3673fe5abd2fbb7dd",
+      "parent_run_id": "143d2149611e487eacfa9039c2be831f",
+      "source_sha256": "6a5ffa139cbf267f4f4dedfbe5a2b003299f4b31c43f0020e38e35dd83e65db4",
       "runner_inputs": {
         "tests/sdk_m6_checks.py": "17532f40d6a2bb44b64e32b6b264ba836f87cf609ea5bfbdada88fcf7cc16124",
         "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc"
@@ -13748,8 +13792,8 @@
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_replay_checks.py",
       "sdk_version": "1.0.1",
-      "parent_run_id": "84bd50bd79064ffdac93610bddaa3310",
-      "source_sha256": "317983b96fbc0aad4f5d2a9fbecbf6bb852868ff505bbbb3673fe5abd2fbb7dd",
+      "parent_run_id": "143d2149611e487eacfa9039c2be831f",
+      "source_sha256": "6a5ffa139cbf267f4f4dedfbe5a2b003299f4b31c43f0020e38e35dd83e65db4",
       "runner_inputs": {
         "tests/sdk_m6_replay_checks.py": "d1247f81afafa9aafecb7dfff1ec2f37f67b14de32be46f4e3ffe27f206664a1",
         "tests/sdk_m6_checks.py": "17532f40d6a2bb44b64e32b6b264ba836f87cf609ea5bfbdada88fcf7cc16124",
@@ -43108,6 +43152,478 @@
         "claim_code": "handoff_claim_conflict",
         "investigation_reads": 0,
         "late_status": "unknown"
+      }
+    ]
+  },
+  "boundary_batch": {
+    "scope": "real SDK boundaries with synthetic effects; not classroom or complete business AT execution",
+    "execution": {
+      "mode": "native_sdk",
+      "runner": "tests/sdk_m6_boundary_checks.py",
+      "sdk_version": "1.0.1",
+      "run_id": "143d2149611e487eacfa9039c2be831f",
+      "source_sha256": "6a5ffa139cbf267f4f4dedfbe5a2b003299f4b31c43f0020e38e35dd83e65db4",
+      "inputs": {
+        "tests/sdk_m6_boundary_checks.py": "9432d2d878a013db03e63c5a01b484d179a68a315dfe9335b49ab09849669013",
+        "scripts/local_boundary_batch.py": "84eb94a3e0dfb88d8455c2204ba8171bfdd35e06692e5d6f73e59c34c21eecb5",
+        "tests/sdk_m6_replay_checks.py": "d1247f81afafa9aafecb7dfff1ec2f37f67b14de32be46f4e3ffe27f206664a1",
+        "tests/sdk_m6_checks.py": "17532f40d6a2bb44b64e32b6b264ba836f87cf609ea5bfbdada88fcf7cc16124",
+        "tests/fixtures/m6_dialogues.json": "57f42f4fd55591ca5cd8e62b41e5968cc80f3c659213e93d083e7f58615799fa",
+        "tests/fixtures/m6_combinations.json": "fe8b468988a8e1692a5377ec966dad19a61f084fbeb9bcec302757905b2bb0fd",
+        "tests/fixtures/m6_3_source_baseline.json": "8978475df25a382239d927d53e2d34673fbb7608ac54bce154501a6a9d0265ba"
+      }
+    },
+    "network_attempts": 0,
+    "receipts": [
+      {
+        "id": "order_address",
+        "kind": "address",
+        "action": "shipping_address",
+        "mode": "valid",
+        "status": "succeeded",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": true,
+        "backend_changed": true
+      },
+      {
+        "id": "order_address",
+        "kind": "address",
+        "action": "shipping_address",
+        "mode": "list_body",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "order_address",
+        "kind": "address",
+        "action": "shipping_address",
+        "mode": "authority_fields",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "order_address",
+        "kind": "address",
+        "action": "shipping_address",
+        "mode": "wrong_target",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "default_address",
+        "kind": "address",
+        "action": "default_shipping_address",
+        "mode": "valid",
+        "status": "succeeded",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": true,
+        "backend_changed": true
+      },
+      {
+        "id": "default_address",
+        "kind": "address",
+        "action": "default_shipping_address",
+        "mode": "list_body",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "default_address",
+        "kind": "address",
+        "action": "default_shipping_address",
+        "mode": "authority_fields",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "default_address",
+        "kind": "address",
+        "action": "default_shipping_address",
+        "mode": "wrong_target",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "whole_gift_payment",
+        "kind": "payment",
+        "action": "payment_method",
+        "mode": "valid",
+        "status": "succeeded",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": true,
+        "backend_changed": true
+      },
+      {
+        "id": "whole_gift_payment",
+        "kind": "payment",
+        "action": "payment_method",
+        "mode": "list_body",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "whole_gift_payment",
+        "kind": "payment",
+        "action": "payment_method",
+        "mode": "authority_fields",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "whole_gift_payment",
+        "kind": "payment",
+        "action": "payment_method",
+        "mode": "wrong_target",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "whole_cancellation",
+        "kind": "cancellation",
+        "action": "cancel",
+        "mode": "valid",
+        "status": "succeeded",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": true,
+        "backend_changed": true
+      },
+      {
+        "id": "whole_cancellation",
+        "kind": "cancellation",
+        "action": "cancel",
+        "mode": "list_body",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "whole_cancellation",
+        "kind": "cancellation",
+        "action": "cancel",
+        "mode": "authority_fields",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "whole_cancellation",
+        "kind": "cancellation",
+        "action": "cancel",
+        "mode": "wrong_target",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_items",
+        "kind": "items",
+        "action": "modify_items",
+        "mode": "valid",
+        "status": "succeeded",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": true,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_items",
+        "kind": "items",
+        "action": "modify_items",
+        "mode": "list_body",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_items",
+        "kind": "items",
+        "action": "modify_items",
+        "mode": "authority_fields",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_items",
+        "kind": "items",
+        "action": "modify_items",
+        "mode": "wrong_target",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_return",
+        "kind": "returns",
+        "action": "return",
+        "mode": "valid",
+        "status": "succeeded",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": true,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_return",
+        "kind": "returns",
+        "action": "return",
+        "mode": "list_body",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_return",
+        "kind": "returns",
+        "action": "return",
+        "mode": "authority_fields",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_return",
+        "kind": "returns",
+        "action": "return",
+        "mode": "wrong_target",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_exchange",
+        "kind": "exchange",
+        "action": "exchange",
+        "mode": "valid",
+        "status": "succeeded",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": true,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_exchange",
+        "kind": "exchange",
+        "action": "exchange",
+        "mode": "list_body",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_exchange",
+        "kind": "exchange",
+        "action": "exchange",
+        "mode": "authority_fields",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "complete_exchange",
+        "kind": "exchange",
+        "action": "exchange",
+        "mode": "wrong_target",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": true
+      },
+      {
+        "id": "human",
+        "kind": "handoff",
+        "action": "handoff",
+        "mode": "valid",
+        "status": "accepted",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": true,
+        "backend_changed": false
+      },
+      {
+        "id": "human",
+        "kind": "handoff",
+        "action": "handoff",
+        "mode": "list_body",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": false
+      },
+      {
+        "id": "human",
+        "kind": "handoff",
+        "action": "handoff",
+        "mode": "authority_fields",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": false
+      },
+      {
+        "id": "human",
+        "kind": "handoff",
+        "action": "handoff",
+        "mode": "wrong_target",
+        "status": "unknown",
+        "sends": 1,
+        "extra_sends": 0,
+        "receipt_retained": false,
+        "backend_changed": false
+      }
+    ],
+    "gateway": [
+      {
+        "id": "read_positive",
+        "accepted": true,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "reply_is_not_dispatch",
+        "accepted": true,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "injected_context_workflow_is_filtered",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "derived_context_is_not_authority",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "address_workflow",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "payment_workflow",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "cancellation_workflow",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "items_workflow",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "returns_workflow",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "exchange_workflow",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "handoff_workflow",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "extra_confirmed",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "foreign_customer",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "foreign_order",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "wrong_type",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
+      },
+      {
+        "id": "model_context_overflow",
+        "accepted": false,
+        "http_calls": 0,
+        "workflow_exposed": false
       }
     ]
   }
