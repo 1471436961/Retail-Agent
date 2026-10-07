@@ -1,6 +1,6 @@
 # 安装完整 Enterprise AI 项目
 
-绑定：1471436961/retail-agent / main；场景：retail_plus；语言：python；任务：t2。
+绑定：1471436961/retail-agent / main；场景：retail_plus；语言：python；任务：t1。
 
 ## 按这个顺序操作
 
@@ -22,7 +22,7 @@ macOS / Linux（bash 或 zsh）：
 ~~~bash
 curl -fL 'https://agentist.org/lab/enterprise-ai/install.py' -o install-enterprise-ai.py
 # 查看下载的脚本后执行：
-python3 install-enterprise-ai.py --binding d0f71d59-58f3-4d6f-a8e0-851da67bd787 --config "/绝对路径/Enterprise-AI.json" --mode new
+python3 install-enterprise-ai.py --binding da37778d-769a-41ed-8c78-8eb4b91be977 --config "/绝对路径/Enterprise-AI.json" --mode new
 ~~~
 
 Windows PowerShell（不需要 bash）：
@@ -30,7 +30,7 @@ Windows PowerShell（不需要 bash）：
 ~~~powershell
 Invoke-WebRequest -Uri 'https://agentist.org/lab/enterprise-ai/install.py' -OutFile install-enterprise-ai.py
 # 查看下载的脚本后执行：
-py -3 install-enterprise-ai.py --binding d0f71d59-58f3-4d6f-a8e0-851da67bd787 --config "C:\Users\你的用户名\Enterprise-AI.json" --mode new
+py -3 install-enterprise-ai.py --binding da37778d-769a-41ed-8c78-8eb4b91be977 --config "C:\Users\你的用户名\Enterprise-AI.json" --mode new
 ~~~
 
 全新项目用 --mode new：安装完整包，包括 agent/、scripts/、tests/、材料和文档，并自动放好 .github/workflows/hyper-lab.yml。已有 Agent 项目用 --mode existing：只安装工作流、终端辅助脚本和本说明，不修改 agent/、package.json、测试和材料。安装器先核对仓库、分支，以及已有 Agent 的场景与语言；遇到不同内容的同名文件会列出冲突并停止，不自动覆盖。先自行备份/移走冲突文件再重试。相同内容可重复安装。七题作业需先 clone 作业，用 --mode existing；不会安装答案。

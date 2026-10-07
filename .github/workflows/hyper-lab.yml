@@ -1,5 +1,4 @@
 name: Enterprise AI evaluation
-# Binding scope: retail_plus / Python / t2 / all 134 cases; resolved by platform config.
 on:
   push:
     branches: ["main"]
@@ -15,5 +14,5 @@ jobs:
   evaluate:
     uses: mrvgao/enterprise-ai-evaluation/.github/workflows/evaluate.yml@v1.1.0
     with:
-      binding-id: "d0f71d59-58f3-4d6f-a8e0-851da67bd787"
+      binding-id: "da37778d-769a-41ed-8c78-8eb4b91be977"
       api-url: "https://agentist.org/lab/api/enterprise-ai"
