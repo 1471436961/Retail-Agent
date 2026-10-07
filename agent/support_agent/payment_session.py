@@ -105,7 +105,7 @@ def _prepare(state, api, notice=""):
         return answer(choice)
     attempted = {o["version"] for o in state["operations"] if o["mutates"]}
     current = _current_records(state)
-    if any(p["spec"]["action"] != "payment_method" and p["version"] not in attempted for p in current) or unfinished_other_tasks(state, {"payment_method"}, target=target):
+    if any(p["status"] != "withdrawn" and p["spec"]["action"] != "payment_method" and p["version"] not in attempted for p in current) or unfinished_other_tasks(state, {"payment_method"}, target=target):
         return boundary.reply(state, "payment_mixed_plan_requires_review", "An unfinished non-payment proposal needs clarification; it has not been silently discarded.")
     selected = choice["details"]["payment_method_id"]
     saved = _methods(methods)

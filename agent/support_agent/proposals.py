@@ -719,6 +719,8 @@ def _observe_set_user(state, index):
     if entry["role"] != "user":
         raise InvalidProposal("Operation consent requires original user text")
     records = _current_records(state)
+    if all(p['status'] == 'withdrawn' for p in records):
+        return None  # A new request must not revive an abandoned version.
     kind, assignments = _classify_set_reply(entry["content"], records)
     previous = state["history"][index - 1] if index else {}
     if kind == "confirm" and "proposal_set_ack" in previous:
@@ -731,6 +733,8 @@ def _observe_set_user(state, index):
     for action, selection in assignments:
         for i in selection:
             p = records[i]
+            if p['status'] == 'withdrawn':
+                continue
             affected.add(i)
             if action == "confirm" and p["status"] == "confirmed":
                 continue  # Preserve the original exact-scope user evidence.
@@ -740,7 +744,7 @@ def _observe_set_user(state, index):
     if fresh:
         excludes_others = re.search(r"\bonly\b|只确认|仅确认", entry["content"].casefold()) is not None
         for i, p in enumerate(records):
-            if i not in affected:
+            if i not in affected and p['status'] != 'withdrawn':
                 if p["status"] == "confirmed" and not excludes_others:
                     continue
                 p["status"], p["confirmation"] = "needs_review", None

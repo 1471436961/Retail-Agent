@@ -1,5 +1,6 @@
 """Cancellation producer; original user sources, common consent and journal."""
 import re
+import json
 from copy import deepcopy
 
 from support_agent.workflow_registry import WORKFLOW_KINDS
@@ -34,8 +35,12 @@ def route_cancellation(state, text=None):
         return None
     from support_agent.domain.addresses import request_from_history as address_request
     from support_agent.domain.payment_intake import request_from_history as payment_request
+    from support_agent.domain.returns_intake import request_from_history as returns_request
+    from support_agent.domain.items_intake import request_from_history as replacement_request
     if any(other and other["request_index"] > request["request_index"]
-           for other in (address_request(state["history"]), payment_request(state["history"]))):
+           for other in (address_request(state["history"]), payment_request(state["history"]),
+                         returns_request(state['history']), replacement_request(state['history']),
+                         replacement_request(state['history'], kind='exchange'))):
         return None
     if request["error"] == "mixed_business_request":
         return _boundary().reply(state, "mixed_business_request", "Cancellation conflicts with other changes on the same order. Choose a final operation in a separate workflow; no business request was submitted.")
@@ -103,12 +108,13 @@ def _prepare(state, api, notice=""):
     quote = refund_recap_rule(order["payments"],state["customer_record"]["payment_methods"])
     if quote["decision"] != "allow": return answer(quote)
     attempted = {o["version"] for o in state["operations"] if o["mutates"]}
-    if any(p["spec"]["action"] != "cancel" and p["version"] not in attempted for p in _current_records(state)) or unfinished_other_tasks(state,{"cancel"},target=target):
+    if any(p["status"] != "withdrawn" and p["spec"]["action"] != "cancel" and p["version"] not in attempted for p in _current_records(state)) or unfinished_other_tasks(state,{"cancel"},target=target):
         return boundary.reply(state,"cancellation_mixed_plan_requires_review","An unfinished non-cancellation proposal needs a final choice. It was not silently discarded.")
     spec = normalize_spec({"action":"cancel","target":target,"parameters":{"reason":reason["details"]["reason"]},
                            "amount":{"kind":"per_charge_refunds","rows":quote["details"]["charges"]}})
     notes = [notice] if notice else []
     notes += [f'Current order status: {order["status"]}.',
+              'Complete original item list for this whole-order cancellation: ' + json.dumps(order['items'], ensure_ascii=False),
               f'Original charge total (sum of recorded amounts, not a net balance): {quote["details"]["display_total"]}.',
               "Each charge will be refunded separately in full to its own original method; no fees, withheld portion, new card or separate refund API."]
     notes += [f'Charge {row["charge_index"]}: {row["display_amount"]} to {row["destination_label"]}; channel policy: {row["timing"]}.' for row in quote["details"]["rows"]]

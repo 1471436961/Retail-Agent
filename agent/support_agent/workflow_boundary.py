@@ -219,6 +219,12 @@ Unresolved global workflow reservations are blocked before this function.
     for node in assessment["details"]["tasks"]:
         if node['action'] in actions or node['assessment']['code'] == 'task_completed':
             continue
+        # A replay-validated real-user withdrawal abandons an unsent plan;
+        # it is not completion and cannot erase an attempted/unknown operation.
+        if node['assessment']['code'] == 'proposal_withdrawn' and not any(
+                o['mutates'] and o['version'] == node['proposal_version']
+                for o in state['operations']):
+            continue
         if targets and all(node['target'] != record for record in targets) and any(
                 o['mutates'] and o['spec']['target'] == node['target'] and o['spec']['action'] == node['action']
                 and o['sent_index'] > node['plan_index'] for o in state['operations']):

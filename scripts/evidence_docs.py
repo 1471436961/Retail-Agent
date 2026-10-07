@@ -41,20 +41,34 @@ def render_current(report, trace):
                     f'完整提交 JSON 字节 {package["package"]["payload_bytes"]}。'
                     '复制包逐文件字节在隔离 SDK 运行前后均核对；真实 SDK 导入／工具库存核查通过。'
                     '真实模型成本未实测，token／费用为 unknown。') if package else ''
+    business = trace.get('local_business_acceptance')
     defects = trace.get('defect_closure')
+    defect_new_label = '台账在 M6.6 新增修复' if business else '本轮新增修复'
     defect_text = (f'\n\n有限根因台账 {defects["incident_count"]} 项：'
                    f'生产缺陷 {defects["by_kind"]["production"]}、测试／证据基础设施 {defects["by_kind"]["test_infrastructure"]}；'
-                   f'本轮新增修复 {defects["new_incidents"]} 项，'
+                   f'{defect_new_label} {defects["new_incidents"]} 项，'
                    f'{defects["unique_regressions"]} 个不同回归方法均在本次报告实际通过。'
                    '历史修复不计为新增能力，分类不冒充自动根因证明或完整业务 AT。') if defects else ''
+    business_label = '直接本地业务 AT 执行' if business else '完整业务 AT 执行'
+    business_complete = bool(business and business['ats_passed_local'] == 522 and business['ats_not_executed'] == 0 and business['cases_complete_local'] == 134)
+    business_text = (f'\n\nM6.7 直接本地业务验收{"完成" if business_complete else "进行中"}：{business["scenarios_executed"]} 个独立合成对话，'
+                     f'{business["ats_passed_local"]}/522 条原子要求直接通过，{business["ats_not_executed"]} 条未执行；'
+                     f'{business["cases_complete_local"]}/134 案例的全部原子要求有本地断言。'
+                     '不把组件或首批关联计为执行，不代表原始课堂 fixture／模型效果；'
+                     + ('M0.2 和 M6 的本地验收完成，课堂实测仍归 M7。' if business_complete else 'M0.2 和 M6 整体保持未完成。')) if business else ''
+    review = business.get('predicate_review_index') if business else None
+    review_text = (f'\n\n逐 AT [谓词审阅索引](AT-PREDICATE-REVIEW.md)：{review["assertion_occurrences"]} 次直接谓词检查，'
+                   f'{review["distinct_predicates"]} 个按场景区分的定义，{review["shared_predicates"]} 个定义由多个 AT 共用；'
+                   f'{review["single_predicate_atoms"]} 条 AT 仅有一个不同的直接谓词。'
+                   '字段、期望值、实际判定及审阅队列从固定夹具和本轮观察派生；标记不证明语义充分或存在缺陷。') if review else ''
     return (f'实际完整回归 **{report["tests_run"]}/{report["tests_run"]}**，零跳过/失败/错误、退出码 0。'
             f'原生 SDK＋合成后台对话 **{trace["local_dialogues"]["dialogues_passed"]}** 组，'
             f'{len(turns)} 个 user 轮次、{len(calls)} 次 HTTP 调用、{len(writes)} 次业务发送。\n\n'
             f'计划保留 {trace["case_count"]} 案例／{len(plan)} AT；关联 {unique} 个不同 AT、{links} 条关联关系，'
-            f'{len(plan)-unique} 条尚未关联首批对话。完整业务 AT 执行 **{trace["business_ats_executed"]}**；'
+            f'{len(plan)-unique} 条尚未关联首批对话。{business_label} **{trace["business_ats_executed"]}**；'
             '全部本地业务验收由 M6.7 收口，课堂正式评分由 M7 单列。\n\n'
             f'run_id `{report["run_id"]}`；source_sha256 `{report["source_sha256"]}`；'
-            f'specification_sha256 `{report["specification_sha256"]}`。'+replay_text+boundary_text+package_text+defect_text)
+            f'specification_sha256 `{report["specification_sha256"]}`。'+replay_text+boundary_text+package_text+defect_text+business_text+review_text)
 
 
 def update_current(root, report, trace):

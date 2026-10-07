@@ -134,6 +134,9 @@ class DefectRegisterTests(unittest.TestCase):
         control=FoundationTraceTests();control.setUp()
         report=control.report
         report['source_files']=trace.source_file_hashes()
+        # This is a defect-closure control, not an executed native M6.7 batch.
+        # Exclude that batch's fixture instead of fabricating its observations.
+        report['source_files'].pop('tests/fixtures/m6_business_acceptance.json')
         report['results'].update(self.report()['results'])
         report['tests_run']=len(report['results'])
         snapshot={**control.snapshot,'source_files':report['source_files']}

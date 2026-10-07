@@ -6,7 +6,7 @@ from support_agent.domain.rules import identifier
 
 
 def starts_returns_request(text):
-    return bool(re.match(r'^(?:please\s+)?(?:return\b|start (?:a )?return\b|退货|退回)', text.strip(), re.I))
+    return bool(re.match(r'^(?:can I\s+|please\s+)?(?:return\b|start (?:a )?return\b|退货|退回)', text.strip(), re.I))
 
 
 def _selection(text):
@@ -39,7 +39,10 @@ def request_from_history(history):
     for index, entry in enumerate(history):
         if entry.get('role') != 'user':
             continue
-        text = entry['content'].strip()
+        # A finite eligibility question is intake, never assent. Keep its real
+        # user source in history; only normalize the local parsing prefix.
+        text = re.sub(r'^can I\s+(?=return\b)', '', entry['content'].strip(), flags=re.I)
+        text = text.rstrip('?？')
         starts = starts_returns_request(text)
         if not starts and request is None:
             continue

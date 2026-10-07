@@ -32,6 +32,10 @@ def request_from_history(history, *, kind="items"):
             continue
         text = entry['content'].strip()
         initial = starts(text)
+        # A new explicit replacement action belongs to its own producer. Its
+        # items JSON cannot become a correction to an older opposite-kind draft.
+        if not initial and (starts_exchange_request(text) if kind == 'items' else starts_items_request(text)):
+            continue
         structured = re.search(r'(?:items|商品)\s*[:：]\s*(\{.*)', text, re.I | re.S)
         line_start = bool(re.search(r'(?:\bitem\s+|商品\s*)[\w-]+\s*[:：]', text, re.I))
         method = re.search(r'(?:pay\s+with|payment_method_id\s*[:=]|结算方式\s*[:：]|使用支付方式)\s*([\w-]+)', text, re.I)
@@ -58,7 +62,7 @@ def request_from_history(history, *, kind="items"):
         if structured:
             try:
                 body = json.loads(structured[1])
-                if (not isinstance(body, dict) or set(body) - {'replacements', 'payment_method_id'}
+                if (not isinstance(body, dict) or set(body) - {'replacements', 'payment_method_id', 'max_total_price'}
                         or 'replacements' not in body or not isinstance(body['replacements'], list)):
                     raise ValueError()
                 lines = []
@@ -74,6 +78,10 @@ def request_from_history(history, *, kind="items"):
                     raise ValueError()
                 request['lines'] = lines  # Explicit envelope replaces the whole draft, preserving occurrences.
                 request['method'] = {'query': body['payment_method_id'], 'index': index} if 'payment_method_id' in body else None
+                request.pop('max_total_price', None)
+                if 'max_total_price' in body:
+                    from support_agent.domain.money import finite_amount
+                    request['max_total_price'] = finite_amount(body['max_total_price'])
             except (TypeError, ValueError):
                 request['error'] = request['error'] if request['error'] == 'quantity_change_unsupported' else 'invalid_items_json'
         else:
@@ -129,6 +137,8 @@ def criteria_for_line(line, original):
     if 'replacement_item_id' in line:
         return allow('explicit_variant', 'Exact variant choice retained for validation.', 'IT-01', details={'variant': line['replacement_item_id']})
     result = _blank()
+    if 'text' in line and re.fullmatch(r'(?:same variant|same item|identical replacement|同款|相同规格)[.!。！]?', line['text'], re.I):
+        return allow('explicit_variant', 'The customer requested a replacement of the same variant.', 'EX-01', details={'variant': line['item_id']})
     if 'options' in line:
         if not isinstance(line['options'], dict) or any(k not in original['options'] or not isinstance(v, str) or not v.strip() for k, v in line['options'].items()):
             return input_error('invalid_item_options', 'Use known option names and string values.', 'IT-01')

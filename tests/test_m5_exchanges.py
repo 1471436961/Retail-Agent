@@ -201,8 +201,8 @@ class ExchangeFlowTests(unittest.TestCase):
         while decision.calls: decision=f.consume(decision)
         self.assertEqual(f.code(),'exchange_confirmation_required'); self.assertFalse(f.posts())
 
-    def test_same_variant_cross_product_unavailable_and_unknown_original_block(self):
-        for variant,code in [('item_blue','unchanged_variant'),('foreign_item','target_variant_required'),('item_red','variant_unavailable')]:
+    def test_cross_product_unavailable_and_unknown_original_block(self):
+        for variant,code in [('foreign_item','target_variant_required'),('item_red','variant_unavailable')]:
             with self.subTest(variant=variant):
                 f=ExchangeConversation()
                 if code=='variant_unavailable': f.api.products['product_mug']['items'][1]['available']=False

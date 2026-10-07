@@ -33,7 +33,7 @@ def _partial_order_scope(text):
     return bool(re.search(
         r"\b(?:partial(?:ly)?\b(?!\s+refund\b)|part\s+of|some\s+(?:of\s+)?(?:the\s+)?items?|"
         r"(?:only|just|one|a\s+single)\s+(?:the\s+)?(?:item(?:s)?\b|item_[\w-]+)|"
-        r"cancel\s+(?:the\s+)?items?\b)"
+        r"cancel\s+(?:the\s+)?(?:[A-Za-z-]+\s+){0,3}items?\b)"
         r"|部分(?:订单|商品|取消)|取消(?:一部分|部分|其中|一件|一个商品)"
         r"|(?:只|仅)(?:取消)?\s*(?:商品|一件|一个|item_[\w-]+)|订单.*(?:中的|里|内).*商品",
         intent, re.I))
@@ -72,7 +72,11 @@ def request_from_history(history):
         if re.search(r"\b(?:don't|do not|never|not to)\s+cancel\b|不要取消|别取消|不取消", text, re.I):
             active = False
             continue
-        if not initial and (starts_address_request(text) or starts_payment_request(text)):
+        from support_agent.domain.items_intake import starts_items_request, starts_exchange_request
+        from support_agent.domain.returns_intake import starts_returns_request
+        if not initial and (starts_address_request(text) or starts_payment_request(text)
+                            or starts_items_request(text) or starts_exchange_request(text)
+                            or starts_returns_request(text)):
             active = False
             continue
         if not initial and (request is None or not active):

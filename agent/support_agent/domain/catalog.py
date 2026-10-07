@@ -99,14 +99,16 @@ def _variants(products):
     return variants
 
 
-def resolve_replacements(order_items, replacements, products, *, requested_options=None, sequential_matching=True) -> dict:
+def resolve_replacements(order_items, replacements, products, *, requested_options=None, sequential_matching=True, allow_same_variant=False) -> dict:
     """Check a selected full list; M5.1 candidate_selection supplies alternatives.
 
     requested_options has one dict per occurrence, reflecting only explicitly
     requested attribute changes. Omitted attributes must retain original values.
     Only ID pairs belong in future backend requests; no quantity/occurrence field.
+    A delivered exchange may replace a defective unit with the same variant.
+    The trusted action owner must opt in; pending modifications remain changes.
     """
-    if type(sequential_matching) is not bool:
+    if type(sequential_matching) is not bool or type(allow_same_variant) is not bool:
         return input_error("invalid_matching_mode", "The trusted matching mode must be boolean.", "U5")
     if replacements is None:
         return need("replacement_list_required", "Specify the complete original/replacement ID list.", "IT-01", "U5")
@@ -141,7 +143,7 @@ def resolve_replacements(order_items, replacements, products, *, requested_optio
         product_id, target = variants[target_id]
         if product_id != original["product_id"]:
             return deny("different_product", "Only a variant of the same product can replace this item.", "IT-01", "EX-01")
-        if target_id == source_id:
+        if target_id == source_id and not allow_same_variant:
             return deny("unchanged_variant", "An item change must select a different variant.", "IT-01")
         if not target["available"]:
             return deny("variant_unavailable", "Unavailable variants cannot enter the replacement list.", "IT-01", "EX-01")

@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "scope": "Explicit M6.7 changes from the preserved M6.3 byte baseline; not a signature",
+  "baseline_sha256": "8978475df25a382239d927d53e2d34673fbb7608ac54bce154501a6a9d0265ba",
+  "changes": [
+    {
+      "path": "agent/support_agent/adapters/write_runtime.py",
+      "before_sha256": "1b7a801322b497ff698061b0e52ddb46384b3973fda43fab3721c33b9f2a2bd4",
+      "after_sha256": "42d9ea7572dd203caa121496ca9a4f71f757e8dba5a7aa04e4640da76000208e",
+      "reason": "Trusted exchange action opts into same-variant eligibility at the write-time business check; pending modification does not."
+    },
+    {
+      "path": "agent/support_agent/address_session.py",
+      "before_sha256": "228823f749fe875a1d7d4728cf453253c223b1781827d5a9b857c0d1d7c05079",
+      "after_sha256": "9b09605a3936a404c39a6ed2204de565e38f5fbb866f83f39e8d2b64b7a1224a",
+      "reason": "The address route ignores only explicitly withdrawn unsent other-action proposals, allowing a new independently confirmed address request without resurrecting the old write."
+    },
+    {
+      "path": "agent/support_agent/cancellation_session.py",
+      "before_sha256": "58ef2f4abd4a0864a2ef59fcdf4986132ea6447923fd29b8f4b17468dec7535e",
+      "after_sha256": "55ab89d3bb4379681af87c7e1b7e636d3f2aaf74eb4209ea698af2f7d52381e4",
+      "reason": "Ignore only withdrawn unsent competing proposals when forming a new separately confirmed whole-order cancellation recap."
+    },
+    {
+      "path": "agent/support_agent/domain/cancellation_intake.py",
+      "before_sha256": "5a5313bb444f00d4110d524248d461a6e68cd0aea35aa77e1bc2b75708f2d027",
+      "after_sha256": "6cd681a310dd1f7638d8908e4e662ad38b343664bd38f33c39fa2cc4932d9563",
+      "reason": "New explicit item/exchange/return requests end old cancellation reason intake; distinct producer JSON cannot rewrite old request provenance. Finite adjective-qualified item cancellation is rejected as narrowed scope before private reads, while reason text remains data."
+    },
+    {
+      "path": "agent/support_agent/domain/catalog.py",
+      "before_sha256": "c2fe0c7940ba78f33e7d3a181c5738671d457a03b93d7805b3892bdcb4aa2242",
+      "after_sha256": "6ccfe9389649190153ddb93e72c4c03c75ff1b6b31db254ca296c36a94583bce",
+      "reason": "Strict internal same-variant opt-in for defective-unit exchanges, with stock/product/options/count checks retained."
+    },
+    {
+      "path": "agent/support_agent/domain/items_intake.py",
+      "before_sha256": "43fdd799a876c9898816f23a2ab299ab61521f0c349fcb9157381b60aff98ea2",
+      "after_sha256": "deeabd7ec2e8b4fd7496969bd0b5a5a52a3ff6acfbffa578cabd416d5cbc6e1f",
+      "reason": "Exact supported customer same-variant phrases bind the already specified original variant ID."
+    },
+    {
+      "path": "agent/support_agent/domain/returns_intake.py",
+      "before_sha256": "8806ba64a3cddd47f15afcc86794d0f81f8f4b19f7f98835460001c977352c16",
+      "after_sha256": "0c920a7877f97ab012ed628699b236a3a1267164c99f557eab680509f2ebe177",
+      "reason": "A finite real-user Can I return eligibility question enters read-only preparation and exposes the existing one-application restriction; the question cannot create assent or send a write."
+    },
+    {
+      "path": "agent/support_agent/items_session.py",
+      "before_sha256": "85fdaee33a84883f0cf8436fd359d391b88303edefd3b3c7999751bbcfd1fdee",
+      "after_sha256": "f458b405800c8483b1fe4bc090395d376ee5b590d827df7a5766dbb804cce3d4",
+      "reason": "Trusted exchange same-variant opt-in; withdrawn unsent proposals do not block fresh recaps; per-line directional displays preserve public full-list arithmetic. Optional customer whole-order budgets count all original occurrences and selected current target prices, are refreshed before sending, and stay outside wire payloads."
+    },
+    {
+      "path": "agent/support_agent/payment_session.py",
+      "before_sha256": "9c5339d21fb0c01587e1ea32d7f36b9abc9ff27973b15f9d4b2db94d56795874",
+      "after_sha256": "4dd4d31a1b0b063543b864e836c7e228ec071b9996fee0f079a7a3a924bb89d9",
+      "reason": "Ignore only withdrawn unsent competing proposals when forming a new separately confirmed payment recap."
+    },
+    {
+      "path": "agent/support_agent/proposals.py",
+      "before_sha256": "fc6d2eeeece7bcaa73e959c219df1316d6f22ac9a270100b302b267b4fb516d8",
+      "after_sha256": "0aea8d98ad335886a8dcec5587f3235040dc0f2d14b762493cc9cbd928c642e9",
+      "reason": "Later unrelated text or assent cannot resurrect a withdrawn proposal version or its former confirmation."
+    },
+    {
+      "path": "agent/support_agent/read_session.py",
+      "before_sha256": "3fb50db07c385b8d90d002de9bb292d117a393b4b4b3ad7a46b3893f0704cc89",
+      "after_sha256": "7eb654cd5589eda3f0f26e253643529dfb71eed95037ad5f7c2ee370d3b7f8db",
+      "reason": "Read-only original-price, highest-unit, charge/refund, retained-occurrence and lowest available catalog analyses; selected-item estimates and same-order return/exchange savings comparisons use fresh owned evidence with no proposal or permission. Finite unsupported account/payment, compensation and delivery-guarantee requests are explained without I/O, mutation or settlement inference."
+    },
+    {
+      "path": "agent/support_agent/returns_session.py",
+      "before_sha256": "8e05659f3e7141c135286ce966cc0bb9dd60fd152858b485b2b0240370251dd6",
+      "after_sha256": "c2460ca6f454099e132cb08406c2aa342217d6b9e5aa634b0a161bafd43372c2",
+      "reason": "An explicitly withdrawn unsent competing proposal does not block a new complete return recap; attempted journals remain protected."
+    },
+    {
+      "path": "agent/support_agent/workflow_boundary.py",
+      "before_sha256": "31d228c05039d0217d0d9b04804adc01f77b16f76a2900e14a03931a6247924f",
+      "after_sha256": "a40383f750bb1e6f3f2f6bd437bdc85c206b52fccc12b0bc0992ec7ed0a64258",
+      "reason": "A genuinely withdrawn task with no mutating journal is no longer an unfinished blocker; sent or unknown operations and dependencies remain unresolved."
+    }
+  ]
+}

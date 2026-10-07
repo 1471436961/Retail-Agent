@@ -75,7 +75,7 @@ def route_address(state, text=None):
         return None
     current = _current_records(state)
     attempted = {o["version"] for o in state["operations"] if o["mutates"]}
-    if any(p["spec"]["action"] not in ADDRESS_ACTIONS and p["version"] not in attempted for p in current):
+    if any(p["status"] != "withdrawn" and p["spec"]["action"] not in ADDRESS_ACTIONS and p["version"] not in attempted for p in current):
         # Preserve the shared scope parser's amendment/condition explanation.
         # A foreign proposal is not an address intake, and its unfinished plan
         # is also protected by _prepare before any new proposal is presented.

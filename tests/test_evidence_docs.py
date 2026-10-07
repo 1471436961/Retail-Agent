@@ -88,3 +88,26 @@ class CurrentEvidenceTests(unittest.TestCase):
         self.assertIn('本轮新增修复 1 项',text)
         self.assertIn('20 个不同回归方法',text)
         self.assertIn('完整业务 AT 执行 **0**',text)
+
+    def test_direct_business_atoms_cases_and_scenarios_are_distinct_from_associations(self):
+        self.trace['business_ats_executed']=4
+        self.trace['local_business_acceptance']={'scenarios_executed':2,'ats_passed_local':4,
+                                               'ats_not_executed':518,'cases_complete_local':1}
+        text=docs.render_current(self.report,self.trace)
+        self.assertIn('关联 1 个不同 AT、2 条关联关系',text)
+        self.assertIn('直接本地业务 AT 执行 **4**',text)
+        self.assertIn('2 个独立合成对话，4/522',text)
+        self.assertIn('518 条未执行；1/134',text)
+        self.assertIn('M0.2 和 M6 整体保持未完成',text)
+
+    def test_complete_business_inventory_changes_local_completion_only(self):
+        self.trace['business_ats_executed']=522
+        self.trace['local_business_acceptance']={'scenarios_executed':158,'ats_passed_local':522,
+                                               'ats_not_executed':0,'cases_complete_local':134}
+        text=docs.render_current(self.report,self.trace)
+        self.assertIn('直接本地业务验收完成',text)
+        self.assertIn('0 条未执行；134/134',text)
+        self.assertIn('M0.2 和 M6 的本地验收完成，课堂实测仍归 M7',text)
+        self.assertIn('不代表原始课堂 fixture／模型效果',text)
+        self.trace['local_business_acceptance']['cases_complete_local']=133
+        self.assertIn('M0.2 和 M6 整体保持未完成',docs.render_current(self.report,self.trace))

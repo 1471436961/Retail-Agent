@@ -184,6 +184,68 @@ def read_intent(text: str):
     return None
 
 
+def capability_reply(text):
+    """Explicit unsupported requests need an explanation, not account access.
+
+    This operates only on the current real user text; business JSON cannot
+    manufacture a new operation. It grants no permission for alternatives.
+    """
+    if '{' in text:
+        return None
+    if re.search(r'\b(change|update|modify)\b.{0,60}\b(email|email address)\b|修改.{0,20}(邮箱|电子邮件)', text, re.I):
+        return 'Customer support cannot change your profile email. No email change has been made or arranged; there is no supported email-change API.'
+    if re.search(r'\b(add|register)\b.{0,40}\b(new\s+)?(payment method|credit card|card|paypal)\b|新增支付方式|添加.{0,15}(支付方式|信用卡)', text, re.I):
+        return 'Add a new payment method through the website. Customer support has no payment-method creation API and cannot use an unverified new method ID. An existing saved method may be considered in a separately confirmed supported request.'
+    from support_agent.domain.payment_intake import starts_payment_request
+    if (not starts_payment_request(text) and
+            re.search(r'\b(split|divide)\b.{0,60}\b(two|2|multiple)\b.{0,20}\b(cards|methods)\b|分摊.{0,15}(两张卡|多张卡)|两张卡.{0,20}(分摊|混合支付)', text, re.I)):
+        return 'Split or mixed payment across two cards is unsupported. A supported payment change uses one existing saved method covering the full order; no split payment has been submitted.'
+    if re.search(r'\b(place|create)\b.{0,30}\b(new order|an order)\b|重新下单|代下.{0,10}订单', text, re.I):
+        return 'Customer support cannot place a new order or reorder items. No purchase has been made or arranged. Product information and a separately confirmed supported existing-order request remain available.'
+    if re.search(r'\b(undo|restore|reverse)\b.{0,45}\b(cancellation|cancelled order|canceled order)\b|撤销取消|恢复.{0,15}已取消订单', text, re.I):
+        return 'A cancelled order cannot be restored through the supported API. No restoration, expedited delivery or new order has been made or arranged. You may request human assistance, without a guarantee of an exception.'
+    if re.search(r'\b(guarantee|promise)\b.{0,60}\b(five|5)\s+days\b|保证.{0,20}[五5]天', text, re.I):
+        return 'The available records do not establish a five-day processing or delivery guarantee. No expedited handling or delivery promise has been arranged. Any cancellation still needs your own allowed reason and complete confirmation.'
+    if re.search(r'\b(compensate|compensation|reorder|replace lost|lost package refund)\b|丢失赔偿|丢件补发', text, re.I):
+        return 'The supported API does not establish lost-package compensation, a replacement shipment or a new-order purchase. None has been arranged, and no refund or arrival is claimed. A separately confirmed supported request or human assistance remains available.'
+    return None
+
+
+def _purchase_amounts(order):
+    """Read-only original-price and recorded-payment analysis, never settlement."""
+    from support_agent.amount_summary import exact_sum
+    from support_agent.domain.catalog import _selected
+    from support_agent.domain.money import display_exact_amount
+    def displayed_sum(values):
+        return display_exact_amount(exact_sum(values))
+    items = order['items']
+    highest = max((item['price'] for item in items), default=None)
+    expensive = [{k:item[k] for k in ('item_id','name','price')} for item in items if item['price'] == highest]
+    payments = order.get('payments', [])
+    charges = [row['amount'] for row in payments if row['transaction_type'] == 'payment']
+    refunds = [row['amount'] for row in payments if row['transaction_type'] == 'refund']
+    result = {'order_id':order['order_id'],
+              'original_item_total':displayed_sum([item['price'] for item in items]) if items else None,
+              'highest_original_price_units':expensive,
+              'recorded_charge_total':displayed_sum(charges) if charges else None,
+              'visible_refund_total':displayed_sum(refunds) if refunds else None,
+              'settlement_verified':False}
+    request = order.get('return_request')
+    if request is not None:
+        selection = _selected(items,request['item_ids'])
+        if selection['decision'] == 'allow':
+            from collections import Counter
+            remaining = Counter(request['item_ids']); retained=[]
+            for item in items:
+                if remaining[item['item_id']]:remaining[item['item_id']]-=1
+                else:retained.append(item)
+            result['retained_original_units']=[{k:item[k] for k in ('item_id','name','price')} for item in retained]
+            result['retained_original_total']=displayed_sum([item['price'] for item in retained])
+        else:
+            result['retained_original_units']=None;result['retained_original_total']=None
+    return result
+
+
 def format_reads(records):
     lines = []
     for name, _, body in records:
@@ -194,15 +256,142 @@ def format_reads(records):
         elif name in {"get_order", "list_customer_orders"}:
             orders = [body] if name == "get_order" else body["orders"]
             lines.append("Owned order records: " + json.dumps(orders, ensure_ascii=False))
+            lines.append('Original-price analysis (occurrences preserved; charges and visible refunds are separate, missing evidence is unknown, not zero; no settlement/arrival proof): '
+                         + json.dumps([_purchase_amounts(order) for order in orders],ensure_ascii=False))
+            if name == 'list_customer_orders':
+                lines.append('Original purchases grouped by exact product ID (all recorded unit occurrences, not current prices or refunds): '
+                             + json.dumps(_purchase_groups(orders),ensure_ascii=False))
             lines.append("Original item prices are recorded separately from catalog prices. Order dates and delivery estimates are unknown unless explicitly provided; processed does not prove a shipment date, and a tracking ID alone is not a shipment event.")
         elif name == "list_products":
             lines.append(f"Product kinds: {len(body['products'])}. " + json.dumps(body["products"], ensure_ascii=False))
         elif name == "get_product":
             items = body["items"]
             lines.append(f"Variants: {len(items)}; available variants: {sum(i['available'] for i in items)}. Current catalog prices/options: " + json.dumps(body, ensure_ascii=False))
+            available = [item for item in items if item['available']]
+            lowest = min((item['price'] for item in available), default=None)
+            lines.append('Lowest current price among available variants (all equal-price choices retained; no purchase permission): '
+                         + json.dumps({'product_id':body['product_id'],'price':lowest,
+                                       'variants':[item for item in available if item['price']==lowest]},ensure_ascii=False))
         else:
             lines.append("Current catalog variant (not original purchase price): " + json.dumps(body, ensure_ascii=False))
     return "\n".join(lines)
+
+
+def _purchase_groups(orders):
+    from support_agent.amount_summary import exact_sum
+    from support_agent.domain.money import display_exact_amount
+    groups = {}
+    for order in orders:
+        for item in order['items']:
+            row = groups.setdefault(item['product_id'], {'product_id':item['product_id'], 'units':[]})
+            row['units'].append({'order_id':order['order_id'], 'item_id':item['item_id'],
+                                 'name':item['name'], 'original_price':item['price']})
+    for row in groups.values():
+        row['unit_count'] = len(row['units'])
+        row['original_price_total'] = display_exact_amount(exact_sum([i['original_price'] for i in row['units']]))
+    return list(groups.values())
+
+
+def route_scope_analysis(state):
+    """Finite real-user, read-only estimates and same-order alternative comparison.
+
+    Read fresh owned facts for this request only. This creates no proposal,
+    confirmation, task or write permission; any later business request must
+    pass its ordinary complete producer and confirmation path.
+    """
+    text = state['user_request']
+    match = re.fullmatch(r'(Estimate selected items|Compare return and exchange)\s+order\s+(#[\w-]+)\s*:\s*(\{.*\})', text, re.I | re.S)
+    if not match:
+        return None
+    from support_agent.domain.catalog import _selected, return_refund_basis, resolve_replacements
+    from support_agent.domain.items_intake import criteria_for_line
+    from support_agent.domain.candidate_selection import select_candidates
+    from support_agent.domain.rules import identifier
+    from support_agent.domain.orders import order_state_rule
+    from support_agent.address_session import _accepted_bodies
+    try:
+        body = json.loads(match[3]); comparison = match[1].casefold().startswith('compare')
+        if not isinstance(body, dict) or set(body) != ({'item_ids', 'replacements'} if comparison else {'item_ids'}):
+            raise ValueError()
+        ids = body['item_ids']
+        if not isinstance(ids, list) or not ids or any(not identifier(i) for i in ids):
+            raise ValueError()
+        replacements = body.get('replacements', [])
+        if comparison and (not isinstance(replacements, list) or not replacements):
+            raise ValueError()
+        for row in replacements:
+            if not isinstance(row, dict) or set(row) not in ({'item_id','criteria'}, {'item_id','replacement_item_id'}, {'item_id','options'}) or not identifier(row['item_id']):
+                raise ValueError()
+    except (TypeError, ValueError):
+        return reply(state, 'scope_analysis_input_error: Use exact item IDs and supported complete replacement criteria. No operation was created.')
+    oid = match[2]
+    if oid not in customer_order_ids(state['customer_record']):
+        return reply(state, 'scope_analysis_order_not_owned: No private order read or write was requested.')
+    start = max(i for i,e in enumerate(state['history']) if e['role'] == 'user')
+    history = state['history'][start:]
+    orders = _accepted_bodies(history, {'get_order'})
+    order = next((o for o in reversed(orders) if o['order_id'] == oid), None)
+    if order is None:
+        try:
+            return emit(state, 'get_order', {'order_id':oid})
+        except InvalidAction:
+            return reply(state, 'scope_analysis_read_budget_exceeded: No old snapshot replaces the required current read.')
+    estimate = return_refund_basis(order['items'], ids)
+    if estimate['decision'] != 'allow':
+        return reply(state, 'scope_analysis_' + estimate['code'] + ': ' + estimate['message'])
+    result = {'order_id':oid,'item_ids':ids,'selected_original_units':_selected(order['items'],ids)['details']['items'],
+              'potential_refund_estimate':estimate['details'], 'write_authorized':False,
+              'settlement_or_arrival_proven':False}
+    if comparison:
+        return_guard = order_state_rule(order, 'return'); exchange_guard = order_state_rule(order, 'exchange')
+        if return_guard['decision'] != 'allow' or exchange_guard['decision'] != 'allow':
+            return reply(state, 'scope_analysis_state_not_allowed: The requested alternatives are not both eligible; no plan or write was created.')
+        originals = []
+        for row in replacements:
+            selected = _selected(order['items'],[row['item_id']])
+            if selected['decision'] != 'allow':
+                return reply(state, 'scope_analysis_' + selected['code'] + ': ' + selected['message'])
+            originals.append(selected['details']['items'][0])
+        catalogs = _accepted_bodies(history, {'get_product'})
+        needed = list(dict.fromkeys(i['product_id'] for i in originals))
+        missing = [pid for pid in needed if not any(p['product_id'] == pid for p in catalogs)]
+        if state['tool_calls_since_user'] + len(missing) > MAX_READ_CALLS_PER_REQUEST:
+            return reply(state, 'scope_analysis_read_budget_exceeded: The complete comparison cannot be split or guessed.')
+        if missing:
+            return emit(state, 'get_product', {'product_id':missing[0]})
+        pairs, changes, prices = [], [], []
+        for row, original in zip(replacements, originals):
+            catalog = next(p for p in catalogs if p['product_id'] == original['product_id'])
+            criteria = criteria_for_line({**row,'text':text,'index':start}, original)
+            if criteria['decision'] != 'allow':
+                return reply(state, 'scope_analysis_' + criteria['code'] + ': ' + criteria['message'])
+            if 'variant' in criteria['details']:
+                target = next((i for i in catalog['items'] if i['item_id'] == criteria['details']['variant']),None)
+                if target is None:
+                    return reply(state, 'scope_analysis_target_variant_required: No cross-product substitute was selected.')
+            else:
+                selected = select_candidates(order['items'], row['item_id'], [catalog], criteria['details']['criteria'])
+                if selected['code'] != 'candidate_selected':
+                    return reply(state, 'scope_analysis_' + selected['code'] + ': No unique complete alternative can be compared. ' + json.dumps(selected['details'],ensure_ascii=False))
+                target = selected['details']['selected']
+            pairs.append({'existing_item_id':row['item_id'],'replacement_item_id':target['item_id']})
+            changes.append({k:v for k,v in target['options'].items() if original['options'].get(k) != v})
+            prices.append({'original_item_id':row['item_id'],'original_price':original['price'],'target':target})
+        resolved = resolve_replacements(order['items'],pairs,catalogs,requested_options=changes,sequential_matching=False,allow_same_variant=True)
+        if resolved['decision'] != 'allow':
+            return reply(state, 'scope_analysis_' + resolved['code'] + ': ' + resolved['message'])
+        difference = resolved['details']['price_difference']
+        from decimal import Decimal
+        savings = max(Decimal(0), -Decimal(str(difference)))
+        refund = Decimal(str(estimate['details']['aggregate_amount']))
+        result.update(exchange_candidates=prices, exchange_signed_difference=difference,
+                      exchange_savings=str(savings), mutually_exclusive_same_order=True,
+                      most_saving_option='return' if refund > savings else 'exchange' if savings > refund else 'customer_choice_required')
+    message = 'Read-only scope analysis: ' + json.dumps(result,ensure_ascii=False)
+    message += '\nPotential amounts are not cancellations, refunds or settlement. A same-order return and exchange cannot both be submitted. Review the comparison and make a new complete business request; nothing here confirms or sends it.' if comparison else '\nThis is a potential selected-item estimate, not cancellation or return eligibility, a submitted operation or money received. Partial cancellation is unsupported; keeping the order causes no write.'
+    if len(message) > 4096:
+        return reply(state, 'scope_analysis_display_budget_exceeded: The complete comparison cannot be displayed here. No list is truncated or submitted; human assistance is needed.')
+    return reply(state, message)
 
 
 def advance(turn: TurnInput, state: dict, model_adapter=None):
@@ -239,6 +428,9 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                     "failed": "I could not verify or read the requested records because the lookup failed. Please check the details or try again.",
                     "mismatch": "The customer lookup/read did not match the verification details or authorized scope."}[status]
             return reply(state, text)
+        analysis = route_scope_analysis(state) if state['identity']['verified'] else None
+        if analysis is not None:
+            return analysis
         if len(records) == 1 and records[0][0] in {"lookup_customer", "verify_customer"}:
             from support_agent.exchange_session import route_exchange
             exchange = route_exchange(state)
@@ -350,12 +542,18 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if state["payment_pending"] is not None:
         from support_agent.payment_session import route_payment
         return route_payment(state, text)
+    limitation = capability_reply(text)
+    if limitation is not None:
+        return reply(state, limitation)
     if proof:
         name = "lookup_customer" if proof["email"] else "verify_customer"
         args = {"customer_id": state["customer_id"] or "", "email": proof["email"]} if name == "lookup_customer" else {"customer_id": state["customer_id"] or "", **proof}
         return emit(state, name, args)
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
+    analysis = route_scope_analysis(state)
+    if analysis is not None:
+        return analysis
     from support_agent.amount_summary import route_summary
     summary = route_summary(state)
     if summary is not None:

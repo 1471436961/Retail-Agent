@@ -45,8 +45,8 @@ def backend_snapshot(api):
     return deepcopy({'customers': api.customers, 'orders': api.orders, 'products': api.products})
 
 
-def execute(scenario, *, observer=None, restore=False):
-    backend = MatrixBackend()
+def execute(scenario, *, observer=None, restore=False, backend_factory=MatrixBackend, verifier=verify_scenario):
+    backend = backend_factory()
     snapshot = apply_patches(backend_snapshot(backend), scenario['setup'])
     for key, value in snapshot.items():
         setattr(backend, key, value)
@@ -126,7 +126,7 @@ def execute(scenario, *, observer=None, restore=False):
               'turns':turns, 'final_backend':backend_snapshot(backend),
               'journal':[{'action':o['spec']['action'],'status':o['status']} for o in state['operations'] if o['mutates']],
               'handoff':state['handoff']['status']}
-    verify_scenario(scenario, result)
+    verifier(scenario, result)
     return result
 
 

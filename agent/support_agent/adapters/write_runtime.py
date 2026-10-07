@@ -82,7 +82,7 @@ class SessionWriteRuntime(WriteRuntime):
                 product["items"] = list({i["item_id"]: i for i in product["items"]}.values())
             return resolve_replacements(order["items"], spec["parameters"]["replacements"],
                                         list(products.values()), requested_options=self.requested_options,
-                                        sequential_matching=action == "modify_items")
+                                        sequential_matching=action == "modify_items", allow_same_variant=action == "exchange")
         return allow("complete_parameters_checked", "Accepted facts bind the complete confirmed parameters; no settlement is asserted.", "CF-01")
 
     def claim_sent(self, state, call_id):

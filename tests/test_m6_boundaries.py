@@ -430,17 +430,23 @@ class BoundaryPublicationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'passed wrapper'):
             contract.trace_boundaries({**self.parent,'results':{},'boundary_batch':self.value})
 
-    def test_m63_baseline_hashes_match_agent_and_fixed_dialogue_bytes(self):
+    def test_m63_baseline_preserved_with_explicit_m67_changes_and_unchanged_dialogues(self):
         import hashlib
+        spec=importlib.util.spec_from_file_location('business_changes',ROOT/'scripts/business_acceptance.py')
+        business=importlib.util.module_from_spec(spec); spec.loader.exec_module(business)
         baseline=json.loads((ROOT/'tests/fixtures/m6_3_source_baseline.json').read_text(encoding='utf-8'))
         self.assertEqual(baseline['scope'],'M6.3 agent and fixed dialogue byte baseline; not a signature')
         expected={p.relative_to(ROOT).as_posix() for p in (ROOT/'agent').rglob('*.py') if '__pycache__' not in p.parts}
         expected|={'agent/agent.json','tests/fixtures/m6_dialogues.json','tests/fixtures/m6_combinations.json'}
         self.assertEqual(set(baseline['source_files']),expected)
         self.assertEqual(len(expected),59)
+        evidence=business.source_change_evidence()
+        self.assertEqual(len(evidence['changes']),13)
+        self.assertEqual(evidence['unchanged_files'],46)
+        changed={r['path']:r['after_sha256'] for r in evidence['changes']}
         for name,digest in baseline['source_files'].items():
             with self.subTest(path=name):
-                self.assertEqual(hashlib.sha256((ROOT/name).read_bytes()).hexdigest(),digest)
+                self.assertEqual(hashlib.sha256((ROOT/name).read_bytes()).hexdigest(),changed.get(name,digest))
 
     def test_derived_projection_case_is_required_independently_of_name_filter_case(self):
         self.assertIn('derived_context_is_not_authority',contract.GATEWAY_CASES)

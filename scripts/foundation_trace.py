@@ -33,6 +33,9 @@ _package_spec.loader.exec_module(_package_module)
 _defect_spec = importlib.util.spec_from_file_location('defect_register', ROOT/'scripts/defect_register.py')
 _defect_module = importlib.util.module_from_spec(_defect_spec)
 _defect_spec.loader.exec_module(_defect_module)
+_business_spec = importlib.util.spec_from_file_location('business_acceptance', ROOT/'scripts/business_acceptance.py')
+_business_module = importlib.util.module_from_spec(_business_spec)
+_business_spec.loader.exec_module(_business_module)
 SPECIFICATION_PATHS = (
     "materials/CLASSROOM.md", "materials/client_api/openapi.yaml",
     "materials/framework/agent_contract.md", "materials/framework/client_api_contract.md",
@@ -224,7 +227,8 @@ def source_paths(root=ROOT):
                     root / "scripts" / "local_dialogue_batch.py", root / "scripts" / "evidence_docs.py",
                     root / "scripts" / "local_replay_batch.py", root / "scripts" / "local_boundary_batch.py",
                     root / "scripts" / "local_package_audit.py", root / "scripts" / "lab_eval.py",
-                    root / "scripts" / "evaluate.mjs", root / "scripts" / "defect_register.py"])
+                    root / "scripts" / "evaluate.mjs", root / "scripts" / "defect_register.py",
+                    root / "scripts" / "business_acceptance.py"])
     return sorted({path for path in paths + _defect_module.source_inputs(root)
                    if "__pycache__" not in path.parts})
 
@@ -332,6 +336,17 @@ def build_trace(requirements, report, *, expected_source_digest, expected_specif
     defects = _defect_module.trace_defects(report)
     if defects is not None:
         result['defect_closure'] = defects
+    business = _business_module.trace_business(report)
+    if business is not None:
+        result['local_business_acceptance'] = business
+        result['business_ats_executed'] = business['ats_passed_local']
+        result['scope'] = 'component association and explicitly executed synthetic local business atoms; not classroom results'
+        direct = {row['at_id']:row for row in business['plan']}
+        for record in result['records']:
+            record['business_result'] = direct[record['at_id']]['business_result']
+            record['business_test_ids'] = ([_business_module.WRAPPER]
+                if direct[record['at_id']]['business_result'] == 'passed_local' else [])
+            record['business_scenario_ids'] = direct[record['at_id']]['scenario_ids']
     return result
 
 
@@ -425,7 +440,8 @@ def main(argv=None):
     started = time.monotonic()
     native_modules = {key:sys.modules.get(name) for key,name in
                       (('dialogue_batch','test_m6_dialogues'), ('replay_batch','test_m6_replays'),
-                       ('boundary_batch','test_m6_boundaries'), ('package_batch','test_m6_package'))}
+                       ('boundary_batch','test_m6_boundaries'), ('package_batch','test_m6_package'),
+                       ('business_batch','test_m6_business'))}
     saved = {key:(getattr(module,'PARENT_RUN',None),getattr(module,'BATCH_EVIDENCE',None))
              for key,module in native_modules.items() if module is not None}
     native_evidence = {}
@@ -455,7 +471,8 @@ def main(argv=None):
     exit_code = publish_run((ROOT / "docs" / "CASE-REQUIREMENTS.md").read_text(encoding="utf-8"), report,
                            snapshot=after, report_path=args.report, trace_path=args.trace)
     if exit_code: return exit_code
-    print(f"FOUNDATION_RUN_PASSED {result.testsRun}; 134 cases / 522 AT records; full business ATs executed 0")
+    trace = json.loads(args.trace.read_text(encoding='utf-8'))
+    print(f"FOUNDATION_RUN_PASSED {result.testsRun}; 134 cases / 522 AT records; direct local business ATs executed {trace['business_ats_executed']}")
     return 0
 
 

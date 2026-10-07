@@ -218,7 +218,7 @@ class FoundationTraceTests(unittest.TestCase):
     def test_source_digest_tracks_runner_oracle_and_fixture_but_not_unselected_docs_or_credentials(self):
         paths=('agent/agent.json','agent/core.py','tests/check.py','tests/fixtures/batch.json',
                'scripts/foundation_trace.py','scripts/local_dialogue_batch.py','scripts/evidence_docs.py','scripts/local_replay_batch.py','scripts/local_boundary_batch.py',
-               'scripts/local_package_audit.py','scripts/lab_eval.py','scripts/evaluate.mjs','scripts/defect_register.py')
+               'scripts/local_package_audit.py','scripts/lab_eval.py','scripts/evaluate.mjs','scripts/defect_register.py','scripts/business_acceptance.py')
         with temporary_directory() as directory:
             root=Path(directory)
             for name in paths:
@@ -253,7 +253,7 @@ class FoundationTraceTests(unittest.TestCase):
     def test_per_file_hashes_match_bytes_and_detect_single_file_change_without_git(self):
         paths = ('agent/agent.json', 'agent/core.py', 'tests/check.py', 'tests/fixtures/batch.json',
                  'scripts/foundation_trace.py', 'scripts/local_dialogue_batch.py', 'scripts/evidence_docs.py', 'scripts/local_replay_batch.py', 'scripts/local_boundary_batch.py',
-                 'scripts/local_package_audit.py','scripts/lab_eval.py','scripts/evaluate.mjs','scripts/defect_register.py')
+                 'scripts/local_package_audit.py','scripts/lab_eval.py','scripts/evaluate.mjs','scripts/defect_register.py','scripts/business_acceptance.py')
         with temporary_directory() as directory:
             root = Path(directory)
             for name in paths:

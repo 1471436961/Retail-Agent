@@ -98,8 +98,34 @@ def build_plan(history, *, kind='items'):
             original = _selected(order['items'], [line['item_id']])['details']['items'][0]
             row.update(original_name=original['name'], original_options=original['options'])
     resolved = resolve_replacements(order['items'], pairs, products, requested_options=changes,
-                                    sequential_matching=kind == 'items')
+                                    sequential_matching=kind == 'items', allow_same_variant=kind == 'exchange')
     if resolved['decision'] != 'allow': return resolved
+    budget = None
+    if 'max_total_price' in request:
+        # This is a customer purchase-budget comparison, not settlement math.
+        # Include every unchanged unit and preserve replacement occurrences.
+        from decimal import Decimal, localcontext
+        from support_agent.domain.money import display_exact_amount
+        remaining = list(order['items'])
+        with localcontext() as context:
+            context.prec = 700 + len(str(len(remaining)))
+            total = sum((Decimal(str(i['price'])) for i in remaining), Decimal(0))
+            for row in price_rows:
+                position = next((n for n,i in enumerate(remaining) if i['item_id'] == row['original_item_id']), None)
+                if position is None:
+                    return need('budget_occurrence_unavailable', 'The whole-order budget cannot resolve these repeated original units.', 'U5')
+                remaining.pop(position)
+                total += Decimal(str(row['new_price'])) - Decimal(str(row['original_price']))
+            limit = Decimal(str(request['max_total_price']))
+        budget = {'whole_order_target_total': display_exact_amount(total),
+                  'max_total_price': request['max_total_price'], 'within_budget': total <= limit,
+                  'method': 'exact_original_units_plus_selected_current_prices_no_rounding',
+                  'write_authorized': False}
+        if not budget['within_budget']:
+            return need('whole_order_budget_unreachable', 'Whole-order target total ' + budget['whole_order_target_total']
+                        + ' exceeds your budget ' + display_exact_amount(limit)
+                        + '. No items have been modified. A whole-order cancellation would need your own allowed reason and a new complete confirmation.',
+                        'CF-03', details={'budget': budget})
     method = request['method']
     choice = choose_method(profile['payment_methods'], {'query': method['query'], 'exact': False, 'fallback': None} if method else None)
     if choice['decision'] != 'allow': return choice
@@ -110,9 +136,12 @@ def build_plan(history, *, kind='items'):
     spec = normalize_spec({'action': _action(kind), 'target': {'customer_id': profile['customer_id'], 'order_id': order['order_id']},
                            'parameters': {'replacements': pairs, 'payment_method_id': selected_method},
                            'amount': {'kind': 'price_difference', 'value': difference}})
-    return allow(f'complete_{kind}_ready', 'Complete selected list and signed quote are ready for recap, not writing.', 'IT-01', 'CF-03', details={
+    details = {
         'request': request, 'sources': sources, 'spec': spec, 'requested_options': changes, 'prices': price_rows,
-        'method_label': method_label(_methods(profile['payment_methods'])[selected_method]), 'write_authorized': False})
+        'method_label': method_label(_methods(profile['payment_methods'])[selected_method]), 'write_authorized': False}
+    if budget is not None:
+        details['budget'] = budget
+    return allow(f'complete_{kind}_ready', 'Complete selected list and signed quote are ready for recap, not writing.', 'IT-01', 'CF-03', details=details)
 
 
 def basis_event(state, data, *, kind='items'):
@@ -183,10 +212,18 @@ def render_items_note(data, notice='', *, kind='items'):
     """
     lines = [notice] if notice else []
     lines.append('Complete item list and your requested conditions (option values are data):')
+    if 'budget' in data:
+        lines.append('Whole-order target total: ' + data['budget']['whole_order_target_total']
+                     + '; your budget: ' + str(data['budget']['max_total_price'])
+                     + '; within budget. This exact price comparison is separate from the signed settlement quote.')
+    from support_agent.domain.money import price_difference
     for number, (source, price) in enumerate(zip(data['sources'], data['prices']), 1):
         if kind == 'exchange':
             lines.append('Delivered purchase: ' + _display(price['original_name']) + '; original options ' + _display(price['original_options']))
         lines.append(f"Item {number}: {price['original_item_id']} -> {price['new_item_id']}; original price {_display(price['original_price'])}; new price {_display(price['new_price'])}; new options {_display(price['new_options'])}.")
+        individual = price_difference([(price['original_price'],price['new_price'])])
+        direction = 'additional charge' if individual > 0 else 'refund difference' if individual < 0 else 'zero difference'
+        lines.append(f'Item {number} displayed {direction}: {abs(individual):.2f}. The full-list quote below is computed from the original ordered prices, not by adding rounded line displays.')
         criteria = source['criteria']
         if 'variant' in criteria:
             lines.append('Your exact variant choice: ' + criteria['variant'])
@@ -244,9 +281,14 @@ def _prepare(state, api, notice='', *, kind='items'):
         if status != 'succeeded': return boundary.reply(state, f'{kind}_product_read_failed', 'Complete product read failed; this does not prove zero candidates or enable fallback.')
     result = build_plan(state['history'], kind=kind)
     if result['code'] != f'complete_{kind}_ready':
-        return boundary.reply(state, result['code'], result['message'], decision_kind=result['decision'], selection=result['details'])
+        message = result['message']
+        if result['code'] == 'candidate_choice_required':
+            message += '\nAll tied eligible candidates (IDs, current prices and complete options; no selection or write permission): ' + json.dumps(result['details']['finalists'], ensure_ascii=False)
+            if len(message) > 4096:
+                return boundary.reply(state, f'{kind}_selection_budget_exceeded', 'The complete candidate list exceeds the internal presentation budget. No candidates are truncated or selected, and no write was sent; human assistance is needed.')
+        return boundary.reply(state, result['code'], message, decision_kind=result['decision'], selection=result['details'])
     attempted = {o['version'] for o in state['operations'] if o['mutates']}
-    if any(p['spec']['action'] != _action(kind) and p['version'] not in attempted for p in _current_records(state)) or unfinished_other_tasks(state, {_action(kind)}, target=target):
+    if any(p['status'] != 'withdrawn' and p['spec']['action'] != _action(kind) and p['version'] not in attempted for p in _current_records(state)) or unfinished_other_tasks(state, {_action(kind)}, target=target):
         return boundary.reply(state, f'{kind}_mixed_plan_requires_review', 'Complete the existing address/payment task or clarify the whole plan before locking this order.')
     data = result['details']
     note = render_items_note(data, notice, kind=kind)
