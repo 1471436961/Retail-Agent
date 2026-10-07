@@ -1,4 +1,5 @@
 name: Enterprise AI evaluation
+# Binding scope: retail_plus / Python / t2 / all 134 cases; resolved by platform config.
 on:
   push:
     branches: ["main"]
