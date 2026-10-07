@@ -14,5 +14,5 @@ jobs:
   evaluate:
     uses: mrvgao/enterprise-ai-evaluation/.github/workflows/evaluate.yml@v1.1.0
     with:
-      binding-id: "5147314e-f2da-4bac-924a-e2ad95e647e4"
+      binding-id: "d0f71d59-58f3-4d6f-a8e0-851da67bd787"
       api-url: "https://agentist.org/lab/api/enterprise-ai"

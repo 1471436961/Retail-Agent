@@ -1,8 +1,19 @@
 # 安装完整 Enterprise AI 项目
 
-绑定：1471436961/retail-agent / main；场景：retail_plus；语言：python；任务：t1。
+绑定：1471436961/retail-agent / main；场景：retail_plus；语言：python；任务：t2。
+
+## 按这个顺序操作
+
+1. 获取权限中心的 Enterprise-AI.json，保存在独立私人目录，不放入资料文件夹或 Git 仓库。
+2. 用网页命令下载完整原始 Package 和测试案例说明。在新建的普通资料文件夹运行，无需 Git 仓库，也不用先 clone；需 Python 3.9+ 和 curl。
+3. clone 绑定的仓库，进入仓库根目录。
+4. 安装项目文件。
+5. 启用终端评测。
+6. 检查、commit、push，查看结果。
 
 ## 命令安装（推荐）
+
+第二步同时下载完整原始 Package 和测试案例说明。在网页此仓库的指导中复制命令：先用 curl（Windows 用 curl.exe）下载脚本，再用 --mode materials 和个人 Enterprise-AI.json 运行。命令下载全部原始 ZIP 分卷和 test-cases-<绑定编号>-<语言>.md，逐个显示字节进度并校验 SHA-256；重试跳过已校验文件，同名不同内容不会覆盖。下载后将所有 ZIP 分卷解压到同一资料目录。不会安装项目或发起评测。Markdown 包含绑定场景的全部公开案例，不等于下一次 push 的选定范围。旧的 --mode cases 仍只下载 Markdown。
 
 先安装 Git、Python 3.9+ 和 GitHub CLI（gh）；TypeScript 本地测试另需 Node 24+。clone 自己的仓库，在绑定分支的项目根目录打开终端。在 Agentist → 我的学习 → 实验管理 → 权限中心下载个人 Enterprise-AI.json，保存在仓库外，禁止提交凭证。
 
@@ -11,7 +22,7 @@ macOS / Linux（bash 或 zsh）：
 ~~~bash
 curl -fL 'https://agentist.org/lab/enterprise-ai/install.py' -o install-enterprise-ai.py
 # 查看下载的脚本后执行：
-python3 install-enterprise-ai.py --binding 5147314e-f2da-4bac-924a-e2ad95e647e4 --config "/绝对路径/Enterprise-AI.json" --mode new
+python3 install-enterprise-ai.py --binding d0f71d59-58f3-4d6f-a8e0-851da67bd787 --config "/绝对路径/Enterprise-AI.json" --mode new
 ~~~
 
 Windows PowerShell（不需要 bash）：
@@ -19,7 +30,7 @@ Windows PowerShell（不需要 bash）：
 ~~~powershell
 Invoke-WebRequest -Uri 'https://agentist.org/lab/enterprise-ai/install.py' -OutFile install-enterprise-ai.py
 # 查看下载的脚本后执行：
-py -3 install-enterprise-ai.py --binding 5147314e-f2da-4bac-924a-e2ad95e647e4 --config "C:\Users\你的用户名\Enterprise-AI.json" --mode new
+py -3 install-enterprise-ai.py --binding d0f71d59-58f3-4d6f-a8e0-851da67bd787 --config "C:\Users\你的用户名\Enterprise-AI.json" --mode new
 ~~~
 
 全新项目用 --mode new：安装完整包，包括 agent/、scripts/、tests/、材料和文档，并自动放好 .github/workflows/hyper-lab.yml。已有 Agent 项目用 --mode existing：只安装工作流、终端辅助脚本和本说明，不修改 agent/、package.json、测试和材料。安装器先核对仓库、分支，以及已有 Agent 的场景与语言；遇到不同内容的同名文件会列出冲突并停止，不自动覆盖。先自行备份/移走冲突文件再重试。相同内容可重复安装。七题作业需先 clone 作业，用 --mode existing；不会安装答案。

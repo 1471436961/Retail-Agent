@@ -1,6 +1,7 @@
 """Push once, then read the matching managed GitHub evaluation. Python stdlib + gh."""
 import datetime as dt
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -8,11 +9,76 @@ import subprocess
 import sys
 import tempfile
 import time
+import urllib.request
+from urllib.parse import urlparse
+
+
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args, **kwargs):
+        raise ValueError('Platform redirects are not accepted')
+
+
+class LiveReceipt:
+    """Read the same owner's existing GitHub job; never submits or runs student code."""
+    def __init__(self, config_path):
+        path = Path(config_path).expanduser().resolve()
+        config = json.loads(path.read_text(encoding='utf-8-sig'))
+        self.base = config.get('platformUrl', '').rstrip('/')
+        url = urlparse(self.base)
+        hosts = {'agentist.org', 'test.agentist.org', 'parallight-lab-git-staging-mrvgaos-projects.vercel.app'}
+        if (url.scheme != 'https' or url.username or url.password or url.port or url.query or url.fragment
+            or url.path != '/lab/api/enterprise-ai' or not (url.hostname in hosts or
+                re.fullmatch(r'parallight-[a-z0-9]+-mrvgaos-projects\.vercel\.app', url.hostname or ''))):
+            raise ValueError('Invalid platform URL')
+        token_path = config.get('tokenFile')
+        self.token = (path.parent / token_path).read_text(encoding='utf-8').strip() if token_path else config.get('token')
+        if not re.fullmatch(r'[\x21-\x7e]{32,512}', self.token or ''):
+            raise ValueError('Invalid credential')
+        self.job_id = None
+        self.cursor = 0
+
+    def get(self, path):
+        request = urllib.request.Request(self.base + path, headers={'Authorization': 'Bearer ' + self.token})
+        with urllib.request.build_opener(NoRedirect).open(request, timeout=10) as response:
+            data = response.read(600001)
+            if len(data) > 600000:
+                raise ValueError('Receipt too large')
+            return json.loads(data)
+
+    def poll(self, repo, branch, sha, run_id):
+        def matches(row):
+            github = row.get('github') or {}
+            return (row.get('commit_sha') == sha and str(github.get('run_id')) == str(run_id)
+                    and github.get('repository') == repo and github.get('branch') == branch)
+        if self.job_id is None:
+            jobs = self.get('/v1/evaluations?github_run_id=' + str(int(run_id))).get('jobs', [])
+            matching_jobs = [job for job in jobs if matches(job)]
+            if not matching_jobs:
+                return
+            self.job_id = matching_jobs[0]['job_id']
+            if not re.fullmatch(r'[a-f0-9-]{36}', self.job_id):
+                raise ValueError('Invalid job ID')
+        receipt = self.get('/v1/evaluations/' + self.job_id)
+        if not matches(receipt):
+            raise ValueError('Run identity mismatch')
+        self.display(receipt)
+
+    def display(self, receipt):
+        labels = {'system': '测试', 'user': '模拟用户', 'authority': '授权负责人',
+                  'agent': 'Agent 回复', 'tool': '工具调用', 'result': 'Agent 返回结果'}
+        for event in sorted(receipt.get('interaction_events') or [], key=lambda e: e['seq']):
+            if event['seq'] <= self.cursor:
+                continue
+            if event['seq'] != self.cursor + 1:
+                say('[对话记录缺段，等待下一次同步]')
+                break
+            self.cursor = event['seq']
+            say(f"\n[{event['case_id']}/{event['scenario']} #{event['seq']}] {labels.get(event['role'], '记录')}\n{event['text']}")
 
 
 def say(message):
     # Reports are untrusted text: strip terminal control sequences.
-    print(re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]|[\x00-\x08\x0b-\x1f\x7f]", "", str(message)), flush=True)
+    print(re.sub(r"\x1b\[[0-?]*[ -/]*[@-~]|[\x00-\x08\x0b-\x1f\x7f-\x9f\u202a-\u202e\u2066-\u2069]", "", str(message)), flush=True)
 
 
 def run(args):
@@ -71,10 +137,15 @@ def render(receipt):
         say(f"网页详情与历史入口: {receipt['web_url']}")
     if receipt.get("task") == "t1":
         say("t1 仅为接入检查，不代表完整业务评测通过。")
+    simulation = report.get('simulation')
+    if simulation:
+        say(f"模拟用户测试：{simulation['passed']}/{simulation['total']} 通过，执行 {simulation['completed']}/{simulation['total']}（观察项，不计分）")
+        for item in simulation.get('results', []):
+            say(f"  {item['status']} {item['case_id']}/{item['scenario']}")
     return 0 if cases and len(cases) == total and counts['PASS'] == total and report.get('verdict') == 'passed' else 1
 
 
-def watch(repo, branch, sha, since, timeout=1800, discover_timeout=120):
+def watch(repo, branch, sha, since, timeout=1800, discover_timeout=120, live=None):
     started = time.monotonic()
     selected = None
     failures = 0
@@ -95,6 +166,11 @@ def watch(repo, branch, sha, since, timeout=1800, discover_timeout=120):
                 jobs = api(f"repos/{repo}/actions/runs/{selected['id']}/jobs").get("jobs", [])
                 steps = [s.get('name', '') for j in jobs for s in j.get('steps', []) if s.get('status') == 'in_progress']
                 say(f"[{elapsed:>4}s] {selected['status']} | {', '.join(steps) or '等待执行器 / 报告'}")
+                if live:
+                    try:
+                        live.poll(repo, branch, sha, selected['id'])
+                    except (OSError, ValueError):
+                        say('实时记录暂不可用，将重试；不影响远程任务，最终仍读取 GitHub 报告。')
                 if selected["status"] == "completed":
                     artifacts = api(f"repos/{repo}/actions/runs/{selected['id']}/artifacts").get("artifacts", [])
                     if not any(a.get("name") == f"enterprise-ai-{sha}" and not a.get("expired") for a in artifacts):
@@ -119,6 +195,13 @@ def watch(repo, branch, sha, since, timeout=1800, discover_timeout=120):
                         receipt = json.loads((Path(folder) / "report.json").read_text(encoding="utf-8"))
                     if receipt.get("commit_sha") != sha or str((receipt.get("github") or {}).get("run_id")) != str(selected["id"]):
                         raise ValueError("报告 commit/run_id 与本次推送不一致，拒绝展示为本次结果")
+                    if live:
+                        live.display(receipt)
+                    elif receipt.get('interaction_events'):
+                        replay = object.__new__(LiveReceipt)
+                        replay.cursor = 0
+                        say('以下为评测结束后的记录回放（没有配置实时读取凭证）。')
+                        replay.display(receipt)
                     # Store outside tracked working files; never overwrite the student's source.
                     gitdir = Path(run(["git", "rev-parse", "--absolute-git-dir"]).strip())
                     dest = gitdir / "enterprise-evaluations" / str(selected["id"])
@@ -175,9 +258,19 @@ def main(argv):
         say('没有更新 GitHub 分支（或远程地址不受支持），未等待评测。')
         return 0
     result = 0
+    live = None
+    if os.environ.get('HYPER_LAB_CONFIG'):
+        try:
+            live = LiveReceipt(os.environ['HYPER_LAB_CONFIG'])
+        except (OSError, ValueError):
+            say('无法读取实时配置；保留 GitHub 进度及最终报告，不输出凭证详情。')
+    else:
+        say('未设置 HYPER_LAB_CONFIG：显示 GitHub 进度和最终回放；设置个人配置后可同步实时交互。')
     for src, branch in refs:
         sha = run(['git', 'rev-parse', f'{src}^{{commit}}']).strip()
-        result = max(result, watch(repo, branch, sha, since))
+        if live:
+            live.job_id, live.cursor = None, 0
+        result = max(result, watch(repo, branch, sha, since, live=live))
     return result
 
 
