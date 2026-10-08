@@ -292,7 +292,7 @@ def _purchase_groups(orders):
     return list(groups.values())
 
 
-def route_scope_analysis(state):
+def route_scope_analysis(state, *, arguments=None):
     """Finite real-user, read-only estimates and same-order alternative comparison.
 
     Read fresh owned facts for this request only. This creates no proposal,
@@ -300,8 +300,8 @@ def route_scope_analysis(state):
     pass its ordinary complete producer and confirmation path.
     """
     text = state['user_request']
-    match = re.fullmatch(r'(Estimate selected items|Compare return and exchange)\s+order\s+(#[\w-]+)\s*:\s*(\{.*\})', text, re.I | re.S)
-    if not match:
+    match = re.fullmatch(r'(Estimate selected items|Compare return and exchange)\s+order\s+(#[\w-]+)\s*:\s*(\{.*\})', text, re.I | re.S) if arguments is None else None
+    if arguments is None and not match:
         return None
     from support_agent.domain.catalog import _selected, return_refund_basis, resolve_replacements
     from support_agent.domain.items_intake import criteria_for_line
@@ -310,7 +310,13 @@ def route_scope_analysis(state):
     from support_agent.domain.orders import order_state_rule
     from support_agent.address_session import _accepted_bodies
     try:
-        body = json.loads(match[3]); comparison = match[1].casefold().startswith('compare')
+        if arguments is None:
+            body = json.loads(match[3]); comparison = match[1].casefold().startswith('compare')
+        else:
+            comparison = bool(arguments['replacements'])
+            body = {'item_ids': arguments['item_ids']}
+            if comparison:
+                body['replacements'] = arguments['replacements']
         if not isinstance(body, dict) or set(body) != ({'item_ids', 'replacements'} if comparison else {'item_ids'}):
             raise ValueError()
         ids = body['item_ids']
@@ -324,7 +330,7 @@ def route_scope_analysis(state):
                 raise ValueError()
     except (TypeError, ValueError):
         return reply(state, 'scope_analysis_input_error: Use exact item IDs and supported complete replacement criteria. No operation was created.')
-    oid = match[2]
+    oid = match[2] if arguments is None else arguments['order_id']
     if oid not in customer_order_ids(state['customer_record']):
         return reply(state, 'scope_analysis_order_not_owned: No private order read or write was requested.')
     start = max(i for i,e in enumerate(state['history']) if e['role'] == 'user')
@@ -428,6 +434,12 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
                     "failed": "I could not verify or read the requested records because the lookup failed. Please check the details or try again.",
                     "mismatch": "The customer lookup/read did not match the verification details or authorized scope."}[status]
             return reply(state, text)
+        from support_agent.semantic_session import enabled, after_read
+        if enabled(model_adapter):
+            try:
+                return after_read(state, model_adapter)
+            except Exception:
+                return reply(state, 'I could not safely interpret the records for your request. Please clarify your goal; no additional change was sent.')
         analysis = route_scope_analysis(state) if state['identity']['verified'] else None
         if analysis is not None:
             return analysis
@@ -469,6 +481,14 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
         return reply(state, format_reads(records))
 
     text = turn.content if isinstance(turn.content, str) else ""
+    # A new user message replaces the awaited execution-result boundary. The
+    # effect may already exist; late bundles cannot settle or authorize a retry.
+    from support_agent.workflow_boundary import WorkflowBoundary
+    from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
+    for kind in WORKFLOW_KINDS:
+        pending = state[kind + '_pending']
+        if pending is not None and pending['mode'] == 'execute' and pending['status'] == 'pending':
+            WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).event(state, kind + '_unknown', {'call_id': pending['call_id']})
     if state["exchange_pending"] is not None and state["exchange_pending"]["mode"] == "prepare":
         from support_agent.exchange_session import _boundary
         _boundary().event(state, "exchange_abandoned", {"call_id": state["exchange_pending"]["call_id"]})
@@ -488,32 +508,45 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if state["address_pending"] is not None and state["address_pending"]["mode"] == "prepare":
         from support_agent.address_session import _event
         _event(state, "address_abandoned", {"call_id": state["address_pending"]["call_id"]})
-    from support_agent.handoff_session import intent as handoff_intent
-    if handoff_intent(text) == "request":
-        from support_agent.workflow_boundary import WorkflowBoundary
-        from support_agent.workflow_limits import MAX_WORKFLOW_RESULT_BYTES
-        for kind in WORKFLOW_KINDS:
-            pending = state[kind + "_pending"]
-            if pending is not None and pending["mode"] == "execute" and pending["status"] == "pending":
-                WorkflowBoundary(kind, MAX_WORKFLOW_RESULT_BYTES).event(state, kind + "_unknown", {"call_id": pending["call_id"]})
+    from support_agent.semantic_session import enabled, interpret
+    semantic_mode = enabled(model_adapter)
+    candidate, semantic_error = None, False
+    state['model_calls_since_user'] = 0
+    if semantic_mode:
+        try:
+            candidate = interpret(state, model_adapter, user_text=text)
+        except Exception:
+            semantic_error = True
+            # A failed language step must not fall back to regex consent during
+            # live observation OR history restoration. This is a host refusal
+            # frame, not a claim that a model successfully interpreted the text.
+            candidate = {'action': 'clarify', 'identity': {}, 'arguments': {},
+                         'sources': [], 'message': 'Language understanding unavailable; no authorization inferred.'}
     state["history"].append({"role": "user", "content": text})
+    if candidate is not None:
+        from support_agent.semantics import annotate
+        annotate(state['history'], len(state['history']) - 1, candidate)
     from support_agent.proposals import observe_user
     proposal_reply = observe_user(state, len(state["history"]) - 1)
     state["user_request"] = text
     state["tool_calls_since_user"] = 0
-    state["model_calls_since_user"] = 0
+    if not semantic_mode:
+        state["model_calls_since_user"] = 0
+    if semantic_error and not any(state[k + '_pending'] is not None for k in WORKFLOW_KINDS):
+        return reply(state, 'Language understanding is unavailable for this request. I will not guess identity or business parameters. Please try again later or request human assistance.')
     handoff = route_handoff(state, text)
     if handoff is not None:
         return handoff
-    claim = find_customer_id(text)
-    proof = proof_from_text(text)
+    claim = find_customer_id(text) if not semantic_mode else None
+    proof = proof_from_text(text) if not semantic_mode else None
     if state["identity"]["verified"]:
         evidence = state.get("identity_evidence")
         if (claim and claim != state["identity"]["customer_id"]) or (proof and evidence and any(normalized(proof[k]) != normalized(evidence["inputs"][k]) for k in PROOF_FIELDS)):
             return reply(state, "I cannot switch to another customer's account or verification details in this session.")
     else:
         state["customer_id"] = claim or state["customer_id"]
-        fields = fields_from_text(text)
+        from support_agent.semantics import identity_fields
+        fields = identity_fields(state['history'][-1])
         if fields:
             if "email" in fields:
                 state["verification_draft"] = {"email": fields["email"]}
@@ -542,13 +575,23 @@ def advance(turn: TurnInput, state: dict, model_adapter=None):
     if state["payment_pending"] is not None:
         from support_agent.payment_session import route_payment
         return route_payment(state, text)
-    limitation = capability_reply(text)
+    limitation = capability_reply(text) if not semantic_mode else None
     if limitation is not None:
         return reply(state, limitation)
     if proof:
         name = "lookup_customer" if proof["email"] else "verify_customer"
         args = {"customer_id": state["customer_id"] or "", "email": proof["email"]} if name == "lookup_customer" else {"customer_id": state["customer_id"] or "", **proof}
         return emit(state, name, args)
+    if candidate is not None:
+        from support_agent.semantic_session import route
+        if state['identity']['verified'] and state.get('identity_evidence') and any(
+                normalized(value) != normalized(state['identity_evidence']['inputs'][key])
+                for key, value in candidate['identity'].items()):
+            return reply(state, 'I cannot switch verification details or customer accounts within this session.')
+        try:
+            return route(state, candidate, proposal_reply=proposal_reply)
+        except (InvalidAction, ValueError, TypeError, KeyError):
+            return reply(state, 'Those parameters could not be validated for your verified records. Please clarify the requested target or choice; no operation was sent.')
     if not state["identity"]["verified"] or not state.get("identity_evidence"):
         return reply(state, "Please provide your email, or first name, last name and postal code, to verify identity before I access your profile. A customer ID alone is not verification.")
     analysis = route_scope_analysis(state)

@@ -369,7 +369,9 @@ def observe_user(state, index):
     entry = state["history"][index]
     if entry["role"] != "user":
         raise InvalidProposal("Confirmation must be an actual user message")
-    affirmative = _whole_assent(entry["content"])
+    from support_agent.semantics import frame, consent_assignments
+    semantic = consent_assignments(entry, [proposal])
+    affirmative = (semantic == ('confirm', [('confirm', [0])])) if frame(entry) else _whole_assent(entry["content"])
     if (proposal["status"] == "proposed" and affirmative and index == proposal["presentation_index"] + 1):
         proposal["status"] = "confirmed"
         proposal["confirmation"] = {"history_index": index, "fingerprint": proposal["fingerprint"]}
@@ -721,7 +723,9 @@ def _observe_set_user(state, index):
     records = _current_records(state)
     if all(p['status'] == 'withdrawn' for p in records):
         return None  # A new request must not revive an abandoned version.
-    kind, assignments = _classify_set_reply(entry["content"], records)
+    from support_agent.semantics import consent_assignments
+    semantic = consent_assignments(entry, records)
+    kind, assignments = semantic if semantic is not None else _classify_set_reply(entry["content"], records)
     previous = state["history"][index - 1] if index else {}
     if kind == "confirm" and "proposal_set_ack" in previous:
         restore_set_ack(state, index - 1)

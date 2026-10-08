@@ -379,14 +379,13 @@ def isolated_replay_environment():
     api = ClientAPI(transport, context=ClientAPIContext(conversation_id="offline-handoff-sdk"))
     return Environment("retail_plus", "offline replay", tools=Tools(api, claims=SessionClaims())), backend
 
-# Record via the SDK itself: base Environment.to_json_str converts nested
-# numeric/bool values to strings. Do not mix that format with the raw JSON
-# result used by the application round trip above, or weaken strict checking.
+# Record via the SDK itself. The toolkit now emits JSON text at dispatch,
+# preserving scalar types for both application consumption and SDK replay.
 recording_environment, recording_backend = isolated_replay_environment()
 recorded_response = recording_environment.get_response(call)
 assert not recorded_response.error
 from support_agent.state import SCHEMA_VERSION
-assert json.loads(recorded_response.content)["state"]["schema_version"] == str(SCHEMA_VERSION)
+assert json.loads(recorded_response.content)["state"]["schema_version"] == SCHEMA_VERSION
 assert recording_backend.calls == before_handoff_calls
 handoff_trace = [UserMessage(role="user", content="转人工"), handoff_dispatch_message, recorded_response]
 replay_environment, replay_backend = isolated_replay_environment()

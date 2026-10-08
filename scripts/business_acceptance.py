@@ -1,4 +1,4 @@
-"""M6.7 direct, fixed local business assertions over native default dialogues.
+"""M6.7 direct, fixed local business assertions over preserved rule-port dialogues.
 
 The complete requirement inventory is never inferred from scenario names or
 component tests. Only explicitly reviewed whole-atom claims with executed
@@ -117,7 +117,8 @@ def json_equal(left, right):
 
 def metadata(parent, root=ROOT):
     files = (RUNNER, 'scripts/business_acceptance.py', 'tests/sdk_m6_checks.py',
-             'scripts/local_dialogue_batch.py', FIXTURE, SOURCE_CHANGES, BASELINE)
+             'scripts/local_dialogue_batch.py', FIXTURE, SOURCE_CHANGES, BASELINE,
+             'scripts/m7_source_changes.py', 'tests/fixtures/m7_semantic_changes.json')
     return {'mode': 'native_sdk', 'sdk_version': '1.0.1', 'runner': RUNNER, **parent,
             'inputs': {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in files}}
 
@@ -235,7 +236,17 @@ def source_change_evidence(root=ROOT):
     paths = {p.relative_to(root).as_posix() for p in (root/'agent').rglob('*.py') if '__pycache__' not in p.parts}
     paths |= {'agent/agent.json','tests/fixtures/m6_dialogues.json','tests/fixtures/m6_combinations.json'}
     current = {p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in paths}
-    return validate_source_changes(value,json.loads(baseline_bytes),current)
+    baseline = json.loads(baseline_bytes)
+    previous = dict(baseline['source_files'])
+    for change in value['changes']:
+        previous[change['path']] = change['after_sha256']
+    evidence = validate_source_changes(value, baseline, previous)
+    # M6.7 is immutable historical evidence. M7 adds an explicit chained delta;
+    # current bytes must match both stages, including every fixed old fixture.
+    from m7_source_changes import MANIFEST, validate_changes
+    stage = json.loads((root/MANIFEST).read_text(encoding='utf-8'))
+    evidence['m7_refactor'] = validate_changes(stage, hashlib.sha256((root/SOURCE_CHANGES).read_bytes()).hexdigest(), previous, current)
+    return evidence
 
 
 def validate_batch(value, manifest, parent, *, root=ROOT):

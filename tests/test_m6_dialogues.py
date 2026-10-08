@@ -249,7 +249,7 @@ class NativeDialogueBatchTests(unittest.TestCase):
                                 '--parent-run-id',parent['run_id'],'--source-sha256',parent['source_sha256']],
                                 cwd=ROOT,env=env,text=True,encoding='utf-8',capture_output=True,timeout=180)
         self.assertEqual(result.returncode,0,result.stderr[-6000:])
-        self.assertIn('M6_DIALOGUE_SDK_CHECK_PASSED; native SDK/default turns;',result.stdout)
+        self.assertIn('M6_DIALOGUE_SDK_CHECK_PASSED; native SDK/rule-port turns;',result.stdout)
         records=[line.removeprefix('M6_DIALOGUE_JSON=') for line in result.stdout.splitlines() if line.startswith('M6_DIALOGUE_JSON=')]
         self.assertEqual(len(records),1)
         verified=batch.validate_batch(json.loads(records[0]),batch.load_manifest())

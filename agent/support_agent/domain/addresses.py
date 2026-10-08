@@ -72,6 +72,12 @@ def request_from_history(history):
     for index, entry in enumerate(history):
         if entry["role"] != "user":
             continue
+        from support_agent.semantics import frame, request as semantic_request
+        if frame(entry) is not None:
+            candidate = semantic_request(entry, index, 'address')
+            if candidate is not None:
+                request = candidate
+            continue
         text = entry["content"]
         fields, full, error = address_fields(text)
         if starts_address_request(text):

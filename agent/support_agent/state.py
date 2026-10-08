@@ -14,7 +14,8 @@ HANDOFF_SCHEMA_VERSION = 9
 ITEMS_SCHEMA_VERSION = 10
 RETURNS_SCHEMA_VERSION = 11
 EXCHANGE_SCHEMA_VERSION = 12
-SCHEMA_VERSION = EXCHANGE_SCHEMA_VERSION
+SEMANTIC_SCHEMA_VERSION = 13
+SCHEMA_VERSION = SEMANTIC_SCHEMA_VERSION
 
 
 class InvalidState(ValueError):
@@ -75,6 +76,8 @@ def _history_entry(message):
     if role not in {"user", "assistant", "tool"}:
         return None
     entry = {"role": role, "content": content if isinstance(content, str) else ""}
+    if isinstance(message, dict) and 'interpretation' in message:
+        entry['interpretation'] = message['interpretation']
     if role == "tool":
         return _tool_entry(message)
     if role == "assistant":
@@ -114,6 +117,11 @@ def initial_state(message_history=None) -> dict:
             entry = _history_entry(message)
             if entry is not None:
                 history.append(entry)
+    from support_agent.semantics import validate_history
+    try:
+        validate_history(history)
+    except (InvalidAction, TypeError, ValueError, KeyError) as exc:
+        raise InvalidState('Invalid model interpretation history') from exc
     state = {
         "schema_version": SCHEMA_VERSION,
         "turn": 0,
@@ -153,8 +161,8 @@ def initial_state(message_history=None) -> dict:
             state["user_request"] = entry["content"]
             from support_agent.proposals import observe_user
             observe_user(state, len(state["history"]) - 1)
-            from support_agent.domain.identity import fields_from_text
-            fields = fields_from_text(entry["content"])
+            from support_agent.semantics import identity_fields
+            fields = identity_fields(entry)
             if not state["identity"]["verified"] and fields:
                 if "email" in fields:
                     state["verification_draft"] = {"email": fields["email"]}
@@ -239,7 +247,7 @@ def initial_state(message_history=None) -> dict:
 
 def clone_state(state: dict) -> dict:
     """Round-trip the state to reject non-JSON values and avoid aliasing."""
-    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, SCHEMA_VERSION}:
+    if not isinstance(state, dict) or type(state.get("schema_version")) is not int or state["schema_version"] not in {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, SCHEMA_VERSION}:
         raise InvalidState("Unsupported session state version")
     if {"write_authorized", "delivery_verified", "confirmed", "condition_verified"} & set(state):
         raise InvalidState("Authorization flags cannot be added to session state")
@@ -247,6 +255,9 @@ def clone_state(state: dict) -> dict:
         copied = json.loads(json.dumps(state, allow_nan=False))
     except (TypeError, ValueError) as exc:
         raise InvalidState("Session state must be JSON serializable") from exc
+    if copied['schema_version'] < SEMANTIC_SCHEMA_VERSION and any(
+            isinstance(e, dict) and 'interpretation' in e for e in copied.get('history', [])):
+        raise InvalidState('Legacy state cannot carry model interpretation records')
     if copied["schema_version"] < EXCHANGE_SCHEMA_VERSION:
         if (copied.get("exchange_pending") is not None or not isinstance(copied.get("history"), list)
                 or any(isinstance(e, dict) and {"exchange_dispatch", "exchange_result", "exchange_unknown", "exchange_abandoned", "exchange_assessment", "exchange_basis"} & set(e) for e in copied["history"])):
@@ -302,7 +313,7 @@ def clone_state(state: dict) -> dict:
                 or any(isinstance(e, dict) and ({"proposal_set", "proposal_set_ack"} & set(e)) for e in copied["history"])):
             raise InvalidState("Schema 2 cannot contain schema 3 scope evidence")
         copied["schema_version"] = SCHEMA_VERSION
-    elif copied["schema_version"] in {3, 4, 5, 6, 7, 8, 9, 10, 11}:
+    elif copied["schema_version"] in {3, 4, 5, 6, 7, 8, 9, 10, 11, 12}:
         copied["schema_version"] = SCHEMA_VERSION
     # M1 states remain readable; missing evidence does not grant private reads.
     for key, default in (("model_calls_since_user", 0), ("identity_evidence", None), ("customer_record", None), ("user_request", ""), ("model_usage", []), ("verification_draft", {})):
@@ -331,6 +342,11 @@ def clone_state(state: dict) -> dict:
             raise InvalidState("Presentation modes require a complete operation set")
     if any(type(copied.get(key)) is not int or copied[key] < 0 for key in ("turn", "tool_calls_since_user", "model_calls_since_user")):
         raise InvalidState("Malformed session counters")
+    from support_agent.semantics import validate_history
+    try:
+        validate_history(copied['history'])
+    except (InvalidAction, TypeError, ValueError, KeyError) as exc:
+        raise InvalidState('Invalid model interpretation evidence') from exc
     identity, handoff = copied.get("identity"), copied.get("handoff")
     if not isinstance(identity, dict) or type(identity.get("verified")) is not bool or "customer_id" not in identity:
         raise InvalidState("Malformed identity")

@@ -176,10 +176,10 @@ def render_summary(result):
     return '\n'.join(lines)
 
 
-def route_summary(state, *, after_reads=False):
+def route_summary(state, *, after_reads=False, order_ids=None):
     """Finite explicit default read route; refresh via the existing owned API."""
     from support_agent.read_session import reply, emit
-    ids = summary_request(state['user_request'])
+    ids = summary_request(state['user_request']) if order_ids is None else order_ids
     if ids is None:
         return None
     if set(ids) <= set(customer_order_ids(state['customer_record'])):

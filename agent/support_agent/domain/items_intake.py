@@ -30,6 +30,12 @@ def request_from_history(history, *, kind="items"):
     for index, entry in enumerate(history):
         if entry['role'] != 'user':
             continue
+        from support_agent.semantics import frame, request as semantic_request
+        if frame(entry) is not None:
+            candidate = semantic_request(entry, index, kind)
+            if candidate is not None:
+                request = candidate
+            continue
         text = entry['content'].strip()
         initial = starts(text)
         # A new explicit replacement action belongs to its own producer. Its

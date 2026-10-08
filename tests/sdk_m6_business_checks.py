@@ -1,4 +1,4 @@
-"""Native M6.7 default dialogue runner; no model or network.
+"""Native M6.7 preserved rule-port dialogue runner; no model or network.
 
 Reuse the SDK harness, not its existing AT associations. New fixed business
 fixtures and their direct assertions are validated independently.
@@ -66,4 +66,4 @@ if __name__ == '__main__':
     value['network_attempts'] = len(native.network_attempts)
     validate_batch(value, manifest, parent)
     print('M6_BUSINESS_JSON=' + json.dumps(value, ensure_ascii=False, allow_nan=False, separators=(',', ':')))
-    print('M6_BUSINESS_CHECK_PASSED; native default turns and direct local atomic assertions; network attempts 0')
+    print('M6_BUSINESS_CHECK_PASSED; native rule-port turns and direct local atomic assertions; network attempts 0')

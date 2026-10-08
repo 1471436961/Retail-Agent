@@ -39,6 +39,18 @@ def request_from_history(history):
     for index, entry in enumerate(history):
         if entry.get('role') != 'user':
             continue
+        from support_agent.semantics import frame, request as semantic_request
+        if frame(entry) is not None:
+            candidate = semantic_request(entry, index, 'returns')
+            if candidate is not None:
+                # A destination/list correction does not reopen the eligibility
+                # clock. Preserve the same first-order boundary as legacy intake.
+                order = candidate['order_id']
+                openings[order] = min(openings.get(order, candidate['opening_request_index']),
+                                      candidate['opening_request_index'])
+                candidate['opening_request_index'] = openings[order]
+                request = candidate
+            continue
         # A finite eligibility question is intake, never assent. Keep its real
         # user source in history; only normalize the local parsing prefix.
         text = re.sub(r'^can I\s+(?=return\b)', '', entry['content'].strip(), flags=re.I)

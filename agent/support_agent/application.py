@@ -10,12 +10,13 @@ from tau2.data_model.message import AssistantMessage, MultiToolMessage, ToolCall
 
 
 class CustomerAgent:
-    """Deterministic reads/address/payment/cancellation/handoff/item workflows."""
+    """Model interpretation with deterministic business and execution controls."""
 
     def __init__(self, context=None, model_adapter=None):
         # Runtime capabilities are instance-local, never persisted in JSON state.
         self.context = context
-        # Explicit injection is required; factory defaults never call a model.
+        # The production factory supplies the platform semantic adapter. Direct
+        # construction without one remains a low-level rule/test entry point.
         self.model_adapter = model_adapter
 
     def get_init_state(self, message_history=None):

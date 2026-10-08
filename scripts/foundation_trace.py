@@ -228,7 +228,7 @@ def source_paths(root=ROOT):
                     root / "scripts" / "local_replay_batch.py", root / "scripts" / "local_boundary_batch.py",
                     root / "scripts" / "local_package_audit.py", root / "scripts" / "lab_eval.py",
                     root / "scripts" / "evaluate.mjs", root / "scripts" / "defect_register.py",
-                    root / "scripts" / "business_acceptance.py"])
+                    root / "scripts" / "business_acceptance.py", root / "scripts" / "m7_source_changes.py"])
     return sorted({path for path in paths + _defect_module.source_inputs(root)
                    if "__pycache__" not in path.parts})
 

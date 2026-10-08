@@ -24,11 +24,12 @@ class ModelGatewayFailure(RuntimeError):
     """A sanitized boundary error; original provider text is never a customer reply."""
 
 
-def sdk_messages(history: list):
+def sdk_messages(history: list, *, abandoned_read_ids=(), omit_rejected_read_results=False):
     """Restore SDK messages, retaining call IDs and complete result batches."""
     from tau2.data_model.message import AssistantMessage, MultiToolMessage, SystemMessage, ToolCall, ToolMessage, UserMessage
     messages = [SystemMessage(role="system", content=READ_POLICY)]
     outstanding, seen = set(), set()
+    abandoned_read_ids = set(abandoned_read_ids)
     for entry in history:
         role = entry.get("role")
         if role in {"user", "assistant"}:
@@ -44,11 +45,18 @@ def sdk_messages(history: list):
                 raise InvalidAction("History contains repeated or missing call IDs")
             if "tool_call_ids" in entry and entry["tool_call_ids"] != ids:
                 raise InvalidAction("History call descriptors are incomplete")
+            if any(c.id in abandoned_read_ids and c.name not in READ_TOOL_FIELDS for c in calls):
+                raise InvalidAction('Only abandoned reads may leave the model projection')
+            removed = [c.id for c in calls if c.id in abandoned_read_ids]
+            calls = [c for c in calls if c.id not in abandoned_read_ids]
+            ids = [c.id for c in calls]
             if calls and entry.get("content"):
                 raise InvalidAction("Mixed historical text and calls")
             outstanding = set(ids)
             seen.update(ids)
             content = entry.get("content", "")
+            if removed and not calls:
+                content = 'Host observation: this read has no accepted result. No facts or permission were obtained.'
             if "write_event" in entry:
                 event = entry["write_event"]
                 status = "succeeded" if event.get("kind") == "verified" else event.get("status", "sent; outcome unresolved")
@@ -56,6 +64,21 @@ def sdk_messages(history: list):
             messages.append(AssistantMessage(role="assistant", content=None if calls else content, tool_calls=calls or None))
         elif role in {"tool", "tools"}:
             raw = entry["tool_messages"] if role == "tools" else [entry]
+            if abandoned_read_ids or omit_rejected_read_results:
+                raw = [r for r in raw if r['id'] not in abandoned_read_ids]
+                # Rejected, sanitized READ diagnostics are not provider tool
+                # results. Keep them in canonical history, not as orphan calls.
+                import json
+                def rejected_read(r):
+                    try:
+                        body = json.loads(r['content'])
+                    except (ValueError, TypeError):
+                        return False
+                    return (isinstance(body, dict) and set(body)=={'read_result_status'}
+                            and body['read_result_status'] in {'none', 'unknown', 'mismatch'})
+                raw = [r for r in raw if not rejected_read(r)]
+                if not raw:
+                    continue
             ids = [r["id"] for r in raw]
             if not outstanding or len(ids) != len(set(ids)) or set(ids) - outstanding:
                 raise InvalidAction("History result IDs do not match outstanding calls")

@@ -16,7 +16,7 @@ def _size(message):
     return len(json.dumps(message.model_dump(), ensure_ascii=False, allow_nan=False))
 
 
-def project_messages(state, *, max_characters=MAX_MODEL_CONTEXT_CHARACTERS):
+def project_messages(state, *, max_characters=MAX_MODEL_CONTEXT_CHARACTERS, abandoned_reads=False):
     from tau2.data_model.message import SystemMessage
     from support_agent.adapters.model_gateway import sdk_messages
     from support_agent.proposals import _current_records
@@ -28,7 +28,9 @@ def project_messages(state, *, max_characters=MAX_MODEL_CONTEXT_CHARACTERS):
         raise InvalidAction("An internal workflow result is unresolved")
     if type(max_characters) is not int or max_characters < 1024:
         raise InvalidAction("Invalid model context budget")
-    messages = sdk_messages(state["history"])
+    unknown_reads = {o['call_id'] for o in state['operations'] if not o['mutates'] and o['status']=='unknown'} if abandoned_reads else set()
+    messages = sdk_messages(state["history"], abandoned_read_ids=unknown_reads,
+                            omit_rejected_read_results=abandoned_reads)
     if sum(_size(m) for m in messages) <= max_characters:
         return messages
     operations = [o for o in state["operations"] if o["mutates"]]

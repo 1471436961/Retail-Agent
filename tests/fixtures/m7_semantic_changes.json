@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "scope": "Explicit M7 semantic refactor after preserved M6.7 changes; not a signature",
+  "previous_manifest_sha256": "241e76fcf50c920a1c144ecd2a943b52b8c8b0b49af5a349c0eccbe8eaf2e7a5",
+  "changes": [
+    {
+      "path": "agent/agent.py",
+      "before_sha256": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
+      "after_sha256": "b2f5f095f373c5402dcfe060cae6cea16dd3b7282c610e0c03b724ce4b9359d7",
+      "reason": "Production factory installs the platform semantic gateway component by default."
+    },
+    {
+      "path": "agent/support_agent/adapters/customer_tools.py",
+      "before_sha256": "c3738a879ffc0d32c298528620035d56f4c6e584aa68a809a6dbe0bcdc3e5175",
+      "after_sha256": "723417b58e48fc172ab338e05c4fad6c5c620182a867f62297e11d8930a7668c",
+      "reason": "Serialize public SDK results once as JSON text, preserving numeric, boolean and null types."
+    },
+    {
+      "path": "agent/support_agent/adapters/model_gateway.py",
+      "before_sha256": "5aacf5d51a2e51d05344e75867e0ffdb82bf69fa7cefd073ec91310f3cd51759",
+      "after_sha256": "0894a90dd04da86147a6b8bf3c8d4ed5344a39b6791ba27d6883c3933f34483c",
+      "reason": "Project missing nonmutating read results as host absence observations without fabricating SDK successes or user messages."
+    },
+    {
+      "path": "agent/support_agent/adapters/semantic_model.py",
+      "before_sha256": null,
+      "after_sha256": "aebfaca16113fb2661f33203004ba127469f44d99c1cb6dc197ca6d42441581c",
+      "reason": "New platform-model interpretation contract, bounded context, original user source indices and usage accounting."
+    },
+    {
+      "path": "agent/support_agent/amount_summary.py",
+      "before_sha256": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
+      "after_sha256": "109b041f23ebaf4169e09b6e3b302208261efa49da92c848cf2a91db832ae87a",
+      "reason": "Accept validated typed order scopes while retaining existing host amount arithmetic."
+    },
+    {
+      "path": "agent/support_agent/application.py",
+      "before_sha256": "e3b2a776a2ebc5e24804b7a49b6bd961edfcd51fb434736871b035bed4aae6c8",
+      "after_sha256": "f1cd75d851babb47f73f2d5f8c1ebff98d2c4d4025d55fd3c2ed97be215a8d56",
+      "reason": "Support language understanding before verification while retaining the public single-turn interface."
+    },
+    {
+      "path": "agent/support_agent/domain/addresses.py",
+      "before_sha256": "e9c1aa9dc9b88ae9f8315745af2d9af7921e939db8e20cbcb8a1400cef82fc91",
+      "after_sha256": "8dc7f1f5791574a1587816fcc340125a70987c2511a0397a09af61fa95d24ae6",
+      "reason": "Consume typed address intent without parsing customer text as an address command."
+    },
+    {
+      "path": "agent/support_agent/domain/cancellation_intake.py",
+      "before_sha256": "6cd681a310dd1f7638d8908e4e662ad38b343664bd38f33c39fa2cc4932d9563",
+      "after_sha256": "fac3fd62c5e5885310ee089cfb7c4a0102bb41cc7f4153234986568867137016",
+      "reason": "Consume typed cancellation scope and canonical reason, preserving partial and conditional refusal."
+    },
+    {
+      "path": "agent/support_agent/domain/items_intake.py",
+      "before_sha256": "deeabd7ec2e8b4fd7496969bd0b5a5a52a3ff6acfbffa578cabd416d5cbc6e1f",
+      "after_sha256": "4f758d3f72a132c67aef82cc7714b66d1f17fb6d723297d2d54995d38a305678",
+      "reason": "Consume typed modifications/exchanges, conditions and variant choices; retain deterministic catalog matching."
+    },
+    {
+      "path": "agent/support_agent/domain/payment_intake.py",
+      "before_sha256": "f0273df2246f41e293741ee727353bf0654e4c4a7f6a50496cd832a00d01a44b",
+      "after_sha256": "5bac76340fdb3c60887525d3c246a3f695c26f63a5b26e9cb42ca19b4280a4f1",
+      "reason": "Consume typed saved-instrument choice and fallback without finite payment phrases."
+    },
+    {
+      "path": "agent/support_agent/domain/returns_intake.py",
+      "before_sha256": "0c920a7877f97ab012ed628699b236a3a1267164c99f557eab680509f2ebe177",
+      "after_sha256": "e045462b47665ccd860c3302be7926848c01dc059128365417ecb9b53e3c97d8",
+      "reason": "Consume typed requested occurrences and refund destination without finite return phrases."
+    },
+    {
+      "path": "agent/support_agent/handoff_session.py",
+      "before_sha256": "691e5ec5c73f54802d59e91f84b09206d787864c8a0e7e30ddf8b688bccf174a",
+      "after_sha256": "c70f718f340fdabb240037b96f8850ed709df9bf9c6e9a634a9a66a4b87ed115",
+      "reason": "Accept source-bound human/supervisor intent without finite phrase matching."
+    },
+    {
+      "path": "agent/support_agent/model_context.py",
+      "before_sha256": "58983cb6cf9fbed8d91b0109d976f79b18f16b01e23b9a428b69c42e8a8b4eba",
+      "after_sha256": "48fba6bd3844594c3c9a40eb052d4fc9e2118f37bf4190403c4d6922f28ea8eb",
+      "reason": "Derive abandoned-read projection IDs from validated Unknown read journals; full canonical history remains intact."
+    },
+    {
+      "path": "agent/support_agent/proposals.py",
+      "before_sha256": "0aea8d98ad335886a8dcec5587f3235040dc0f2d14b762493cc9cbd928c642e9",
+      "after_sha256": "6c56f8523a1b0c681a2e0d13cc07306aac2fffee78fef9c97e50fabca720ff51",
+      "reason": "Interpret latest-user consent by typed version assignments while retaining freshness, scope and execution checks."
+    },
+    {
+      "path": "agent/support_agent/read_session.py",
+      "before_sha256": "7eb654cd5589eda3f0f26e253643529dfb71eed95037ad5f7c2ee370d3b7f8db",
+      "after_sha256": "311bec04a4ad58d93cd87f42f1ef2e4be3200d558acaac9593c78a559032d094",
+      "reason": "Use model understanding before identity and after reads; typed read-only analysis; lost execution results become Unknown."
+    },
+    {
+      "path": "agent/support_agent/semantic_session.py",
+      "before_sha256": null,
+      "after_sha256": "6a0482728c0b2d9e936cca99af245c732767f4629b76b3df2c98d733fd2d01b5",
+      "reason": "New semantic read/plan/consent orchestration through existing deterministic business gates."
+    },
+    {
+      "path": "agent/support_agent/semantics.py",
+      "before_sha256": null,
+      "after_sha256": "24ca35c064d607b4cc293c08c527b2fcfa672e49136ce2a9bb298a4b258dec53",
+      "reason": "New closed typed intent and original-user interpretation validation; no synthetic user messages or backend authority."
+    },
+    {
+      "path": "agent/support_agent/state.py",
+      "before_sha256": "5330decb4ed88e17f61abf9a42ed706e1995be42dc067ec10e0fa5fee557a201",
+      "after_sha256": "1e393300d66d46da1758308cdc7e134be1702762beb0c2d832701bcd13f8cb1b",
+      "reason": "Schema 13 preserves and validates original-user interpretation bindings and migrates earlier snapshots."
+    },
+    {
+      "path": "agent/tools.py",
+      "before_sha256": "cd8fcc30f062bf8cf9d9237321e4bdc127665d96fe62190e2cc61b97a8fd9368",
+      "after_sha256": "888f920d94787307c7890427d15e9c70ad83c72745c46605a7929d9eff9783e5",
+      "reason": "Expose only the Tools subclass to the native SDK discovery algorithm."
+    }
+  ]
+}

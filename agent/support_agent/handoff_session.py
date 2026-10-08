@@ -33,6 +33,12 @@ def intent(text):
     return None
 
 
+def user_intent(entry):
+    from support_agent.semantics import frame
+    candidate = frame(entry)
+    return ('request' if candidate['action'] == 'handoff' else None) if candidate else intent(entry['content'])
+
+
 def build_summary(state, request_index):
     """Derive fields from accepted state; keep user text in JSON string fields.
 
@@ -113,7 +119,7 @@ def restore_handoff(state, index):
         if (set(data) != {"kind", "call_id", "request_index", "summary"} or current["status"] in BLOCKED
                 or type(data["request_index"]) is not int or data["request_index"] != index - 1
                 or index < 1 or state["history"][index - 1]["role"] != "user"
-                or intent(state["history"][index - 1]["content"]) != "request"
+                or user_intent(state["history"][index - 1]) != "request"
                 or state["pending_calls"] or data["call_id"] != f"handoff:{index}"
                 or data["summary"] != build_summary(state, index - 1)):
             raise ValueError("Transfer requires its preceding explicit user request and exact derived summary")
@@ -164,7 +170,8 @@ def route_handoff(state, text):
         if status == "dispatched":
             event(state, {"kind": "result", "call_id": state["handoff"]["call_id"], "status": "unknown", "conversation_id": None, "receipt": None, "error_code": "result_missing"})
         return reply(state, assessment(state["handoff"]["status"]))
-    request = intent(text)
+    entry = next((e for e in reversed(state['history']) if e['role'] == 'user'), {'content': text})
+    request = user_intent(entry)
     if request is None:
         return None
     if request == "clarify":

@@ -97,7 +97,10 @@ class BusinessContractTests(unittest.TestCase):
     def test_historical_source_baseline_requires_explicit_before_after_bytes_and_reason(self):
         value=json.loads((ROOT/contract.SOURCE_CHANGES).read_text(encoding='utf-8'))
         baseline=json.loads((ROOT/contract.BASELINE).read_text(encoding='utf-8'))
-        current={k:hashlib.sha256((ROOT/k).read_bytes()).hexdigest() for k in baseline['source_files']}
+        # Validate the preserved historical M6 delta; current bytes are checked
+        # independently by source_change_evidence's chained M7 manifest.
+        current=dict(baseline['source_files'])
+        current.update({r['path']:r['after_sha256'] for r in value['changes']})
         self.assertEqual(contract.validate_source_changes(value,baseline,current)['unchanged_files'],46)
         for change in ('before','after','reason','duplicate','missing'):
             bad=deepcopy(value)
@@ -112,7 +115,8 @@ class BusinessContractTests(unittest.TestCase):
     def test_unrecorded_file_or_old_dialogue_change_cannot_hide_in_approved_delta(self):
         value=json.loads((ROOT/contract.SOURCE_CHANGES).read_text(encoding='utf-8'))
         baseline=json.loads((ROOT/contract.BASELINE).read_text(encoding='utf-8'))
-        current={k:hashlib.sha256((ROOT/k).read_bytes()).hexdigest() for k in baseline['source_files']}
+        current=dict(baseline['source_files'])
+        current.update({r['path']:r['after_sha256'] for r in value['changes']})
         for path in ('agent/agent.py','tests/fixtures/m6_dialogues.json','tests/fixtures/m6_combinations.json','agent/unapproved.py'):
             changed=dict(current);changed[path]='0'*64
             with self.subTest(path=path),self.assertRaisesRegex(ValueError,'Unrecorded'):

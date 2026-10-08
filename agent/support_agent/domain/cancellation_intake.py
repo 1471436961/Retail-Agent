@@ -67,6 +67,14 @@ def request_from_history(history):
     for index, entry in enumerate(history):
         if entry["role"] != "user":
             continue
+        from support_agent.semantics import frame, request as semantic_request
+        if frame(entry) is not None:
+            candidate = semantic_request(entry, index, 'cancellation')
+            if candidate is not None:
+                request, active = candidate, True
+            elif frame(entry)['action'] not in {'clarify', 'respond', 'consent', 'read'}:
+                active = False
+            continue
         text = entry["content"]
         initial = starts_cancellation_request(text)
         if re.search(r"\b(?:don't|do not|never|not to)\s+cancel\b|不要取消|别取消|不取消", text, re.I):

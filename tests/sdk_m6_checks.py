@@ -32,6 +32,9 @@ from copy import deepcopy
 from tau2.data_model.message import UserMessage, AssistantMessage, MultiToolMessage, ToolMessage
 from tau2.hyper.client_api import ClientAPI, ClientAPIContext
 from tau2.environment.toolkit import ToolType
+from tau2.environment.environment import Environment
+from loguru import logger
+logger.disable('tau2.environment.environment')
 from tools import Tools
 from support_agent.application import CustomerAgent
 from support_agent.adapters.write_runtime import SessionClaims
@@ -97,17 +100,14 @@ def execute(scenario, *, observer=None, restore=False, backend_factory=MatrixBac
             call = message.tool_calls[0]
             if call.name not in set(READ_TOOL_FIELDS) | WORKFLOW_TOOL_NAMES:
                 raise AssertionError('Unexpected SDK tool')
-            error = False
-            try:
-                payload = getattr(toolkit, call.name)(**call.arguments)
-            except ClientAPIError:
-                # Platform-style failed tool outcome, never private diagnostics.
-                payload, error = {}, True
+            response = Environment('retail_plus', '', toolkit).get_response(call)
+            error = response.error
+            payload = {} if error else json.loads(response.content)
             tools.append({'name':call.name, 'arguments_sha256':digest(call.arguments), 'error':error})
             if observer is not None:
                 observer('tool', call, payload, toolkit, backend)
             message, state = agent.generate_next_message(MultiToolMessage(role='tool', tool_messages=[
-                ToolMessage(role='tool', id=call.id, content=json.dumps(payload), error=error)]), state)
+                response]), state)
             if observer is not None:
                 observer('result', message, state, toolkit, backend)
         assert isinstance(message, AssistantMessage) and message.content is not None
@@ -148,4 +148,4 @@ if __name__ == '__main__':
              'network_attempts':len(network_attempts), 'results':results}
     validate_batch(batch, manifest)
     print('M6_DIALOGUE_JSON='+json.dumps(batch, ensure_ascii=False, allow_nan=False, separators=(',',':')))
-    print('M6_DIALOGUE_SDK_CHECK_PASSED; native SDK/default turns; fixed call and full-backend oracles; network attempts 0')
+    print('M6_DIALOGUE_SDK_CHECK_PASSED; native SDK/rule-port turns; fixed call and full-backend oracles; network attempts 0')

@@ -438,12 +438,13 @@ class BoundaryPublicationTests(unittest.TestCase):
         self.assertEqual(baseline['scope'],'M6.3 agent and fixed dialogue byte baseline; not a signature')
         expected={p.relative_to(ROOT).as_posix() for p in (ROOT/'agent').rglob('*.py') if '__pycache__' not in p.parts}
         expected|={'agent/agent.json','tests/fixtures/m6_dialogues.json','tests/fixtures/m6_combinations.json'}
-        self.assertEqual(set(baseline['source_files']),expected)
-        self.assertEqual(len(expected),59)
         evidence=business.source_change_evidence()
+        self.assertEqual(set(baseline['source_files']) | set(evidence['m7_refactor']['added_files']),expected)
+        self.assertEqual(len(baseline['source_files']),59)
         self.assertEqual(len(evidence['changes']),13)
         self.assertEqual(evidence['unchanged_files'],46)
         changed={r['path']:r['after_sha256'] for r in evidence['changes']}
+        changed.update({r['path']:r['after_sha256'] for r in evidence['m7_refactor']['changes']})
         for name,digest in baseline['source_files'].items():
             with self.subTest(path=name):
                 self.assertEqual(hashlib.sha256((ROOT/name).read_bytes()).hexdigest(),changed.get(name,digest))

@@ -42,6 +42,7 @@ def render_current(report, trace):
                     '复制包逐文件字节在隔离 SDK 运行前后均核对；真实 SDK 导入／工具库存核查通过。'
                     '真实模型成本未实测，token／费用为 unknown。') if package else ''
     business = trace.get('local_business_acceptance')
+    semantic_refactor = bool(business and business.get('source_changes', {}).get('m7_refactor'))
     defects = trace.get('defect_closure')
     defect_new_label = '台账在 M6.6 新增修复' if business else '本轮新增修复'
     defect_text = (f'\n\n有限根因台账 {defects["incident_count"]} 项：'
@@ -61,14 +62,17 @@ def render_current(report, trace):
                    f'{review["distinct_predicates"]} 个按场景区分的定义，{review["shared_predicates"]} 个定义由多个 AT 共用；'
                    f'{review["single_predicate_atoms"]} 条 AT 仅有一个不同的直接谓词。'
                    '字段、期望值、实际判定及审阅队列从固定夹具和本轮观察派生；标记不证明语义充分或存在缺陷。') if review else ''
+    language_boundary = ('\n\n本轮已改为模型默认理解入口；上述 M6 固定对话和 522 条断言复验的是保留的确定性规则端口，'
+                         '没有调用默认工厂的真实模型，不能作为自然语言理解通过数。'
+                         'M7 默认工厂＋真实 SDK 的脚本网关集成另见 [重构记录](M7-REFACTOR.md)；真实模型效果和费用仍待授权实测。') if semantic_refactor else ''
     return (f'实际完整回归 **{report["tests_run"]}/{report["tests_run"]}**，零跳过/失败/错误、退出码 0。'
-            f'原生 SDK＋合成后台对话 **{trace["local_dialogues"]["dialogues_passed"]}** 组，'
+            f'{"保留规则端口的" if semantic_refactor else ""}原生 SDK＋合成后台对话 **{trace["local_dialogues"]["dialogues_passed"]}** 组，'
             f'{len(turns)} 个 user 轮次、{len(calls)} 次 HTTP 调用、{len(writes)} 次业务发送。\n\n'
             f'计划保留 {trace["case_count"]} 案例／{len(plan)} AT；关联 {unique} 个不同 AT、{links} 条关联关系，'
             f'{len(plan)-unique} 条尚未关联首批对话。{business_label} **{trace["business_ats_executed"]}**；'
             '全部本地业务验收由 M6.7 收口，课堂正式评分由 M7 单列。\n\n'
             f'run_id `{report["run_id"]}`；source_sha256 `{report["source_sha256"]}`；'
-            f'specification_sha256 `{report["specification_sha256"]}`。'+replay_text+boundary_text+package_text+defect_text+business_text+review_text)
+            f'specification_sha256 `{report["specification_sha256"]}`。'+replay_text+boundary_text+package_text+defect_text+business_text+review_text+language_boundary)
 
 
 def update_current(root, report, trace):

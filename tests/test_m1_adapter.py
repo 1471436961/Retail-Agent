@@ -63,11 +63,27 @@ def platform_modules(context):
 
 
 class AdapterTests(unittest.TestCase):
+    def factory_with_language_component(self, entry):
+        """Unit adapter test double; native factory/gateway lives in M7 worker."""
+        class Language:
+            semantic_understanding = True
+            last_usage = None
+            def understand(self, state, *, user_text=None):
+                from support_agent.domain.customer import find_email
+                index = len(state['history']) if user_text is not None else max(i for i,e in enumerate(state['history']) if e['role']=='user')
+                text = user_text if user_text is not None else state['history'][index]['content']
+                return {'action':'clarify' if user_text is not None else 'respond',
+                        'identity':{'email':find_email(text)} if user_text is not None else {}, 'arguments':{},
+                        'sources':[{'index':index,'quote':text}],
+                        'message':state['customer_record']['email'] if state['customer_record'] else ''}
+        with patch.object(entry,'runtime_adapter',side_effect=lambda context:Language()):
+            return entry.create_agent()
+
     def test_interleaved_customer_sessions_do_not_mix_results(self):
         with patch.dict(sys.modules, platform_modules(object())):
             entry = importlib.import_module("agent")
             toolkit = importlib.import_module("tools")
-            first, second = entry.create_agent(), entry.create_agent()
+            first, second = self.factory_with_language_component(entry), self.factory_with_language_component(entry)
             api_a, api_b = FakeClientAPI(), FakeClientAPI()
             call_a, waiting_a = first.generate_next_message(SimpleNamespace(role="user", content="customer_a a@example.test"), first.get_init_state())
             call_b, waiting_b = second.generate_next_message(SimpleNamespace(role="user", content="customer_b b@example.test"), second.get_init_state())
@@ -94,7 +110,7 @@ class AdapterTests(unittest.TestCase):
         with patch.dict(sys.modules, platform_modules(context)):
             entry = importlib.import_module("agent")
             tools_module = importlib.import_module("tools")
-            agent = entry.create_agent()
+            agent = self.factory_with_language_component(entry)
             self.assertIs(agent.context, context)
             state = agent.get_init_state()
             user = SimpleNamespace(role="user", content="customer_a a@example.test")

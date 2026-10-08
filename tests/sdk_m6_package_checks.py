@@ -47,7 +47,17 @@ context=SimpleNamespace(conversation_id='isolated-context')
 agent.get_agent_context=lambda:context
 first,second=agent.create_agent(),agent.create_agent()
 assert first is not second and first.context is context and second.context is context
-assert first.model_adapter is None and second.model_adapter is None
+assert first.model_adapter is not second.model_adapter
+assert first.model_adapter.semantic_understanding is True
+assert second.model_adapter.semantic_understanding is True
+# Package isolation provides no model capability. The production factory must
+# refuse interpretation rather than silently become the old regex agent.
+unavailable,unused=first.generate_next_message(UserMessage(role='user',content='a@example.test'),first.get_init_state())
+assert not unavailable.tool_calls and not unused['identity']['verified']
+# Separately exercise transport sanitization through the low-level rule port.
+# Actual factory/gateway/SDK round trips are covered by the M7 native worker.
+from support_agent.application import CustomerAgent
+transport_agent=CustomerAgent()
 marker='M65_PRIVATE_ERROR_CANARY_0123456789'
 calls=[]
 def transport(request):
@@ -57,16 +67,16 @@ toolkit=Tools(ClientAPI(transport,context=ClientAPIContext(conversation_id='isol
 assert set(toolkit.get_tools())==set(READ_TOOL_FIELDS)|WORKFLOW_TOOL_NAMES
 assert all(toolkit.tool_type(n)==ToolType.READ for n in READ_TOOL_FIELDS)
 assert all(toolkit.tool_type(n)==ToolType.WRITE for n in WORKFLOW_TOOL_NAMES)
-message,state=first.generate_next_message(UserMessage(role='user',content='a@example.test'),first.get_init_state())
+message,state=transport_agent.generate_next_message(UserMessage(role='user',content='a@example.test'),transport_agent.get_init_state())
 assert len(message.tool_calls)==1
 call=message.tool_calls[0]
 assert call.name=='lookup_customer'
 try:
-    getattr(toolkit,call.name)(**call.arguments)
+    toolkit.use_tool(call.name,**call.arguments)
 except ClientAPIError as error:
     assert marker not in str(error)
 else: raise AssertionError('Transport failure must not become success')
-reply,state=first.generate_next_message(MultiToolMessage(role='tool',tool_messages=[
+reply,state=transport_agent.generate_next_message(MultiToolMessage(role='tool',tool_messages=[
     ToolMessage(role='tool',id=call.id,content=marker,error=True)]),state)
 assert not reply.tool_calls and marker not in (reply.content or '')
 assert marker not in json.dumps(state)
