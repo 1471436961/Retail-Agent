@@ -1,71 +1,74 @@
 {
   "schema_version": 2,
   "status": "valid",
-  "run_id": "33a2cc70ea6940af972368c02cdf8ef2",
+  "run_id": "1b315f7b44b64832bab24cb5c0e6ca26",
   "scope": "component association and explicitly executed synthetic local business atoms; not classroom results",
   "case_count": 134,
   "at_count": 522,
   "business_ats_executed": 522,
   "requirements_sha256": "308ef07535a8b96016021ceec40e2efadef556f964a76fb280d5d5b9a7fadeda",
-  "run_source_sha256": "5f7734bad98e04b19d2442e2aaacb1ff6eec6832f42202b99a634caf98c36143",
+  "run_source_sha256": "bd1b322916639c67ddfc7aa4a6eda30494166f641e6c14a26d8a3a3d637fc84d",
   "source_files": {
     "agent/agent.json": "7c8b0cb6c62e4ba39a16f827830ec530aa9ac9916fe52873c4a490bc4a9355c9",
-    "agent/agent.py": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
+    "agent/agent.py": "b2f5f095f373c5402dcfe060cae6cea16dd3b7282c610e0c03b724ce4b9359d7",
     "agent/support_agent/__init__.py": "b945c22ad75d95e3672da9ec456c099e951fc059f8580e9ed07b3840b095770a",
     "agent/support_agent/adapters/__init__.py": "22d3f8d91bb91ea0615860036b38771c962bc192dbafbcf0c5523171f6da1807",
     "agent/support_agent/adapters/address_tools.py": "8196f3ca15d34f7444b771a904a3b2d9be18222a1a55e86a380b7565536fcc9e",
     "agent/support_agent/adapters/cancellation_tools.py": "b723d2a2040bd1a91e8b85fe5505af1dfaecfa00d9d59aa7b80713d721b515b2",
     "agent/support_agent/adapters/client_api.py": "6d21cdcbaec9ce19133a61c50860371e9e5efb1d3ab5f368b42e0bb05149a688",
     "agent/support_agent/adapters/customer_api.py": "6eee5efe034bd9926682d4f4237bb5f97364794e4e0605c6db576ae254d16f74",
-    "agent/support_agent/adapters/customer_tools.py": "c3738a879ffc0d32c298528620035d56f4c6e584aa68a809a6dbe0bcdc3e5175",
+    "agent/support_agent/adapters/customer_tools.py": "723417b58e48fc172ab338e05c4fad6c5c620182a867f62297e11d8930a7668c",
     "agent/support_agent/adapters/exchange_tools.py": "79c74d78c1d773d995880eff084641baaf08d39281cb35fe9c6f8be071ae2306",
     "agent/support_agent/adapters/handoff_tools.py": "36a998554491028e0b7e18d2e4f2506145eb1327b93cd00a815df30eec9545ad",
     "agent/support_agent/adapters/items_tools.py": "0a6bf5db8518c6db006ff3ba62ac030a8ab65fcead8c9f3425837bbec296aaef",
-    "agent/support_agent/adapters/model_gateway.py": "5aacf5d51a2e51d05344e75867e0ffdb82bf69fa7cefd073ec91310f3cd51759",
+    "agent/support_agent/adapters/model_gateway.py": "0894a90dd04da86147a6b8bf3c8d4ed5344a39b6791ba27d6883c3933f34483c",
     "agent/support_agent/adapters/payment_tools.py": "4059a70555d908b88ff159061bcfbb2e920ea68e8cebfb2a96abd6e8b61cd209",
     "agent/support_agent/adapters/read_api.py": "16ec1a47c04224434686c39ae5449c0f08b2d8fcc92e09ad1ff5bd9e257fb744",
     "agent/support_agent/adapters/read_tools.py": "71adab1bdcc7482a0a1ccfe99173a9f2badf0b44aed343af530b37ec22ebdf43",
     "agent/support_agent/adapters/returns_tools.py": "ef5121b72c80be166de9e0ed3c978e8cd21bd866af2ad0e7e6273fa7f000972a",
+    "agent/support_agent/adapters/semantic_model.py": "aebfaca16113fb2661f33203004ba127469f44d99c1cb6dc197ca6d42441581c",
     "agent/support_agent/adapters/write_runtime.py": "42d9ea7572dd203caa121496ca9a4f71f757e8dba5a7aa04e4640da76000208e",
     "agent/support_agent/address_session.py": "9b09605a3936a404c39a6ed2204de565e38f5fbb866f83f39e8d2b64b7a1224a",
-    "agent/support_agent/amount_summary.py": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
-    "agent/support_agent/application.py": "e3b2a776a2ebc5e24804b7a49b6bd961edfcd51fb434736871b035bed4aae6c8",
+    "agent/support_agent/amount_summary.py": "109b041f23ebaf4169e09b6e3b302208261efa49da92c848cf2a91db832ae87a",
+    "agent/support_agent/application.py": "f1cd75d851babb47f73f2d5f8c1ebff98d2c4d4025d55fd3c2ed97be215a8d56",
     "agent/support_agent/cancellation_session.py": "55ab89d3bb4379681af87c7e1b7e636d3f2aaf74eb4209ea698af2f7d52381e4",
     "agent/support_agent/candidate_session.py": "41c8bc7640bf76f06984db25274d607aa6e70b2903d5869acac3267d7d4c8cca",
     "agent/support_agent/config.py": "bed92066063c625472fe3afe92d268b1330b89f18fed3efc97e8c42f073ebc22",
     "agent/support_agent/domain/__init__.py": "fce2b1e04b26ebe9cbf5e0ba5a04b7aa2a5deb078461c0d810cb41143f1594f1",
-    "agent/support_agent/domain/addresses.py": "e9c1aa9dc9b88ae9f8315745af2d9af7921e939db8e20cbcb8a1400cef82fc91",
-    "agent/support_agent/domain/cancellation_intake.py": "6cd681a310dd1f7638d8908e4e662ad38b343664bd38f33c39fa2cc4932d9563",
+    "agent/support_agent/domain/addresses.py": "8dc7f1f5791574a1587816fcc340125a70987c2511a0397a09af61fa95d24ae6",
+    "agent/support_agent/domain/cancellation_intake.py": "fac3fd62c5e5885310ee089cfb7c4a0102bb41cc7f4153234986568867137016",
     "agent/support_agent/domain/candidate_selection.py": "3bb00adff57603a69146f400498612c8786187470018a476ad80908bf49f2fb2",
     "agent/support_agent/domain/catalog.py": "6ccfe9389649190153ddb93e72c4c03c75ff1b6b31db254ca296c36a94583bce",
     "agent/support_agent/domain/customer.py": "1374bdd79d0602e266e0a08da2ce1269663125fe9140d0a6234f81099e5782e0",
     "agent/support_agent/domain/identity.py": "f371c4ea0654699843809a080814a657b13cd508be32e19f43c9428e81f296ec",
-    "agent/support_agent/domain/items_intake.py": "deeabd7ec2e8b4fd7496969bd0b5a5a52a3ff6acfbffa578cabd416d5cbc6e1f",
+    "agent/support_agent/domain/items_intake.py": "4f758d3f72a132c67aef82cc7714b66d1f17fb6d723297d2d54995d38a305678",
     "agent/support_agent/domain/money.py": "a698138a08fd1dc7083b3860c28577fc807a53a5aa9bf21339685a2f4498e388",
     "agent/support_agent/domain/orders.py": "112bb2af986050dee03c61a642c42a18ffd4aa561cfe5afd8382f672c013fb40",
-    "agent/support_agent/domain/payment_intake.py": "f0273df2246f41e293741ee727353bf0654e4c4a7f6a50496cd832a00d01a44b",
+    "agent/support_agent/domain/payment_intake.py": "5bac76340fdb3c60887525d3c246a3f695c26f63a5b26e9cb42ca19b4280a4f1",
     "agent/support_agent/domain/policies.py": "43ef5c9ede59a5d9ef0053c907575a7b46f17656f528ccae089786469382d2c1",
-    "agent/support_agent/domain/returns_intake.py": "0c920a7877f97ab012ed628699b236a3a1267164c99f557eab680509f2ebe177",
+    "agent/support_agent/domain/returns_intake.py": "e045462b47665ccd860c3302be7926848c01dc059128365417ecb9b53e3c97d8",
     "agent/support_agent/domain/rules.py": "1ca3958a8e089d8372d2da213df693fbedbc54050f72f55bbe7d529f22e7cc4b",
     "agent/support_agent/domain/task_graph.py": "c92a530b8c0092aa39ee864c432cd4ab02536999a9fcd581a3027b5ebead2120",
     "agent/support_agent/domain/write_receipts.py": "5e509e10adaaa91671d346133bc5ff04d851a1871df89cce322e11bb3f031c17",
     "agent/support_agent/exchange_session.py": "d7e640e922246374141bcb66b1794390f6959ac0e60c513e0afc78456ed2bf6d",
-    "agent/support_agent/handoff_session.py": "691e5ec5c73f54802d59e91f84b09206d787864c8a0e7e30ddf8b688bccf174a",
+    "agent/support_agent/handoff_session.py": "c70f718f340fdabb240037b96f8850ed709df9bf9c6e9a634a9a66a4b87ed115",
     "agent/support_agent/items_session.py": "f458b405800c8483b1fe4bc090395d376ee5b590d827df7a5766dbb804cce3d4",
-    "agent/support_agent/model_context.py": "58983cb6cf9fbed8d91b0109d976f79b18f16b01e23b9a428b69c42e8a8b4eba",
+    "agent/support_agent/model_context.py": "48fba6bd3844594c3c9a40eb052d4fc9e2118f37bf4190403c4d6922f28ea8eb",
     "agent/support_agent/payment_session.py": "4dd4d31a1b0b063543b864e836c7e228ec071b9996fee0f079a7a3a924bb89d9",
-    "agent/support_agent/proposals.py": "0aea8d98ad335886a8dcec5587f3235040dc0f2d14b762493cc9cbd928c642e9",
+    "agent/support_agent/proposals.py": "6c56f8523a1b0c681a2e0d13cc07306aac2fffee78fef9c97e50fabca720ff51",
     "agent/support_agent/protocol.py": "6d80032f64f37b1d1cd3f832228d958b91a9ea024b9792f2bc134011cbc3e13a",
-    "agent/support_agent/read_session.py": "7eb654cd5589eda3f0f26e253643529dfb71eed95037ad5f7c2ee370d3b7f8db",
+    "agent/support_agent/read_session.py": "311bec04a4ad58d93cd87f42f1ef2e4be3200d558acaac9593c78a559032d094",
     "agent/support_agent/returns_session.py": "c2460ca6f454099e132cb08406c2aa342217d6b9e5aa634b0a161bafd43372c2",
-    "agent/support_agent/state.py": "5330decb4ed88e17f61abf9a42ed706e1995be42dc067ec10e0fa5fee557a201",
+    "agent/support_agent/semantic_session.py": "6a0482728c0b2d9e936cca99af245c732767f4629b76b3df2c98d733fd2d01b5",
+    "agent/support_agent/semantics.py": "24ca35c064d607b4cc293c08c527b2fcfa672e49136ce2a9bb298a4b258dec53",
+    "agent/support_agent/state.py": "1e393300d66d46da1758308cdc7e134be1702762beb0c2d832701bcd13f8cb1b",
     "agent/support_agent/tasks.py": "d27e8e9a55099f0c2c9d3e9a5b54fa8b41052017fe61ae262ff44afebbc19ba1",
     "agent/support_agent/turns.py": "fb158197d66dfa168c0762e86eb5ed5a2f5107209d94b70cc955ba30d09d8759",
     "agent/support_agent/workflow_boundary.py": "a40383f750bb1e6f3f2f6bd437bdc85c206b52fccc12b0bc0992ec7ed0a64258",
     "agent/support_agent/workflow_limits.py": "eb52a0ca6a262b756bc301692d97d8bf88b66c7abc533ed2b30db6d49453dc5c",
     "agent/support_agent/workflow_registry.py": "6450ac44e5aca118aafa7ce27cb4a9a3c50b4a07ec547d39c54aaed14bf8da74",
     "agent/support_agent/write_session.py": "46c84cdac54c8ddc1a32af7d9afe6149ec751816fbc950ed3751682437a295dd",
-    "agent/tools.py": "cd8fcc30f062bf8cf9d9237321e4bdc127665d96fe62190e2cc61b97a8fd9368",
+    "agent/tools.py": "888f920d94787307c7890427d15e9c70ad83c72745c46605a7929d9eff9783e5",
     "docs/M4.1-DELIVERY.md": "a5b7bce0508cb8002d5a016eb5d39fcfa2aea9799c6727a68b82903a8a858668",
     "docs/M4.2-DELIVERY.md": "eac0f13c1d8c365cd7514adf2bc13333157c6dd3dc108d7ec914353ee7537188",
     "docs/M5.2-DELIVERY.md": "8e8b07681039b247ad2f08b9015959803ef5610c2d7d7305a27c8bc74032b035",
@@ -74,16 +77,17 @@
     "docs/M6.2-DELIVERY.md": "03ea42c17a2c0ee7281b3af3df6dbabeef198bff9e4f627e5fe353b30e91d596",
     "docs/M6.3-DELIVERY.md": "4f425ebf740e5d2a014f4cd610daf32256a04c7f7b42c7e162de36303333d3f9",
     "docs/M6.5-DELIVERY.md": "de6075560605e2bcfa35a1f4abcfc37e7741f9760169277f31d6a2b84cce3721",
-    "scripts/business_acceptance.py": "65dc19a0c9e3ef38ff9b3e90d3969aaefb09966acdfba8ffb7275aa2253187ac",
+    "scripts/business_acceptance.py": "553fb8079edb0352d9a594f948eb5b375a9f456250a6967bd66f957b2f02e3be",
     "scripts/defect_register.py": "1b82a23dd189661c957c4dc9cba1877d72e82165af9ce7d29069f361005b3a6b",
     "scripts/evaluate.mjs": "79d44b60f3f00dbcb4225cd20f7097c0a754ba8746c342dbb74083640568493c",
-    "scripts/evidence_docs.py": "582ccf996ea44366b69ff13a28b3ce671e1895f714ffd9a1b57c1f94fbe400f3",
-    "scripts/foundation_trace.py": "bba029da697336065229561d8f9fdef4cfaea9423a8b0c93719593054ba36977",
+    "scripts/evidence_docs.py": "4c07dbafa5e2a74a20f207f12f319bbab8b235fd273ff1135a982a47bd2b9d71",
+    "scripts/foundation_trace.py": "a4d2f8cbc1a7e3940c5a19ce856a791c1131937966ecf2ca4665862ebf556285",
     "scripts/lab_eval.py": "0838c55871d062e48cf78ebfbab833709e3077c05860cca8c0446c1b5077dc0e",
     "scripts/local_boundary_batch.py": "84eb94a3e0dfb88d8455c2204ba8171bfdd35e06692e5d6f73e59c34c21eecb5",
     "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc",
     "scripts/local_package_audit.py": "18b59d8b79fe5436686678a99b6787f96b170ca1a966801006c6f29202020f9a",
     "scripts/local_replay_batch.py": "b848a4e856fae2dd23bfb98e600e6e7c863caf7287667038fcb420350bcfec8e",
+    "scripts/m7_source_changes.py": "a3ecf8c77ec39594201c9d33b53017d16ab3ed0646f1dce11b6872d284da9c27",
     "tests/fakes.py": "429edc15f8397324b3dae16890e2a36b370e349eaaaca10db0aef8ccc7a195fe",
     "tests/fixtures/m3_schema1_state.json": "66bad55f73e641ab7968b0acc73647828eef4bea6309a6be43074912b0696b6f",
     "tests/fixtures/m3_schema2_state.json": "faae137cc5dadd6dffe523d4f24d922af9c5b77c5aa39bf30d4a76311bf8a48f",
@@ -103,21 +107,23 @@
     "tests/fixtures/m6_defects.json": "fd3c63d197a735d287c373a0703c3c8a61923ce02e21cff4b7281f46502a8678",
     "tests/fixtures/m6_dialogues.json": "57f42f4fd55591ca5cd8e62b41e5968cc80f3c659213e93d083e7f58615799fa",
     "tests/fixtures/m6_source_baseline.json": "60740b0651b7c47ce23b05266a7f403c428da50b9848cc978fbf1b567212c5dd",
+    "tests/fixtures/m7_semantic_changes.json": "7a65e9c403e0969d5866a4318ac3210a7aababacd41f74e5dd4a30905136aa74",
     "tests/m2_fakes.py": "61f2b0b3a6d479872d9883672c970eae1e030bffcfb90221fc2baa80dc0d1f38",
     "tests/sdk_m2_checks.py": "612608c2984eee57fb43554d9fdf26b57451655bbf21ae73fe002819a6d63830",
-    "tests/sdk_m3_checks.py": "34dfed53385ed6fa87180436ae5c4fbf6f03ee5a7113f896e6b8565630fa6c00",
+    "tests/sdk_m3_checks.py": "764d49c128d628a70df52d1859f2c1d73dd2911e6c6a4bdff91ff691513c6f01",
     "tests/sdk_m6_boundary_checks.py": "9432d2d878a013db03e63c5a01b484d179a68a315dfe9335b49ab09849669013",
-    "tests/sdk_m6_business_checks.py": "f528abf50e0ceaa4964befbbeb5010a97eab0a4728e6a3746ebd3336214d2d9b",
-    "tests/sdk_m6_checks.py": "1156e01ee072e11358f096250f47703aad7aa5bb2286028d6e8d1e9cf9438ca4",
-    "tests/sdk_m6_package_checks.py": "df2146afe2a5a6bd1521a4ec36f5bade6e45e341ae3339b602f9a92679f23951",
+    "tests/sdk_m6_business_checks.py": "3c8d00c7d8abf54c3881819249aabc308ab0024f5e87655280ee4d8ed0c32e52",
+    "tests/sdk_m6_checks.py": "d02b1da22ccc58114ac917d9babde24f4184204c384c41f1802a8d437f800685",
+    "tests/sdk_m6_package_checks.py": "cc1e634f3f52f559eee5bb5474dccfc12e297fc0c93410db5c01567289726118",
     "tests/sdk_m6_replay_checks.py": "d1247f81afafa9aafecb7dfff1ec2f37f67b14de32be46f4e3ffe27f206664a1",
+    "tests/sdk_m7_semantic_checks.py": "4ab6eab6e69c7eff8a5b7e1bfd40fe46aed5d8038ba39778b556a0eb361847db",
     "tests/temp_dirs.py": "5b6d1c28f1d6be10de659339cf6b0b7e0ed9387187884edc6ac874c1d180a8eb",
     "tests/test_case_trace.py": "ce54b09b99fd17d55e89429a620af183c18610459502100c0118886f9e28de69",
     "tests/test_customer.py": "ed3bf9b5a2dbce55dbfe6ca4a59e92cb40fc8f602d889c4784cf9f329b9ba7c2",
     "tests/test_evidence_docs.py": "bfe079235b4dae69f9bab287db5a95722936f9546a315ae3f65d488ace21b09a",
-    "tests/test_foundation_trace.py": "6014b9ccfbe2053ad259c77d524e3ef1ac5e891484d469b745d150fbac1c381e",
+    "tests/test_foundation_trace.py": "888157b35169a7c6356824d5e5775788031226fd97b319b2f63f9904ae563649",
     "tests/test_m0_contract.py": "895185129ebab1ffb79af1d09b26a60f80b95022e526d9939b26ba6dfb8c8f6f",
-    "tests/test_m1_adapter.py": "67236580c807cb2dd7704560ad5532626536238fc25df51fd750feb8dd2cf608",
+    "tests/test_m1_adapter.py": "a60ba8f2a5e38f39417cf2f5e9836a640c1fdd49b2e4e46beb6d4e1f17fb9fe1",
     "tests/test_m1_client_api.py": "3dba71d48e27480847a7c1061ab1614dabee65709b078ff5fd570b1ee2c995ce",
     "tests/test_m1_state.py": "8d907b4badfd684fb89ed992a89b7048d0ffaf85a2a6dd47f5c22b2f7dc2d826",
     "tests/test_m2_reads.py": "4bddc40163ac54b3ecc464da549fa447b777caab5e9f3fecef60faa998de87c8",
@@ -141,13 +147,15 @@
     "tests/test_m5_matrix.py": "db134111a594dcd7cf25b11f7686765ae8c7eda1de675352ecfa4cc99b23a677",
     "tests/test_m5_returns.py": "4a01a1f33b6e89d6f3fcb61c4e0a3fa3bf624620d6177277558f044dada34f99",
     "tests/test_m6_acceptance.py": "bfe6296563e40dc101dfa7340945e7a404016255bf86db009d0d9e505a2f0190",
-    "tests/test_m6_boundaries.py": "0280d960b85a7502e1b39e832e7c84d8f9b7d5855a723638d391162cbe7ece01",
-    "tests/test_m6_business.py": "2c6cb129daec2ea9182706b9b14c54cc01d69b1fa2029f5ea5413285a93fccfd",
+    "tests/test_m6_boundaries.py": "60a1fb16a5b8c8f199d2dc4ae31567aa10547b63814cc05391ae8ce4b824a00e",
+    "tests/test_m6_business.py": "c4fb20c06f52d4426ce8e49e0afccedbb6b713e91dfca75d99f433752f393c69",
     "tests/test_m6_combinations.py": "60ca6bc1b4d50df2bd2c34ed13852c42440f552ff9e02f143de8c8904991a5f7",
     "tests/test_m6_defects.py": "79754a3e15766f385f8383f5577cf35c19c626b6c41b506134c358d1218ca8e1",
-    "tests/test_m6_dialogues.py": "699802600c8cbb6b24ae35a3d4d3016c4367368b3e9f0c193418f567e24d2b8d",
+    "tests/test_m6_dialogues.py": "7264806aabef8295fd144608a9a419e275ad0a64f9daa854e1358a96263c8e51",
     "tests/test_m6_package.py": "b0f21834d7f385d2a73a41679f7bfea9747a8585820249254a70cdf23f7eb64a",
     "tests/test_m6_replays.py": "37fd15307cbd4078e30befcbe8833d56bca9b58eed75ac6ee0f8c53eac628500",
+    "tests/test_m7_semantic_agent.py": "5b076f6a0818452b2ef0a72624d5e34dab14ef2c23bb324e5a4f8dc090507885",
+    "tests/test_m7_source_changes.py": "bec28c7c6e63d3f89b590e6edbf67db9d47635badcbb47d88313222933ec0917",
     "tests/test_money.py": "022ce5613f143d1b03f6929124d4859121e5539c24595c5dda772217e5fe95db"
   },
   "specification_sha256": "b69229eb3c9487395f6b256729e5d2c37a700a95c968321ca502648a1de4032a",
@@ -11639,10 +11647,10 @@
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_checks.py",
       "sdk_version": "1.0.1",
-      "parent_run_id": "33a2cc70ea6940af972368c02cdf8ef2",
-      "source_sha256": "5f7734bad98e04b19d2442e2aaacb1ff6eec6832f42202b99a634caf98c36143",
+      "parent_run_id": "1b315f7b44b64832bab24cb5c0e6ca26",
+      "source_sha256": "bd1b322916639c67ddfc7aa4a6eda30494166f641e6c14a26d8a3a3d637fc84d",
       "runner_inputs": {
-        "tests/sdk_m6_checks.py": "1156e01ee072e11358f096250f47703aad7aa5bb2286028d6e8d1e9cf9438ca4",
+        "tests/sdk_m6_checks.py": "d02b1da22ccc58114ac917d9babde24f4184204c384c41f1802a8d437f800685",
         "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc"
       }
     },
@@ -19422,11 +19430,11 @@
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_replay_checks.py",
       "sdk_version": "1.0.1",
-      "parent_run_id": "33a2cc70ea6940af972368c02cdf8ef2",
-      "source_sha256": "5f7734bad98e04b19d2442e2aaacb1ff6eec6832f42202b99a634caf98c36143",
+      "parent_run_id": "1b315f7b44b64832bab24cb5c0e6ca26",
+      "source_sha256": "bd1b322916639c67ddfc7aa4a6eda30494166f641e6c14a26d8a3a3d637fc84d",
       "runner_inputs": {
         "tests/sdk_m6_replay_checks.py": "d1247f81afafa9aafecb7dfff1ec2f37f67b14de32be46f4e3ffe27f206664a1",
-        "tests/sdk_m6_checks.py": "1156e01ee072e11358f096250f47703aad7aa5bb2286028d6e8d1e9cf9438ca4",
+        "tests/sdk_m6_checks.py": "d02b1da22ccc58114ac917d9babde24f4184204c384c41f1802a8d437f800685",
         "scripts/local_replay_batch.py": "b848a4e856fae2dd23bfb98e600e6e7c863caf7287667038fcb420350bcfec8e",
         "scripts/local_dialogue_batch.py": "a61bed78c11edbac97834231f12b6f277221214c26cad3be5588967fb088ecbc",
         "tests/fixtures/m6_dialogues.json": "57f42f4fd55591ca5cd8e62b41e5968cc80f3c659213e93d083e7f58615799fa",
@@ -19446,13 +19454,13 @@
       "mode": "native_sdk",
       "runner": "tests/sdk_m6_boundary_checks.py",
       "sdk_version": "1.0.1",
-      "run_id": "33a2cc70ea6940af972368c02cdf8ef2",
-      "source_sha256": "5f7734bad98e04b19d2442e2aaacb1ff6eec6832f42202b99a634caf98c36143",
+      "run_id": "1b315f7b44b64832bab24cb5c0e6ca26",
+      "source_sha256": "bd1b322916639c67ddfc7aa4a6eda30494166f641e6c14a26d8a3a3d637fc84d",
       "inputs": {
         "tests/sdk_m6_boundary_checks.py": "9432d2d878a013db03e63c5a01b484d179a68a315dfe9335b49ab09849669013",
         "scripts/local_boundary_batch.py": "84eb94a3e0dfb88d8455c2204ba8171bfdd35e06692e5d6f73e59c34c21eecb5",
         "tests/sdk_m6_replay_checks.py": "d1247f81afafa9aafecb7dfff1ec2f37f67b14de32be46f4e3ffe27f206664a1",
-        "tests/sdk_m6_checks.py": "1156e01ee072e11358f096250f47703aad7aa5bb2286028d6e8d1e9cf9438ca4",
+        "tests/sdk_m6_checks.py": "d02b1da22ccc58114ac917d9babde24f4184204c384c41f1802a8d437f800685",
         "tests/fixtures/m6_dialogues.json": "57f42f4fd55591ca5cd8e62b41e5968cc80f3c659213e93d083e7f58615799fa",
         "tests/fixtures/m6_combinations.json": "fe8b468988a8e1692a5377ec966dad19a61f084fbeb9bcec302757905b2bb0fd",
         "tests/fixtures/m6_3_source_baseline.json": "8978475df25a382239d927d53e2d34673fbb7608ac54bce154501a6a9d0265ba"
@@ -19468,88 +19476,92 @@
     "execution": {
       "mode": "isolated_uploaded_package",
       "runner": "tests/sdk_m6_package_checks.py",
-      "run_id": "33a2cc70ea6940af972368c02cdf8ef2",
-      "source_sha256": "5f7734bad98e04b19d2442e2aaacb1ff6eec6832f42202b99a634caf98c36143",
+      "run_id": "1b315f7b44b64832bab24cb5c0e6ca26",
+      "source_sha256": "bd1b322916639c67ddfc7aa4a6eda30494166f641e6c14a26d8a3a3d637fc84d",
       "inputs": {
-        "tests/sdk_m6_package_checks.py": "df2146afe2a5a6bd1521a4ec36f5bade6e45e341ae3339b602f9a92679f23951",
+        "tests/sdk_m6_package_checks.py": "cc1e634f3f52f559eee5bb5474dccfc12e297fc0c93410db5c01567289726118",
         "scripts/local_package_audit.py": "18b59d8b79fe5436686678a99b6787f96b170ca1a966801006c6f29202020f9a",
         "scripts/lab_eval.py": "0838c55871d062e48cf78ebfbab833709e3077c05860cca8c0446c1b5077dc0e",
         "scripts/evaluate.mjs": "79d44b60f3f00dbcb4225cd20f7097c0a754ba8746c342dbb74083640568493c"
       }
     },
     "package": {
-      "file_count": 57,
-      "source_text_bytes": 481554,
-      "max_text_file_bytes": 49306,
+      "file_count": 60,
+      "source_text_bytes": 521251,
+      "max_text_file_bytes": 49643,
       "content_hashes": {
         "agent.json": "7c8b0cb6c62e4ba39a16f827830ec530aa9ac9916fe52873c4a490bc4a9355c9",
-        "agent.py": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
+        "agent.py": "b2f5f095f373c5402dcfe060cae6cea16dd3b7282c610e0c03b724ce4b9359d7",
         "support_agent/__init__.py": "b945c22ad75d95e3672da9ec456c099e951fc059f8580e9ed07b3840b095770a",
         "support_agent/adapters/__init__.py": "22d3f8d91bb91ea0615860036b38771c962bc192dbafbcf0c5523171f6da1807",
         "support_agent/adapters/address_tools.py": "8196f3ca15d34f7444b771a904a3b2d9be18222a1a55e86a380b7565536fcc9e",
         "support_agent/adapters/cancellation_tools.py": "b723d2a2040bd1a91e8b85fe5505af1dfaecfa00d9d59aa7b80713d721b515b2",
         "support_agent/adapters/client_api.py": "6d21cdcbaec9ce19133a61c50860371e9e5efb1d3ab5f368b42e0bb05149a688",
         "support_agent/adapters/customer_api.py": "6eee5efe034bd9926682d4f4237bb5f97364794e4e0605c6db576ae254d16f74",
-        "support_agent/adapters/customer_tools.py": "74633cea4fe4504e4c18fd9f11704a26a338a68043486bc4531aa95218fefd96",
+        "support_agent/adapters/customer_tools.py": "96544da2b34a6c5086ec24f5c2d5ba059052a50b089eb387f68307f7826e41d3",
         "support_agent/adapters/exchange_tools.py": "ad4321e53e144223884957f350842a986e04e34c9c878dbe6e4004bf94dc7f06",
         "support_agent/adapters/handoff_tools.py": "36a998554491028e0b7e18d2e4f2506145eb1327b93cd00a815df30eec9545ad",
         "support_agent/adapters/items_tools.py": "0a6bf5db8518c6db006ff3ba62ac030a8ab65fcead8c9f3425837bbec296aaef",
-        "support_agent/adapters/model_gateway.py": "7875a41b5ae873ffc2766d99e0a5a8d93346cbdde718aa8bf648330bb6680d3c",
+        "support_agent/adapters/model_gateway.py": "b856f627e74a8871b2c579d9cc57bfaa6f30665ba33088164c50cf39f6210a74",
         "support_agent/adapters/payment_tools.py": "4059a70555d908b88ff159061bcfbb2e920ea68e8cebfb2a96abd6e8b61cd209",
         "support_agent/adapters/read_api.py": "16ec1a47c04224434686c39ae5449c0f08b2d8fcc92e09ad1ff5bd9e257fb744",
         "support_agent/adapters/read_tools.py": "71adab1bdcc7482a0a1ccfe99173a9f2badf0b44aed343af530b37ec22ebdf43",
         "support_agent/adapters/returns_tools.py": "ef5121b72c80be166de9e0ed3c978e8cd21bd866af2ad0e7e6273fa7f000972a",
+        "support_agent/adapters/semantic_model.py": "aebfaca16113fb2661f33203004ba127469f44d99c1cb6dc197ca6d42441581c",
         "support_agent/adapters/write_runtime.py": "42d9ea7572dd203caa121496ca9a4f71f757e8dba5a7aa04e4640da76000208e",
         "support_agent/address_session.py": "64b860bdc6e1e8ded1b697d2c01f051e525e3af2c796246dc31670610e6deabe",
-        "support_agent/amount_summary.py": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
-        "support_agent/application.py": "e3b2a776a2ebc5e24804b7a49b6bd961edfcd51fb434736871b035bed4aae6c8",
+        "support_agent/amount_summary.py": "109b041f23ebaf4169e09b6e3b302208261efa49da92c848cf2a91db832ae87a",
+        "support_agent/application.py": "f1cd75d851babb47f73f2d5f8c1ebff98d2c4d4025d55fd3c2ed97be215a8d56",
         "support_agent/cancellation_session.py": "b5b55d6d2b91c124cc9eb3e1dc9b18728cf24c723c2e510569fb00a825389e3b",
         "support_agent/candidate_session.py": "c2473e05b61cc3b9d6a86a90b4bc64d414806a8cb8187ded301072d81d392b16",
         "support_agent/config.py": "bed92066063c625472fe3afe92d268b1330b89f18fed3efc97e8c42f073ebc22",
         "support_agent/domain/__init__.py": "fce2b1e04b26ebe9cbf5e0ba5a04b7aa2a5deb078461c0d810cb41143f1594f1",
-        "support_agent/domain/addresses.py": "e9c1aa9dc9b88ae9f8315745af2d9af7921e939db8e20cbcb8a1400cef82fc91",
-        "support_agent/domain/cancellation_intake.py": "6cd681a310dd1f7638d8908e4e662ad38b343664bd38f33c39fa2cc4932d9563",
+        "support_agent/domain/addresses.py": "8dc7f1f5791574a1587816fcc340125a70987c2511a0397a09af61fa95d24ae6",
+        "support_agent/domain/cancellation_intake.py": "fac3fd62c5e5885310ee089cfb7c4a0102bb41cc7f4153234986568867137016",
         "support_agent/domain/candidate_selection.py": "3bb00adff57603a69146f400498612c8786187470018a476ad80908bf49f2fb2",
         "support_agent/domain/catalog.py": "6ccfe9389649190153ddb93e72c4c03c75ff1b6b31db254ca296c36a94583bce",
         "support_agent/domain/customer.py": "1374bdd79d0602e266e0a08da2ce1269663125fe9140d0a6234f81099e5782e0",
         "support_agent/domain/identity.py": "f371c4ea0654699843809a080814a657b13cd508be32e19f43c9428e81f296ec",
-        "support_agent/domain/items_intake.py": "7769de2b5c37c6e6675165ae4a9916cc5b59ceaceb0c1c09e3b2f438c3bf74e0",
+        "support_agent/domain/items_intake.py": "d3a5d71cfc6f880a0f6acb295056dc683cda1761e8170706de5dc78bff74a763",
         "support_agent/domain/money.py": "a698138a08fd1dc7083b3860c28577fc807a53a5aa9bf21339685a2f4498e388",
         "support_agent/domain/orders.py": "112bb2af986050dee03c61a642c42a18ffd4aa561cfe5afd8382f672c013fb40",
-        "support_agent/domain/payment_intake.py": "f0273df2246f41e293741ee727353bf0654e4c4a7f6a50496cd832a00d01a44b",
+        "support_agent/domain/payment_intake.py": "5bac76340fdb3c60887525d3c246a3f695c26f63a5b26e9cb42ca19b4280a4f1",
         "support_agent/domain/policies.py": "43ef5c9ede59a5d9ef0053c907575a7b46f17656f528ccae089786469382d2c1",
-        "support_agent/domain/returns_intake.py": "0c920a7877f97ab012ed628699b236a3a1267164c99f557eab680509f2ebe177",
+        "support_agent/domain/returns_intake.py": "e045462b47665ccd860c3302be7926848c01dc059128365417ecb9b53e3c97d8",
         "support_agent/domain/rules.py": "1ca3958a8e089d8372d2da213df693fbedbc54050f72f55bbe7d529f22e7cc4b",
         "support_agent/domain/task_graph.py": "c92a530b8c0092aa39ee864c432cd4ab02536999a9fcd581a3027b5ebead2120",
         "support_agent/domain/write_receipts.py": "6b1a27aedab8ea19e27586b4597fd37d288713bf84dc09f60f60f24b6bfdfb62",
         "support_agent/exchange_session.py": "5c2d52d0bf7625b8cab7d941bd2278a7dd893ab0df56297b64fb5f7e2766efca",
-        "support_agent/handoff_session.py": "e3c3e4de2eb878c6e90d7788eca9f78d11243c645701a6f03078a68f3fad2f36",
+        "support_agent/handoff_session.py": "e407b3d98924bb77a5e026bb82132d02e77d9ab9e7dc2400c95955a94d1cdda7",
         "support_agent/items_session.py": "2c7b427434223571056adda30341a1d31d0e5c1d9bf29d2379216690a1bec335",
-        "support_agent/model_context.py": "278615ec9f531c9e019655d3a7146175ec675aafe9247fca3519920f0ffa04e9",
+        "support_agent/model_context.py": "7b5bcee49c3f826c89cee8cdeabf3d1c177cd1a1dec7d356ab2fa7e5810fd9dd",
         "support_agent/payment_session.py": "cc18f6746c678e5494ecb20fcb537b5911beff8691f465ff47777e7f7b9877b0",
-        "support_agent/proposals.py": "e319f8417b7032fbd399504914c1e5055d1a43bfe23cb30f6b6701ffeec7d472",
+        "support_agent/proposals.py": "917583aadf64b4ee4c4afce6e3dd0184f3b522f047a60f93d2dd26bbefd0307c",
         "support_agent/protocol.py": "2b3042bff75bb1c9f8a80894c06f34425b0a34c5d0267190a7cc73b74c7c34e3",
-        "support_agent/read_session.py": "dc9c76a4cd77c1f5e952da3a1e18e779c50a313ca7dfb6a922223a76a685902a",
+        "support_agent/read_session.py": "508ba9b690ecaa1bb630edf58aa0a5571d8b75d7c1b2cc2264b85f95baef6745",
         "support_agent/returns_session.py": "c9d3bdca204f88bcc97a47ec10caea627f4d9095301a8e4e65aeb91ed0559a2b",
-        "support_agent/state.py": "0627a67a639ad5675a31bb7aefbc84563ffadfd12dd6e58e1c93179a34252187",
+        "support_agent/semantic_session.py": "6a0482728c0b2d9e936cca99af245c732767f4629b76b3df2c98d733fd2d01b5",
+        "support_agent/semantics.py": "24ca35c064d607b4cc293c08c527b2fcfa672e49136ce2a9bb298a4b258dec53",
+        "support_agent/state.py": "04b390384ac51f151e86e6fbcc44ac448753fdd359a393618633d4932b645dc2",
         "support_agent/tasks.py": "d27e8e9a55099f0c2c9d3e9a5b54fa8b41052017fe61ae262ff44afebbc19ba1",
         "support_agent/turns.py": "70c768dafea579ce3da0219c5005b20ada01bd0c8dfdeddbc74c692684a1a5ce",
         "support_agent/workflow_boundary.py": "ebe45b97aa0b94ca9e4bb5a4a4a76cb46044dc6965d1e8b0791d69ca16d17724",
         "support_agent/workflow_limits.py": "eb52a0ca6a262b756bc301692d97d8bf88b66c7abc533ed2b30db6d49453dc5c",
         "support_agent/workflow_registry.py": "9efaf8b4fbc2745569734b0f65393a5f6e95a62596ea8f3f01c6914c9aba229c",
         "support_agent/write_session.py": "46c84cdac54c8ddc1a32af7d9afe6149ec751816fbc950ed3751682437a295dd",
-        "tools.py": "ccf8c12e9971d22f588d644936905da27da2c8a2ca10d4f29b17169a243f3f57"
+        "tools.py": "418995774d0a71567f660795b97e114fc38557c74c7f0a084199d6db3c728bea"
       },
       "payload_bytes": {
-        "manual_node": 515661,
-        "github_python": 510624
+        "manual_node": 556569,
+        "github_python": 551320
       },
       "payload_sha256": {
-        "manual_node": "e7ed43efc82ffa253d5a1444589bb6cc601434d9bead910ab9a235e813ae306e",
-        "github_python": "6e5cb6f105df13604bc1839dc7c4b52f82d14890d87da3961a591b28409ee3d8"
+        "manual_node": "6cb9b4cdbc88003017e3aa7fea87a8dd5da6966a53a360589d5cbaf16ab851a0",
+        "github_python": "6a065a2dfab3e32130359357236ec23d54955b0fdf2aa91fe33f62c33a4a4045"
       },
       "imports": {
         "agent.py": [
+          "support_agent.adapters.semantic_model",
           "support_agent.application",
           "tau2.hyper.agent_context"
         ],
@@ -19582,6 +19594,7 @@
           "urllib.parse"
         ],
         "support_agent/adapters/customer_tools.py": [
+          "json",
           "support_agent.adapters.address_tools",
           "support_agent.adapters.cancellation_tools",
           "support_agent.adapters.customer_api",
@@ -19622,6 +19635,7 @@
         ],
         "support_agent/adapters/model_gateway.py": [
           "__future__",
+          "json",
           "math",
           "support_agent.model_context",
           "support_agent.protocol",
@@ -19659,6 +19673,15 @@
           "support_agent.workflow_limits",
           "tau2.environment.toolkit",
           "tau2.hyper.client_api"
+        ],
+        "support_agent/adapters/semantic_model.py": [
+          "json",
+          "support_agent.adapters.model_gateway",
+          "support_agent.model_context",
+          "support_agent.proposals",
+          "support_agent.protocol",
+          "support_agent.semantics",
+          "tau2.data_model.message"
         ],
         "support_agent/adapters/write_runtime.py": [
           "json",
@@ -19757,7 +19780,8 @@
         "support_agent/domain/addresses.py": [
           "copy",
           "json",
-          "re"
+          "re",
+          "support_agent.semantics"
         ],
         "support_agent/domain/cancellation_intake.py": [
           "decimal",
@@ -19769,7 +19793,8 @@
           "support_agent.domain.payment_intake",
           "support_agent.domain.policies",
           "support_agent.domain.returns_intake",
-          "support_agent.domain.rules"
+          "support_agent.domain.rules",
+          "support_agent.semantics"
         ],
         "support_agent/domain/candidate_selection.py": [
           "decimal",
@@ -19802,7 +19827,8 @@
           "re",
           "support_agent.domain.addresses",
           "support_agent.domain.money",
-          "support_agent.domain.rules"
+          "support_agent.domain.rules",
+          "support_agent.semantics"
         ],
         "support_agent/domain/money.py": [
           "__future__",
@@ -19819,7 +19845,8 @@
           "re",
           "support_agent.domain.addresses",
           "support_agent.domain.policies",
-          "support_agent.domain.rules"
+          "support_agent.domain.rules",
+          "support_agent.semantics"
         ],
         "support_agent/domain/policies.py": [
           "support_agent.domain.money",
@@ -19829,7 +19856,8 @@
           "copy",
           "json",
           "re",
-          "support_agent.domain.rules"
+          "support_agent.domain.rules",
+          "support_agent.semantics"
         ],
         "support_agent/domain/rules.py": [
           "__future__",
@@ -19860,6 +19888,7 @@
           "support_agent.adapters.write_runtime",
           "support_agent.domain.rules",
           "support_agent.protocol",
+          "support_agent.semantics",
           "support_agent.state",
           "support_agent.workflow_limits",
           "support_agent.workflow_registry",
@@ -19935,6 +19964,7 @@
           "support_agent.domain.returns_intake",
           "support_agent.domain.rules",
           "support_agent.protocol",
+          "support_agent.semantics",
           "support_agent.state"
         ],
         "support_agent/protocol.py": [
@@ -19972,6 +20002,8 @@
           "support_agent.proposals",
           "support_agent.protocol",
           "support_agent.returns_session",
+          "support_agent.semantic_session",
+          "support_agent.semantics",
           "support_agent.state",
           "support_agent.workflow_boundary",
           "support_agent.workflow_limits",
@@ -20002,6 +20034,29 @@
           "support_agent.workflow_registry",
           "support_agent.write_session"
         ],
+        "support_agent/semantic_session.py": [
+          "support_agent.address_session",
+          "support_agent.amount_summary",
+          "support_agent.cancellation_session",
+          "support_agent.exchange_session",
+          "support_agent.handoff_session",
+          "support_agent.items_session",
+          "support_agent.payment_session",
+          "support_agent.proposals",
+          "support_agent.protocol",
+          "support_agent.read_session",
+          "support_agent.returns_session",
+          "support_agent.semantics",
+          "support_agent.workflow_registry"
+        ],
+        "support_agent/semantics.py": [
+          "copy",
+          "hashlib",
+          "json",
+          "support_agent.domain.addresses",
+          "support_agent.domain.identity",
+          "support_agent.protocol"
+        ],
         "support_agent/state.py": [
           "json",
           "re",
@@ -20017,6 +20072,7 @@
           "support_agent.protocol",
           "support_agent.read_session",
           "support_agent.returns_session",
+          "support_agent.semantics",
           "support_agent.tasks",
           "support_agent.workflow_boundary",
           "support_agent.workflow_registry",
@@ -20071,7 +20127,7 @@
         ]
       },
       "scan": {
-        "files": 57,
+        "files": 60,
         "payloads": 2,
         "rules": [
           "aws_access_key",
@@ -20083,66 +20139,69 @@
         ],
         "findings": []
       },
-      "raw_source_bytes": 485852,
-      "max_raw_file_bytes": 50097,
+      "raw_source_bytes": 525661,
+      "max_raw_file_bytes": 50438,
       "raw_sha256": {
         "agent.json": "7c8b0cb6c62e4ba39a16f827830ec530aa9ac9916fe52873c4a490bc4a9355c9",
-        "agent.py": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
+        "agent.py": "b2f5f095f373c5402dcfe060cae6cea16dd3b7282c610e0c03b724ce4b9359d7",
         "support_agent/__init__.py": "b945c22ad75d95e3672da9ec456c099e951fc059f8580e9ed07b3840b095770a",
         "support_agent/adapters/__init__.py": "22d3f8d91bb91ea0615860036b38771c962bc192dbafbcf0c5523171f6da1807",
         "support_agent/adapters/address_tools.py": "8196f3ca15d34f7444b771a904a3b2d9be18222a1a55e86a380b7565536fcc9e",
         "support_agent/adapters/cancellation_tools.py": "b723d2a2040bd1a91e8b85fe5505af1dfaecfa00d9d59aa7b80713d721b515b2",
         "support_agent/adapters/client_api.py": "6d21cdcbaec9ce19133a61c50860371e9e5efb1d3ab5f368b42e0bb05149a688",
         "support_agent/adapters/customer_api.py": "6eee5efe034bd9926682d4f4237bb5f97364794e4e0605c6db576ae254d16f74",
-        "support_agent/adapters/customer_tools.py": "c3738a879ffc0d32c298528620035d56f4c6e584aa68a809a6dbe0bcdc3e5175",
+        "support_agent/adapters/customer_tools.py": "723417b58e48fc172ab338e05c4fad6c5c620182a867f62297e11d8930a7668c",
         "support_agent/adapters/exchange_tools.py": "79c74d78c1d773d995880eff084641baaf08d39281cb35fe9c6f8be071ae2306",
         "support_agent/adapters/handoff_tools.py": "36a998554491028e0b7e18d2e4f2506145eb1327b93cd00a815df30eec9545ad",
         "support_agent/adapters/items_tools.py": "0a6bf5db8518c6db006ff3ba62ac030a8ab65fcead8c9f3425837bbec296aaef",
-        "support_agent/adapters/model_gateway.py": "5aacf5d51a2e51d05344e75867e0ffdb82bf69fa7cefd073ec91310f3cd51759",
+        "support_agent/adapters/model_gateway.py": "0894a90dd04da86147a6b8bf3c8d4ed5344a39b6791ba27d6883c3933f34483c",
         "support_agent/adapters/payment_tools.py": "4059a70555d908b88ff159061bcfbb2e920ea68e8cebfb2a96abd6e8b61cd209",
         "support_agent/adapters/read_api.py": "16ec1a47c04224434686c39ae5449c0f08b2d8fcc92e09ad1ff5bd9e257fb744",
         "support_agent/adapters/read_tools.py": "71adab1bdcc7482a0a1ccfe99173a9f2badf0b44aed343af530b37ec22ebdf43",
         "support_agent/adapters/returns_tools.py": "ef5121b72c80be166de9e0ed3c978e8cd21bd866af2ad0e7e6273fa7f000972a",
+        "support_agent/adapters/semantic_model.py": "aebfaca16113fb2661f33203004ba127469f44d99c1cb6dc197ca6d42441581c",
         "support_agent/adapters/write_runtime.py": "42d9ea7572dd203caa121496ca9a4f71f757e8dba5a7aa04e4640da76000208e",
         "support_agent/address_session.py": "9b09605a3936a404c39a6ed2204de565e38f5fbb866f83f39e8d2b64b7a1224a",
-        "support_agent/amount_summary.py": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
-        "support_agent/application.py": "e3b2a776a2ebc5e24804b7a49b6bd961edfcd51fb434736871b035bed4aae6c8",
+        "support_agent/amount_summary.py": "109b041f23ebaf4169e09b6e3b302208261efa49da92c848cf2a91db832ae87a",
+        "support_agent/application.py": "f1cd75d851babb47f73f2d5f8c1ebff98d2c4d4025d55fd3c2ed97be215a8d56",
         "support_agent/cancellation_session.py": "55ab89d3bb4379681af87c7e1b7e636d3f2aaf74eb4209ea698af2f7d52381e4",
         "support_agent/candidate_session.py": "41c8bc7640bf76f06984db25274d607aa6e70b2903d5869acac3267d7d4c8cca",
         "support_agent/config.py": "bed92066063c625472fe3afe92d268b1330b89f18fed3efc97e8c42f073ebc22",
         "support_agent/domain/__init__.py": "fce2b1e04b26ebe9cbf5e0ba5a04b7aa2a5deb078461c0d810cb41143f1594f1",
-        "support_agent/domain/addresses.py": "e9c1aa9dc9b88ae9f8315745af2d9af7921e939db8e20cbcb8a1400cef82fc91",
-        "support_agent/domain/cancellation_intake.py": "6cd681a310dd1f7638d8908e4e662ad38b343664bd38f33c39fa2cc4932d9563",
+        "support_agent/domain/addresses.py": "8dc7f1f5791574a1587816fcc340125a70987c2511a0397a09af61fa95d24ae6",
+        "support_agent/domain/cancellation_intake.py": "fac3fd62c5e5885310ee089cfb7c4a0102bb41cc7f4153234986568867137016",
         "support_agent/domain/candidate_selection.py": "3bb00adff57603a69146f400498612c8786187470018a476ad80908bf49f2fb2",
         "support_agent/domain/catalog.py": "6ccfe9389649190153ddb93e72c4c03c75ff1b6b31db254ca296c36a94583bce",
         "support_agent/domain/customer.py": "1374bdd79d0602e266e0a08da2ce1269663125fe9140d0a6234f81099e5782e0",
         "support_agent/domain/identity.py": "f371c4ea0654699843809a080814a657b13cd508be32e19f43c9428e81f296ec",
-        "support_agent/domain/items_intake.py": "deeabd7ec2e8b4fd7496969bd0b5a5a52a3ff6acfbffa578cabd416d5cbc6e1f",
+        "support_agent/domain/items_intake.py": "4f758d3f72a132c67aef82cc7714b66d1f17fb6d723297d2d54995d38a305678",
         "support_agent/domain/money.py": "a698138a08fd1dc7083b3860c28577fc807a53a5aa9bf21339685a2f4498e388",
         "support_agent/domain/orders.py": "112bb2af986050dee03c61a642c42a18ffd4aa561cfe5afd8382f672c013fb40",
-        "support_agent/domain/payment_intake.py": "f0273df2246f41e293741ee727353bf0654e4c4a7f6a50496cd832a00d01a44b",
+        "support_agent/domain/payment_intake.py": "5bac76340fdb3c60887525d3c246a3f695c26f63a5b26e9cb42ca19b4280a4f1",
         "support_agent/domain/policies.py": "43ef5c9ede59a5d9ef0053c907575a7b46f17656f528ccae089786469382d2c1",
-        "support_agent/domain/returns_intake.py": "0c920a7877f97ab012ed628699b236a3a1267164c99f557eab680509f2ebe177",
+        "support_agent/domain/returns_intake.py": "e045462b47665ccd860c3302be7926848c01dc059128365417ecb9b53e3c97d8",
         "support_agent/domain/rules.py": "1ca3958a8e089d8372d2da213df693fbedbc54050f72f55bbe7d529f22e7cc4b",
         "support_agent/domain/task_graph.py": "c92a530b8c0092aa39ee864c432cd4ab02536999a9fcd581a3027b5ebead2120",
         "support_agent/domain/write_receipts.py": "5e509e10adaaa91671d346133bc5ff04d851a1871df89cce322e11bb3f031c17",
         "support_agent/exchange_session.py": "d7e640e922246374141bcb66b1794390f6959ac0e60c513e0afc78456ed2bf6d",
-        "support_agent/handoff_session.py": "691e5ec5c73f54802d59e91f84b09206d787864c8a0e7e30ddf8b688bccf174a",
+        "support_agent/handoff_session.py": "c70f718f340fdabb240037b96f8850ed709df9bf9c6e9a634a9a66a4b87ed115",
         "support_agent/items_session.py": "f458b405800c8483b1fe4bc090395d376ee5b590d827df7a5766dbb804cce3d4",
-        "support_agent/model_context.py": "58983cb6cf9fbed8d91b0109d976f79b18f16b01e23b9a428b69c42e8a8b4eba",
+        "support_agent/model_context.py": "48fba6bd3844594c3c9a40eb052d4fc9e2118f37bf4190403c4d6922f28ea8eb",
         "support_agent/payment_session.py": "4dd4d31a1b0b063543b864e836c7e228ec071b9996fee0f079a7a3a924bb89d9",
-        "support_agent/proposals.py": "0aea8d98ad335886a8dcec5587f3235040dc0f2d14b762493cc9cbd928c642e9",
+        "support_agent/proposals.py": "6c56f8523a1b0c681a2e0d13cc07306aac2fffee78fef9c97e50fabca720ff51",
         "support_agent/protocol.py": "6d80032f64f37b1d1cd3f832228d958b91a9ea024b9792f2bc134011cbc3e13a",
-        "support_agent/read_session.py": "7eb654cd5589eda3f0f26e253643529dfb71eed95037ad5f7c2ee370d3b7f8db",
+        "support_agent/read_session.py": "311bec04a4ad58d93cd87f42f1ef2e4be3200d558acaac9593c78a559032d094",
         "support_agent/returns_session.py": "c2460ca6f454099e132cb08406c2aa342217d6b9e5aa634b0a161bafd43372c2",
-        "support_agent/state.py": "5330decb4ed88e17f61abf9a42ed706e1995be42dc067ec10e0fa5fee557a201",
+        "support_agent/semantic_session.py": "6a0482728c0b2d9e936cca99af245c732767f4629b76b3df2c98d733fd2d01b5",
+        "support_agent/semantics.py": "24ca35c064d607b4cc293c08c527b2fcfa672e49136ce2a9bb298a4b258dec53",
+        "support_agent/state.py": "1e393300d66d46da1758308cdc7e134be1702762beb0c2d832701bcd13f8cb1b",
         "support_agent/tasks.py": "d27e8e9a55099f0c2c9d3e9a5b54fa8b41052017fe61ae262ff44afebbc19ba1",
         "support_agent/turns.py": "fb158197d66dfa168c0762e86eb5ed5a2f5107209d94b70cc955ba30d09d8759",
         "support_agent/workflow_boundary.py": "a40383f750bb1e6f3f2f6bd437bdc85c206b52fccc12b0bc0992ec7ed0a64258",
         "support_agent/workflow_limits.py": "eb52a0ca6a262b756bc301692d97d8bf88b66c7abc533ed2b30db6d49453dc5c",
         "support_agent/workflow_registry.py": "6450ac44e5aca118aafa7ce27cb4a9a3c50b4a07ec547d39c54aaed14bf8da74",
         "support_agent/write_session.py": "46c84cdac54c8ddc1a32af7d9afe6149ec751816fbc950ed3751682437a295dd",
-        "tools.py": "cd8fcc30f062bf8cf9d9237321e4bdc127665d96fe62190e2cc61b97a8fd9368"
+        "tools.py": "888f920d94787307c7890427d15e9c70ad83c72745c46605a7929d9eff9783e5"
       }
     },
     "isolated": {
@@ -20157,24 +20216,26 @@
       "model_calls": 0,
       "copied_content_sha256": {
         "agent.json": "7c8b0cb6c62e4ba39a16f827830ec530aa9ac9916fe52873c4a490bc4a9355c9",
-        "agent.py": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
-        "tools.py": "ccf8c12e9971d22f588d644936905da27da2c8a2ca10d4f29b17169a243f3f57",
+        "agent.py": "b2f5f095f373c5402dcfe060cae6cea16dd3b7282c610e0c03b724ce4b9359d7",
+        "tools.py": "418995774d0a71567f660795b97e114fc38557c74c7f0a084199d6db3c728bea",
         "support_agent/address_session.py": "64b860bdc6e1e8ded1b697d2c01f051e525e3af2c796246dc31670610e6deabe",
-        "support_agent/amount_summary.py": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
-        "support_agent/application.py": "e3b2a776a2ebc5e24804b7a49b6bd961edfcd51fb434736871b035bed4aae6c8",
+        "support_agent/amount_summary.py": "109b041f23ebaf4169e09b6e3b302208261efa49da92c848cf2a91db832ae87a",
+        "support_agent/application.py": "f1cd75d851babb47f73f2d5f8c1ebff98d2c4d4025d55fd3c2ed97be215a8d56",
         "support_agent/cancellation_session.py": "b5b55d6d2b91c124cc9eb3e1dc9b18728cf24c723c2e510569fb00a825389e3b",
         "support_agent/candidate_session.py": "c2473e05b61cc3b9d6a86a90b4bc64d414806a8cb8187ded301072d81d392b16",
         "support_agent/config.py": "bed92066063c625472fe3afe92d268b1330b89f18fed3efc97e8c42f073ebc22",
         "support_agent/exchange_session.py": "5c2d52d0bf7625b8cab7d941bd2278a7dd893ab0df56297b64fb5f7e2766efca",
-        "support_agent/handoff_session.py": "e3c3e4de2eb878c6e90d7788eca9f78d11243c645701a6f03078a68f3fad2f36",
+        "support_agent/handoff_session.py": "e407b3d98924bb77a5e026bb82132d02e77d9ab9e7dc2400c95955a94d1cdda7",
         "support_agent/items_session.py": "2c7b427434223571056adda30341a1d31d0e5c1d9bf29d2379216690a1bec335",
-        "support_agent/model_context.py": "278615ec9f531c9e019655d3a7146175ec675aafe9247fca3519920f0ffa04e9",
+        "support_agent/model_context.py": "7b5bcee49c3f826c89cee8cdeabf3d1c177cd1a1dec7d356ab2fa7e5810fd9dd",
         "support_agent/payment_session.py": "cc18f6746c678e5494ecb20fcb537b5911beff8691f465ff47777e7f7b9877b0",
-        "support_agent/proposals.py": "e319f8417b7032fbd399504914c1e5055d1a43bfe23cb30f6b6701ffeec7d472",
+        "support_agent/proposals.py": "917583aadf64b4ee4c4afce6e3dd0184f3b522f047a60f93d2dd26bbefd0307c",
         "support_agent/protocol.py": "2b3042bff75bb1c9f8a80894c06f34425b0a34c5d0267190a7cc73b74c7c34e3",
-        "support_agent/read_session.py": "dc9c76a4cd77c1f5e952da3a1e18e779c50a313ca7dfb6a922223a76a685902a",
+        "support_agent/read_session.py": "508ba9b690ecaa1bb630edf58aa0a5571d8b75d7c1b2cc2264b85f95baef6745",
         "support_agent/returns_session.py": "c9d3bdca204f88bcc97a47ec10caea627f4d9095301a8e4e65aeb91ed0559a2b",
-        "support_agent/state.py": "0627a67a639ad5675a31bb7aefbc84563ffadfd12dd6e58e1c93179a34252187",
+        "support_agent/semantics.py": "24ca35c064d607b4cc293c08c527b2fcfa672e49136ce2a9bb298a4b258dec53",
+        "support_agent/semantic_session.py": "6a0482728c0b2d9e936cca99af245c732767f4629b76b3df2c98d733fd2d01b5",
+        "support_agent/state.py": "04b390384ac51f151e86e6fbcc44ac448753fdd359a393618633d4932b645dc2",
         "support_agent/tasks.py": "d27e8e9a55099f0c2c9d3e9a5b54fa8b41052017fe61ae262ff44afebbc19ba1",
         "support_agent/turns.py": "70c768dafea579ce3da0219c5005b20ada01bd0c8dfdeddbc74c692684a1a5ce",
         "support_agent/workflow_boundary.py": "ebe45b97aa0b94ca9e4bb5a4a4a76cb46044dc6965d1e8b0791d69ca16d17724",
@@ -20186,29 +20247,30 @@
         "support_agent/adapters/cancellation_tools.py": "b723d2a2040bd1a91e8b85fe5505af1dfaecfa00d9d59aa7b80713d721b515b2",
         "support_agent/adapters/client_api.py": "6d21cdcbaec9ce19133a61c50860371e9e5efb1d3ab5f368b42e0bb05149a688",
         "support_agent/adapters/customer_api.py": "6eee5efe034bd9926682d4f4237bb5f97364794e4e0605c6db576ae254d16f74",
-        "support_agent/adapters/customer_tools.py": "74633cea4fe4504e4c18fd9f11704a26a338a68043486bc4531aa95218fefd96",
+        "support_agent/adapters/customer_tools.py": "96544da2b34a6c5086ec24f5c2d5ba059052a50b089eb387f68307f7826e41d3",
         "support_agent/adapters/exchange_tools.py": "ad4321e53e144223884957f350842a986e04e34c9c878dbe6e4004bf94dc7f06",
         "support_agent/adapters/handoff_tools.py": "36a998554491028e0b7e18d2e4f2506145eb1327b93cd00a815df30eec9545ad",
         "support_agent/adapters/items_tools.py": "0a6bf5db8518c6db006ff3ba62ac030a8ab65fcead8c9f3425837bbec296aaef",
-        "support_agent/adapters/model_gateway.py": "7875a41b5ae873ffc2766d99e0a5a8d93346cbdde718aa8bf648330bb6680d3c",
+        "support_agent/adapters/model_gateway.py": "b856f627e74a8871b2c579d9cc57bfaa6f30665ba33088164c50cf39f6210a74",
         "support_agent/adapters/payment_tools.py": "4059a70555d908b88ff159061bcfbb2e920ea68e8cebfb2a96abd6e8b61cd209",
         "support_agent/adapters/read_api.py": "16ec1a47c04224434686c39ae5449c0f08b2d8fcc92e09ad1ff5bd9e257fb744",
         "support_agent/adapters/read_tools.py": "71adab1bdcc7482a0a1ccfe99173a9f2badf0b44aed343af530b37ec22ebdf43",
         "support_agent/adapters/returns_tools.py": "ef5121b72c80be166de9e0ed3c978e8cd21bd866af2ad0e7e6273fa7f000972a",
+        "support_agent/adapters/semantic_model.py": "aebfaca16113fb2661f33203004ba127469f44d99c1cb6dc197ca6d42441581c",
         "support_agent/adapters/write_runtime.py": "42d9ea7572dd203caa121496ca9a4f71f757e8dba5a7aa04e4640da76000208e",
         "support_agent/adapters/__init__.py": "22d3f8d91bb91ea0615860036b38771c962bc192dbafbcf0c5523171f6da1807",
-        "support_agent/domain/addresses.py": "e9c1aa9dc9b88ae9f8315745af2d9af7921e939db8e20cbcb8a1400cef82fc91",
-        "support_agent/domain/cancellation_intake.py": "6cd681a310dd1f7638d8908e4e662ad38b343664bd38f33c39fa2cc4932d9563",
+        "support_agent/domain/addresses.py": "8dc7f1f5791574a1587816fcc340125a70987c2511a0397a09af61fa95d24ae6",
+        "support_agent/domain/cancellation_intake.py": "fac3fd62c5e5885310ee089cfb7c4a0102bb41cc7f4153234986568867137016",
         "support_agent/domain/candidate_selection.py": "3bb00adff57603a69146f400498612c8786187470018a476ad80908bf49f2fb2",
         "support_agent/domain/catalog.py": "6ccfe9389649190153ddb93e72c4c03c75ff1b6b31db254ca296c36a94583bce",
         "support_agent/domain/customer.py": "1374bdd79d0602e266e0a08da2ce1269663125fe9140d0a6234f81099e5782e0",
         "support_agent/domain/identity.py": "f371c4ea0654699843809a080814a657b13cd508be32e19f43c9428e81f296ec",
-        "support_agent/domain/items_intake.py": "7769de2b5c37c6e6675165ae4a9916cc5b59ceaceb0c1c09e3b2f438c3bf74e0",
+        "support_agent/domain/items_intake.py": "d3a5d71cfc6f880a0f6acb295056dc683cda1761e8170706de5dc78bff74a763",
         "support_agent/domain/money.py": "a698138a08fd1dc7083b3860c28577fc807a53a5aa9bf21339685a2f4498e388",
         "support_agent/domain/orders.py": "112bb2af986050dee03c61a642c42a18ffd4aa561cfe5afd8382f672c013fb40",
-        "support_agent/domain/payment_intake.py": "f0273df2246f41e293741ee727353bf0654e4c4a7f6a50496cd832a00d01a44b",
+        "support_agent/domain/payment_intake.py": "5bac76340fdb3c60887525d3c246a3f695c26f63a5b26e9cb42ca19b4280a4f1",
         "support_agent/domain/policies.py": "43ef5c9ede59a5d9ef0053c907575a7b46f17656f528ccae089786469382d2c1",
-        "support_agent/domain/returns_intake.py": "0c920a7877f97ab012ed628699b236a3a1267164c99f557eab680509f2ebe177",
+        "support_agent/domain/returns_intake.py": "e045462b47665ccd860c3302be7926848c01dc059128365417ecb9b53e3c97d8",
         "support_agent/domain/rules.py": "1ca3958a8e089d8372d2da213df693fbedbc54050f72f55bbe7d529f22e7cc4b",
         "support_agent/domain/task_graph.py": "c92a530b8c0092aa39ee864c432cd4ab02536999a9fcd581a3027b5ebead2120",
         "support_agent/domain/write_receipts.py": "6b1a27aedab8ea19e27586b4597fd37d288713bf84dc09f60f60f24b6bfdfb62",
@@ -20225,18 +20287,18 @@
   },
   "defect_closure": {
     "scope": "finite reviewed defects and current regressions; not all historical failures or business ATs",
-    "run_id": "33a2cc70ea6940af972368c02cdf8ef2",
-    "source_sha256": "5f7734bad98e04b19d2442e2aaacb1ff6eec6832f42202b99a634caf98c36143",
+    "run_id": "1b315f7b44b64832bab24cb5c0e6ca26",
+    "source_sha256": "bd1b322916639c67ddfc7aa4a6eda30494166f641e6c14a26d8a3a3d637fc84d",
     "inputs": {
       "agent/support_agent/adapters/payment_tools.py": "4059a70555d908b88ff159061bcfbb2e920ea68e8cebfb2a96abd6e8b61cd209",
-      "agent/support_agent/amount_summary.py": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
-      "agent/support_agent/domain/cancellation_intake.py": "6cd681a310dd1f7638d8908e4e662ad38b343664bd38f33c39fa2cc4932d9563",
-      "agent/support_agent/domain/items_intake.py": "deeabd7ec2e8b4fd7496969bd0b5a5a52a3ff6acfbffa578cabd416d5cbc6e1f",
+      "agent/support_agent/amount_summary.py": "109b041f23ebaf4169e09b6e3b302208261efa49da92c848cf2a91db832ae87a",
+      "agent/support_agent/domain/cancellation_intake.py": "fac3fd62c5e5885310ee089cfb7c4a0102bb41cc7f4153234986568867137016",
+      "agent/support_agent/domain/items_intake.py": "4f758d3f72a132c67aef82cc7714b66d1f17fb6d723297d2d54995d38a305678",
       "agent/support_agent/domain/money.py": "a698138a08fd1dc7083b3860c28577fc807a53a5aa9bf21339685a2f4498e388",
       "agent/support_agent/items_session.py": "f458b405800c8483b1fe4bc090395d376ee5b590d827df7a5766dbb804cce3d4",
-      "agent/support_agent/proposals.py": "0aea8d98ad335886a8dcec5587f3235040dc0f2d14b762493cc9cbd928c642e9",
-      "agent/support_agent/read_session.py": "7eb654cd5589eda3f0f26e253643529dfb71eed95037ad5f7c2ee370d3b7f8db",
-      "agent/support_agent/state.py": "5330decb4ed88e17f61abf9a42ed706e1995be42dc067ec10e0fa5fee557a201",
+      "agent/support_agent/proposals.py": "6c56f8523a1b0c681a2e0d13cc07306aac2fffee78fef9c97e50fabca720ff51",
+      "agent/support_agent/read_session.py": "311bec04a4ad58d93cd87f42f1ef2e4be3200d558acaac9593c78a559032d094",
+      "agent/support_agent/state.py": "1e393300d66d46da1758308cdc7e134be1702762beb0c2d832701bcd13f8cb1b",
       "agent/support_agent/workflow_boundary.py": "a40383f750bb1e6f3f2f6bd437bdc85c206b52fccc12b0bc0992ec7ed0a64258",
       "docs/M4.1-DELIVERY.md": "a5b7bce0508cb8002d5a016eb5d39fcfa2aea9799c6727a68b82903a8a858668",
       "docs/M4.2-DELIVERY.md": "eac0f13c1d8c365cd7514adf2bc13333157c6dd3dc108d7ec914353ee7537188",
@@ -20247,11 +20309,11 @@
       "docs/M6.3-DELIVERY.md": "4f425ebf740e5d2a014f4cd610daf32256a04c7f7b42c7e162de36303333d3f9",
       "docs/M6.5-DELIVERY.md": "de6075560605e2bcfa35a1f4abcfc37e7741f9760169277f31d6a2b84cce3721",
       "scripts/defect_register.py": "1b82a23dd189661c957c4dc9cba1877d72e82165af9ce7d29069f361005b3a6b",
-      "scripts/foundation_trace.py": "bba029da697336065229561d8f9fdef4cfaea9423a8b0c93719593054ba36977",
+      "scripts/foundation_trace.py": "a4d2f8cbc1a7e3940c5a19ce856a791c1131937966ecf2ca4665862ebf556285",
       "scripts/local_package_audit.py": "18b59d8b79fe5436686678a99b6787f96b170ca1a966801006c6f29202020f9a",
       "scripts/local_replay_batch.py": "b848a4e856fae2dd23bfb98e600e6e7c863caf7287667038fcb420350bcfec8e",
       "tests/fixtures/m6_defects.json": "fd3c63d197a735d287c373a0703c3c8a61923ce02e21cff4b7281f46502a8678",
-      "tests/test_foundation_trace.py": "6014b9ccfbe2053ad259c77d524e3ef1ac5e891484d469b745d150fbac1c381e",
+      "tests/test_foundation_trace.py": "888157b35169a7c6356824d5e5775788031226fd97b319b2f63f9904ae563649",
       "tests/test_m3_proposals.py": "4ff4a4e142171f5cfad5628dce54ec21468c418142084374742ec1778c14871a",
       "tests/test_m4_address_review.py": "2f963c12c896f2eefeea5f6c18c5267bc67d73a48f9d6c412fc1b26dbd8cf22d",
       "tests/test_m5_items.py": "3a8b0822b824565954c6ba31d4dbe7b51954270a77de0cb0196290f5be7b63c7",
@@ -20328,7 +20390,7 @@
           {
             "path": "agent/support_agent/domain/items_intake.py",
             "symbol": "criteria_for_line",
-            "line": 133
+            "line": 139
           }
         ],
         "tests": [
@@ -20393,7 +20455,7 @@
           {
             "path": "agent/support_agent/state.py",
             "symbol": "initial_state",
-            "line": 106
+            "line": 109
           },
           {
             "path": "agent/support_agent/workflow_boundary.py",
@@ -20500,7 +20562,7 @@
           {
             "path": "agent/support_agent/proposals.py",
             "symbol": "render_proposal_set",
-            "line": 551
+            "line": 553
           }
         ],
         "tests": [
@@ -20590,7 +20652,7 @@
           {
             "path": "agent/support_agent/read_session.py",
             "symbol": "advance",
-            "line": 397
+            "line": 403
           },
           {
             "path": "agent/support_agent/items_session.py",
@@ -127573,8 +127635,8 @@
         }
       ]
     },
-    "run_id": "33a2cc70ea6940af972368c02cdf8ef2",
-    "source_sha256": "5f7734bad98e04b19d2442e2aaacb1ff6eec6832f42202b99a634caf98c36143",
+    "run_id": "1b315f7b44b64832bab24cb5c0e6ca26",
+    "source_sha256": "bd1b322916639c67ddfc7aa4a6eda30494166f641e6c14a26d8a3a3d637fc84d",
     "source_changes": {
       "baseline_run_id": "84bd50bd79064ffdac93610bddaa3310",
       "baseline_sha256": "8978475df25a382239d927d53e2d34673fbb7608ac54bce154501a6a9d0265ba",
@@ -127658,7 +127720,133 @@
           "after_sha256": "a40383f750bb1e6f3f2f6bd437bdc85c206b52fccc12b0bc0992ec7ed0a64258",
           "reason": "A genuinely withdrawn task with no mutating journal is no longer an unfinished blocker; sent or unknown operations and dependencies remain unresolved."
         }
-      ]
+      ],
+      "m7_refactor": {
+        "previous_manifest_sha256": "241e76fcf50c920a1c144ecd2a943b52b8c8b0b49af5a349c0eccbe8eaf2e7a5",
+        "changed_existing_files": 16,
+        "added_files": [
+          "agent/support_agent/adapters/semantic_model.py",
+          "agent/support_agent/semantic_session.py",
+          "agent/support_agent/semantics.py"
+        ],
+        "unchanged_previous_files": 43,
+        "changes": [
+          {
+            "path": "agent/agent.py",
+            "before_sha256": "99d93e733161acea0906cc386399dc02e31575e38d316b0f914032433e0ceacd",
+            "after_sha256": "b2f5f095f373c5402dcfe060cae6cea16dd3b7282c610e0c03b724ce4b9359d7",
+            "reason": "Production factory installs the platform semantic gateway component by default."
+          },
+          {
+            "path": "agent/support_agent/adapters/customer_tools.py",
+            "before_sha256": "c3738a879ffc0d32c298528620035d56f4c6e584aa68a809a6dbe0bcdc3e5175",
+            "after_sha256": "723417b58e48fc172ab338e05c4fad6c5c620182a867f62297e11d8930a7668c",
+            "reason": "Serialize public SDK results once as JSON text, preserving numeric, boolean and null types."
+          },
+          {
+            "path": "agent/support_agent/adapters/model_gateway.py",
+            "before_sha256": "5aacf5d51a2e51d05344e75867e0ffdb82bf69fa7cefd073ec91310f3cd51759",
+            "after_sha256": "0894a90dd04da86147a6b8bf3c8d4ed5344a39b6791ba27d6883c3933f34483c",
+            "reason": "Project missing nonmutating read results as host absence observations without fabricating SDK successes or user messages."
+          },
+          {
+            "path": "agent/support_agent/adapters/semantic_model.py",
+            "before_sha256": null,
+            "after_sha256": "aebfaca16113fb2661f33203004ba127469f44d99c1cb6dc197ca6d42441581c",
+            "reason": "New platform-model interpretation contract, bounded context, original user source indices and usage accounting."
+          },
+          {
+            "path": "agent/support_agent/amount_summary.py",
+            "before_sha256": "f8678052d93d65b00ee5fefe58309ebdbae175d2ddf1c37a5dd528d9619c76d9",
+            "after_sha256": "109b041f23ebaf4169e09b6e3b302208261efa49da92c848cf2a91db832ae87a",
+            "reason": "Accept validated typed order scopes while retaining existing host amount arithmetic."
+          },
+          {
+            "path": "agent/support_agent/application.py",
+            "before_sha256": "e3b2a776a2ebc5e24804b7a49b6bd961edfcd51fb434736871b035bed4aae6c8",
+            "after_sha256": "f1cd75d851babb47f73f2d5f8c1ebff98d2c4d4025d55fd3c2ed97be215a8d56",
+            "reason": "Support language understanding before verification while retaining the public single-turn interface."
+          },
+          {
+            "path": "agent/support_agent/domain/addresses.py",
+            "before_sha256": "e9c1aa9dc9b88ae9f8315745af2d9af7921e939db8e20cbcb8a1400cef82fc91",
+            "after_sha256": "8dc7f1f5791574a1587816fcc340125a70987c2511a0397a09af61fa95d24ae6",
+            "reason": "Consume typed address intent without parsing customer text as an address command."
+          },
+          {
+            "path": "agent/support_agent/domain/cancellation_intake.py",
+            "before_sha256": "6cd681a310dd1f7638d8908e4e662ad38b343664bd38f33c39fa2cc4932d9563",
+            "after_sha256": "fac3fd62c5e5885310ee089cfb7c4a0102bb41cc7f4153234986568867137016",
+            "reason": "Consume typed cancellation scope and canonical reason, preserving partial and conditional refusal."
+          },
+          {
+            "path": "agent/support_agent/domain/items_intake.py",
+            "before_sha256": "deeabd7ec2e8b4fd7496969bd0b5a5a52a3ff6acfbffa578cabd416d5cbc6e1f",
+            "after_sha256": "4f758d3f72a132c67aef82cc7714b66d1f17fb6d723297d2d54995d38a305678",
+            "reason": "Consume typed modifications/exchanges, conditions and variant choices; retain deterministic catalog matching."
+          },
+          {
+            "path": "agent/support_agent/domain/payment_intake.py",
+            "before_sha256": "f0273df2246f41e293741ee727353bf0654e4c4a7f6a50496cd832a00d01a44b",
+            "after_sha256": "5bac76340fdb3c60887525d3c246a3f695c26f63a5b26e9cb42ca19b4280a4f1",
+            "reason": "Consume typed saved-instrument choice and fallback without finite payment phrases."
+          },
+          {
+            "path": "agent/support_agent/domain/returns_intake.py",
+            "before_sha256": "0c920a7877f97ab012ed628699b236a3a1267164c99f557eab680509f2ebe177",
+            "after_sha256": "e045462b47665ccd860c3302be7926848c01dc059128365417ecb9b53e3c97d8",
+            "reason": "Consume typed requested occurrences and refund destination without finite return phrases."
+          },
+          {
+            "path": "agent/support_agent/handoff_session.py",
+            "before_sha256": "691e5ec5c73f54802d59e91f84b09206d787864c8a0e7e30ddf8b688bccf174a",
+            "after_sha256": "c70f718f340fdabb240037b96f8850ed709df9bf9c6e9a634a9a66a4b87ed115",
+            "reason": "Accept source-bound human/supervisor intent without finite phrase matching."
+          },
+          {
+            "path": "agent/support_agent/model_context.py",
+            "before_sha256": "58983cb6cf9fbed8d91b0109d976f79b18f16b01e23b9a428b69c42e8a8b4eba",
+            "after_sha256": "48fba6bd3844594c3c9a40eb052d4fc9e2118f37bf4190403c4d6922f28ea8eb",
+            "reason": "Derive abandoned-read projection IDs from validated Unknown read journals; full canonical history remains intact."
+          },
+          {
+            "path": "agent/support_agent/proposals.py",
+            "before_sha256": "0aea8d98ad335886a8dcec5587f3235040dc0f2d14b762493cc9cbd928c642e9",
+            "after_sha256": "6c56f8523a1b0c681a2e0d13cc07306aac2fffee78fef9c97e50fabca720ff51",
+            "reason": "Interpret latest-user consent by typed version assignments while retaining freshness, scope and execution checks."
+          },
+          {
+            "path": "agent/support_agent/read_session.py",
+            "before_sha256": "7eb654cd5589eda3f0f26e253643529dfb71eed95037ad5f7c2ee370d3b7f8db",
+            "after_sha256": "311bec04a4ad58d93cd87f42f1ef2e4be3200d558acaac9593c78a559032d094",
+            "reason": "Use model understanding before identity and after reads; typed read-only analysis; lost execution results become Unknown."
+          },
+          {
+            "path": "agent/support_agent/semantic_session.py",
+            "before_sha256": null,
+            "after_sha256": "6a0482728c0b2d9e936cca99af245c732767f4629b76b3df2c98d733fd2d01b5",
+            "reason": "New semantic read/plan/consent orchestration through existing deterministic business gates."
+          },
+          {
+            "path": "agent/support_agent/semantics.py",
+            "before_sha256": null,
+            "after_sha256": "24ca35c064d607b4cc293c08c527b2fcfa672e49136ce2a9bb298a4b258dec53",
+            "reason": "New closed typed intent and original-user interpretation validation; no synthetic user messages or backend authority."
+          },
+          {
+            "path": "agent/support_agent/state.py",
+            "before_sha256": "5330decb4ed88e17f61abf9a42ed706e1995be42dc067ec10e0fa5fee557a201",
+            "after_sha256": "1e393300d66d46da1758308cdc7e134be1702762beb0c2d832701bcd13f8cb1b",
+            "reason": "Schema 13 preserves and validates original-user interpretation bindings and migrates earlier snapshots."
+          },
+          {
+            "path": "agent/tools.py",
+            "before_sha256": "cd8fcc30f062bf8cf9d9237321e4bdc127665d96fe62190e2cc61b97a8fd9368",
+            "after_sha256": "888f920d94787307c7890427d15e9c70ad83c72745c46605a7929d9eff9783e5",
+            "reason": "Expose only the Tools subclass to the native SDK discovery algorithm."
+          }
+        ]
+      }
     }
   }
 }
