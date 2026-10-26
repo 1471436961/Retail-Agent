@@ -2,12 +2,32 @@
 
 from tau2.data_model.message import AssistantMessage, MultiToolMessage, SystemMessage
 from support_agent.config import policy_text
-from support_agent.state import initial_state, restored_messages, serialized_messages
+from support_agent.state import (finished_message, initial_state, is_finished_message,
+                                 restored_messages, serialized_messages)
 
 
 # Preserve the original SDK methods for compatibility, but offer the model one
 # contextual identity tool rather than several overlapping low-level routes.
 _IDENTITY_PRIMITIVES = {"lookup_customer", "find_user_id_by_email", "find_user_id_by_name_zip", "get_user_details"}
+
+
+class IncompleteModelResponse(RuntimeError):
+    """The provider stopped before completing the proposed reply or tool batch."""
+
+
+def _require_complete_response(response):
+    raw = response.raw_data or {}
+    choices = raw.get("choices") or []
+    # The SDK returns choices[0]; unused alternatives do not determine whether
+    # this AssistantMessage is complete.
+    truncated = bool(choices and isinstance(choices[0], dict)
+                     and choices[0].get("finish_reason") == "length")
+    if raw.get("status") == "incomplete" or truncated:
+        reason = "status=incomplete" if raw.get("status") == "incomplete" else "finish_reason=length"
+        raise IncompleteModelResponse(
+            f"The platform model returned an incomplete response ({reason}); "
+            "no proposed tools were dispatched"
+        )
 
 
 class CustomerAgent:
@@ -18,7 +38,6 @@ class CustomerAgent:
         available = context.action_interface.available
         self.tools = tuple(tool for tool in available if tool.name not in _IDENTITY_PRIMITIVES)
         self._finish_action = next(tool for tool in available if tool.name == "finish_response")
-        self._finished_response = None
         self.model = context.model_gateway.available_models[0]
         self.model_args = {}
         # Fixed options belong to the platform. Only explicit choices need a
@@ -34,16 +53,13 @@ class CustomerAgent:
         self.policy = policy_text()
 
     def get_init_state(self, message_history=None):
-        self._finished_response = None
         return initial_state(message_history)
 
     def is_stop(self, message):
         """Honor the model's explicit finish action; never infer completion from prose."""
-        return (self._finished_response is not None and isinstance(message, AssistantMessage)
-                and not message.tool_calls and message.content == self._finished_response)
+        return is_finished_message(message)
 
     def generate_next_message(self, message, state):
-        self._finished_response = None
         history = restored_messages(state)
         if isinstance(message, MultiToolMessage):
             history.extend(message.tool_messages)
@@ -60,6 +76,7 @@ class CustomerAgent:
         # Gateway exceptions remain observable; do not fabricate a business reply.
         if not isinstance(response, AssistantMessage):
             raise TypeError("The platform model gateway did not return AssistantMessage")
+        _require_complete_response(response)
         if response.tool_calls:
             finish = [call for call in response.tool_calls if call.name == "finish_response"]
             remaining = [call for call in response.tool_calls if call.name != "finish_response"]
@@ -68,8 +85,7 @@ class CustomerAgent:
                 for call in finish:
                     arguments = self._finish_action.params.model_validate(call.arguments).model_dump()
                     messages.append(self._finish_action(**arguments)["message"])
-                response = response.model_copy(update={"content": "\n\n".join(messages), "tool_calls": None})
-                self._finished_response = response.content
+                response = finished_message(response, "\n\n".join(messages))
             elif finish:
                 # A completion proposed alongside real calls must wait for those
                 # results. Dispatch the calls without claiming that they succeeded.
@@ -82,6 +98,6 @@ class CustomerAgent:
         next_state = {**state, "turn": state.get("turn", 0) + 1,
                       "customer_id": state.get("customer_id"),
                       "pending_call_id": response.tool_calls[0].id if response.tool_calls and len(response.tool_calls) == 1 else None,
-                      "finished": self._finished_response is not None,
+                      "finished": is_finished_message(response),
                       "messages": serialized_messages(history)}
         return response, next_state

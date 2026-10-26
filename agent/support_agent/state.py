@@ -2,9 +2,26 @@
 from typing import Any, TypedDict
 
 from pydantic import TypeAdapter
-from tau2.data_model.message import Message, MultiToolMessage
+from tau2.data_model.message import AssistantMessage, Message, MultiToolMessage
 
 _MESSAGE = TypeAdapter(Message)
+_FINISH_CONTROL = {"version": 1, "action": "finish_response"}
+
+
+def is_finished_message(message):
+    """Recognize application control metadata, never customer or tool prose."""
+    return (isinstance(message, AssistantMessage) and not message.tool_calls
+            and isinstance(message.content, str) and bool(message.content.strip())
+            and isinstance(message.raw_data, dict)
+            and message.raw_data.get("retail_agent_control") == _FINISH_CONTROL)
+
+
+def finished_message(response, content):
+    """Keep the completion decision through SDK serialization and restoration."""
+    return response.model_copy(update={
+        "content": content, "tool_calls": None,
+        "raw_data": {**(response.raw_data or {}), "retail_agent_control": dict(_FINISH_CONTROL)},
+    })
 
 
 class SessionState(TypedDict):
@@ -26,8 +43,10 @@ def serialized_messages(history):
 
 def initial_state(message_history=None) -> SessionState:
     """Retain the original state fields; each conversation owns its own history."""
+    history = serialized_messages(message_history)
+    finished = bool(history and is_finished_message(_MESSAGE.validate_python(history[-1])))
     return {"turn": 0, "pending_call_id": None, "customer_id": None,
-            "messages": serialized_messages(message_history), "finished": False}
+            "messages": history, "finished": finished}
 
 
 def restored_messages(state):
