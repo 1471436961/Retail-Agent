@@ -12,6 +12,7 @@ class SessionState(TypedDict):
     pending_call_id: str | None
     customer_id: str | None
     messages: list[dict[str, Any]]
+    finished: bool
 
 
 def serialized_messages(history):
@@ -26,7 +27,7 @@ def serialized_messages(history):
 def initial_state(message_history=None) -> SessionState:
     """Retain the original state fields; each conversation owns its own history."""
     return {"turn": 0, "pending_call_id": None, "customer_id": None,
-            "messages": serialized_messages(message_history)}
+            "messages": serialized_messages(message_history), "finished": False}
 
 
 def restored_messages(state):

@@ -61,7 +61,7 @@ with patch('tau2.hyper.agent_context.generate',return_value=AssistantMessage(rol
     reply,state=application.generate_next_message(UserMessage(role='user',content='Please help me exchange a shirt.'),application.get_init_state())
 assert reply.content=='What is your email address?'
 assert inference.call_count==1
-assert len(inference.call_args.kwargs['tools'])==18
+assert len(inference.call_args.kwargs['tools'])==16
 import json
 json.dumps(state,allow_nan=False)
 print('ISOLATED_UPLOAD_OK network_attempts=0 real_model_calls=0')

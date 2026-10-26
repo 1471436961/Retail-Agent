@@ -236,10 +236,11 @@ class PreferenceRankingTests(unittest.TestCase):
             {"existing_item_id": "thermo-current", "replacement_item_id": "thermo-target"},
         ])
         final = AssistantMessage(role="assistant", content="The exchange request for both items was recorded; this does not confirm refund settlement.")
-        with patch("tau2.hyper.agent_context.generate", return_value=final):
+        with patch("tau2.hyper.agent_context.generate", return_value=function_call("finish_response", {"message": final.content}, "finish")):
             reply, state = application.generate_next_message(MultiToolMessage(role="tool", tool_messages=[outcome]), state)
         self.assertEqual(reply.content, final.content)
         self.assertFalse(reply.tool_calls)
+        self.assertTrue(application.is_stop(reply))
         self.assertEqual(len([r for r in self.requests if r["method"] == "POST"]), 1)
         self.assertEqual(self.db.orders["#D1"].exchange_price_difference, -30.0)
         json.dumps(state, allow_nan=False)

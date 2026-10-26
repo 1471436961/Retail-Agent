@@ -96,24 +96,30 @@ class NativeAgentTests(unittest.TestCase):
         actual,state=self.run_model(UserMessage(role="user",content=original),self.agent.get_init_state(),reply)
         self.assertIs(actual,reply)
         self.assertEqual(state["messages"][0]["content"],original)
-        self.assertEqual(len(self.provider_request["tools"]),18)
+        self.assertEqual(len(self.provider_request["tools"]),16)
+        names={tool.name for tool in self.provider_request["tools"]}
+        self.assertTrue({"get_customer_context","rank_preferred","finish_response"} <= names)
+        self.assertFalse({"lookup_customer","find_user_id_by_email","find_user_id_by_name_zip","get_user_details"} & names)
         self.assertEqual(self.provider_request["model"],"offline/teacher-model")
         self.assertEqual(self.provider_request["max_tokens"],777)
         self.assertEqual(self.provider_request["temperature"],0)
 
     def test_native_name_lookup_tool_result_is_fed_back_to_the_model(self):
         user=UserMessage(role="user",content="I'm Casey Morgan; my ZIP is 90210. I can't remember my email.")
-        call=function_call("find_user_id_by_name_zip",dict(first_name="Casey",last_name="Morgan",zip="90210"))
+        call=function_call("get_customer_context",dict(first_name="Casey",last_name="Morgan",postal_code="90210",order_ids=["#D1"]))
         actual,state=self.run_model(user,self.agent.get_init_state(),call)
         outcome=self.environment.get_response(actual.tool_calls[0])
         self.assertFalse(outcome.error)
-        self.assertEqual(json.loads(outcome.content),{"customer_id":"casey"})
+        context=json.loads(outcome.content)
+        self.assertEqual(context["customer_id"],"casey")
+        self.assertEqual(context["orders"][0]["order_id"],"#D1")
+        self.assertEqual(context["customer"]["customer_id"],"casey")
         reply=AssistantMessage(role="assistant",content="Thank you. I found your account.")
         _,state=self.run_model(MultiToolMessage(role="tool",tool_messages=[outcome]),state,reply)
         wire=to_litellm_messages(self.provider_request["messages"])
         self.assertEqual(wire[-1]["tool_call_id"],"call-1")
         self.assertEqual(json.loads(wire[-1]["content"])["customer_id"],"casey")
-        self.assertEqual(len(self.requests),1)
+        self.assertEqual(len(self.requests),3)
 
     def test_original_correction_and_condition_are_sent_unchanged(self):
         state=self.agent.get_init_state([UserMessage(role="user",content="Change it to red."),
@@ -128,11 +134,11 @@ class NativeAgentTests(unittest.TestCase):
 
     def test_snapshot_history_restores_without_replaying_tools(self):
         user=UserMessage(role="user",content="casey@example.test")
-        call=function_call("find_user_id_by_email",{"email":"casey@example.test"})
+        call=function_call("get_customer_context",{"email":"casey@example.test"})
         _,state=self.run_model(user,self.agent.get_init_state(),call)
         outcome=self.environment.get_response(call.tool_calls[0])
         restored=self.agent.get_init_state([*state["messages"],MultiToolMessage(role="tool",tool_messages=[outcome])])
-        self.assertEqual(len(self.requests),1)
+        self.assertEqual(len(self.requests),2)
         self.assertEqual(restored["messages"][-1]["id"],"call-1")
         self.assertEqual(restored["messages"][-1]["content"],outcome.content)
 
@@ -162,20 +168,21 @@ class NativeAgentTests(unittest.TestCase):
             reply,state=self.agent.generate_next_message(UserMessage(role="user",content="Could we exchange my shirt?"),self.agent.get_init_state())
         payload=json.loads(outbound.getvalue().removeprefix("__TAU2_MODEL_REQUEST__"))
         self.assertEqual(reply.content,result.content)
-        self.assertEqual(len(payload["tools"]),18)
+        self.assertEqual(len(payload["tools"]),16)
         self.assertEqual(payload["kwargs"]["max_tokens"],777)
         self.assertEqual(payload["messages"][-1]["content"],"Could we exchange my shirt?")
         self.assertIn("exchange_delivered_order_items",{s["function"]["name"] for s in payload["tools"]})
+        self.assertTrue({"get_customer_context","rank_preferred","finish_response"} <=
+                        {s["function"]["name"] for s in payload["tools"]})
 
     def test_model_selected_exchange_changes_the_real_reference_backend(self):
         state=self.agent.get_init_state()
         greeting=AssistantMessage(role="assistant",content="I can help. What is your name and postal code?")
         _,state=self.run_model(UserMessage(role="user",content="I received my blue shirt. I'd like red, keeping the size."),state,greeting)
-        lookup=function_call("find_user_id_by_name_zip",dict(first_name="Casey",last_name="Morgan",zip="90210"),"identity")
+        lookup=function_call("get_customer_context",dict(first_name="Casey",last_name="Morgan",postal_code="90210",order_ids=["#D1"]),"identity")
         reply,state=self.run_model(UserMessage(role="user",content="Casey Morgan, 90210."),state,lookup)
-        next_calls=[("get_user_details",{"user_id":"casey"}),
-                    ("get_order_details",{"order_id":"#D1"}),
-                    ("get_product_details",{"product_id":"shirt"})]
+        next_calls=[("rank_preferred",{"order_id":"#D1","item_id":"old",
+                    "allowed_options":{"color":["red"]},"sort_by":[]})]
         for n,(name,args) in enumerate(next_calls):
             outcome=self.environment.get_response(reply.tool_calls[0])
             self.assertFalse(outcome.error,outcome.content)
@@ -194,9 +201,13 @@ class NativeAgentTests(unittest.TestCase):
         self.assertEqual(receipt["status"],"exchange requested")
         self.assertEqual(receipt["exchange"]["price_difference"],3.5)
         self.assertEqual(self.db.orders["#D1"].status,"exchange requested")
-        response=AssistantMessage(role="assistant",content="Your exchange was requested. This does not confirm shipment.")
-        actual,_=self.run_model(MultiToolMessage(role="tool",tool_messages=[result]),state,response)
-        self.assertIs(actual,response)
+        text="Your exchange was requested. This does not confirm shipment."
+        response=function_call("finish_response",{"message":text},"finish")
+        actual,next_state=self.run_model(MultiToolMessage(role="tool",tool_messages=[result]),state,response)
+        self.assertEqual(actual.content,text)
+        self.assertFalse(actual.tool_calls)
+        self.assertTrue(self.agent.is_stop(actual))
+        self.assertTrue(next_state["finished"])
 
 
 class RetailToolTests(unittest.TestCase):
@@ -208,7 +219,7 @@ class RetailToolTests(unittest.TestCase):
         from tau2.hyper.client_api import ClientAPIToolKitBase
         from tau2.hyper.sandbox.candidate_server import _find_subclass
         self.assertIs(_find_subclass(tools,ClientAPIToolKitBase),Tools)
-        self.assertEqual(len(self.tools.get_tools()),18)
+        self.assertEqual(len(self.tools.get_tools()),20)
         self.assertFalse(any("session_json" in t.params.model_fields for t in self.tools.get_tools().values()))
 
     def test_read_operations_and_json_scalars_use_the_real_sdk_transport(self):

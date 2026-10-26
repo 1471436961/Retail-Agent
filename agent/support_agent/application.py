@@ -5,12 +5,20 @@ from support_agent.config import policy_text
 from support_agent.state import initial_state, restored_messages, serialized_messages
 
 
+# Preserve the original SDK methods for compatibility, but offer the model one
+# contextual identity tool rather than several overlapping low-level routes.
+_IDENTITY_PRIMITIVES = {"lookup_customer", "find_user_id_by_email", "find_user_id_by_name_zip", "get_user_details"}
+
+
 class CustomerAgent:
     """Keep conversation history; let the model choose replies and tools."""
 
     def __init__(self, context):
         self.context = context
-        self.tools = context.action_interface.available
+        available = context.action_interface.available
+        self.tools = tuple(tool for tool in available if tool.name not in _IDENTITY_PRIMITIVES)
+        self._finish_action = next(tool for tool in available if tool.name == "finish_response")
+        self._finished_response = None
         self.model = context.model_gateway.available_models[0]
         self.model_args = {}
         # Fixed options belong to the platform. Only explicit choices need a
@@ -26,9 +34,16 @@ class CustomerAgent:
         self.policy = policy_text()
 
     def get_init_state(self, message_history=None):
+        self._finished_response = None
         return initial_state(message_history)
 
+    def is_stop(self, message):
+        """Honor the model's explicit finish action; never infer completion from prose."""
+        return (self._finished_response is not None and isinstance(message, AssistantMessage)
+                and not message.tool_calls and message.content == self._finished_response)
+
     def generate_next_message(self, message, state):
+        self._finished_response = None
         history = restored_messages(state)
         if isinstance(message, MultiToolMessage):
             history.extend(message.tool_messages)
@@ -45,6 +60,20 @@ class CustomerAgent:
         # Gateway exceptions remain observable; do not fabricate a business reply.
         if not isinstance(response, AssistantMessage):
             raise TypeError("The platform model gateway did not return AssistantMessage")
+        if response.tool_calls:
+            finish = [call for call in response.tool_calls if call.name == "finish_response"]
+            remaining = [call for call in response.tool_calls if call.name != "finish_response"]
+            if finish and not remaining:
+                messages = []
+                for call in finish:
+                    arguments = self._finish_action.params.model_validate(call.arguments).model_dump()
+                    messages.append(self._finish_action(**arguments)["message"])
+                response = response.model_copy(update={"content": "\n\n".join(messages), "tool_calls": None})
+                self._finished_response = response.content
+            elif finish:
+                # A completion proposed alongside real calls must wait for those
+                # results. Dispatch the calls without claiming that they succeeded.
+                response = response.model_copy(update={"tool_calls": remaining})
         if response.tool_calls and response.content:
             # A provider preamble is not a separate customer reply. Dispatch
             # the function call and wait for evidence before saying more.
@@ -53,5 +82,6 @@ class CustomerAgent:
         next_state = {**state, "turn": state.get("turn", 0) + 1,
                       "customer_id": state.get("customer_id"),
                       "pending_call_id": response.tool_calls[0].id if response.tool_calls and len(response.tool_calls) == 1 else None,
+                      "finished": self._finished_response is not None,
                       "messages": serialized_messages(history)}
         return response, next_state

@@ -43,6 +43,48 @@ class CustomerTools(_ClientAPIToolKitBase):
         return read_customer(self.client_api, customer_id)
 
     @is_tool(ToolType.READ)
+    def get_customer_context(self, email: str = "", first_name: str = "", last_name: str = "",
+                             postal_code: str = "", order_ids: list[str] | None = None) -> dict:
+        """Authenticate and load the customer plus requested owned orders in one call.
+
+        Use customer-supplied email OR full name and postal code. Returns profile,
+        payment methods and requested order details, so do not repeat those reads.
+        No database changes are made. A customer ID alone is not authentication.
+
+        Args:
+            email: Customer-supplied email, or empty when using name and postal code.
+            first_name: Customer's first name when email is unavailable.
+            last_name: Customer's last name when email is unavailable.
+            postal_code: Customer's postal code for name-based authentication.
+            order_ids: Exact order IDs the customer wants help with; omit if unknown.
+        """
+        if order_ids is not None and (not isinstance(order_ids, list) or
+                                     any(not isinstance(value, str) or not value for value in order_ids)):
+            raise ValueError("order_ids must be a list of exact order IDs")
+        if email:
+            identity = self.find_user_id_by_email(email)
+        elif first_name and last_name and postal_code:
+            identity = self.find_user_id_by_name_zip(first_name, last_name, postal_code)
+        else:
+            raise ValueError("Provide customer-supplied email OR full name and postal code")
+        customer_id = identity.get("customer_id")
+        if not isinstance(customer_id, str) or not customer_id:
+            raise ValueError("Identity search did not return a customer ID")
+        customer = self.get_user_details(customer_id)
+        if customer.get("customer_id") != customer_id:
+            raise ValueError("Customer profile does not match the identity search")
+        requested = list(dict.fromkeys(order_ids or []))
+        if not set(requested).issubset(customer["order_ids"]):
+            raise ValueError("A requested order does not belong to the authenticated customer")
+        orders = []
+        for order_id in requested:
+            order = self.get_order_details(order_id)
+            if order.get("customer_id") != customer_id:
+                raise ValueError("Order ownership does not match the authenticated customer")
+            orders.append(order)
+        return {"customer_id": customer_id, "customer": customer, "orders": orders}
+
+    @is_tool(ToolType.READ)
     def find_user_id_by_email(self, email: str) -> dict:
         """Authenticate by the customer-supplied email. Returns customer_id.
 
@@ -88,7 +130,10 @@ class CustomerTools(_ClientAPIToolKitBase):
 
     @is_tool(ToolType.READ)
     def get_product_details(self, product_id: str) -> dict:
-        """Read all variants, options, current prices and availability for a product.
+        """Inspect catalog vocabulary and product facts; does not rank replacements.
+
+        For a replacement choice, use rank_preferred with customer-derived
+        constraints/priorities before quoting or submitting the chosen variants.
 
         Args:
             product_id: Product ID from an order or catalog; not an item ID.
@@ -262,6 +307,24 @@ class CustomerTools(_ClientAPIToolKitBase):
         """
         conversation = self.client_api.context.conversation_id
         return self._request("POST", f"/v1/conversations/{quote(conversation, safe='')}/transfers", {"summary": summary})
+
+    @is_tool(ToolType.THINK)
+    def finish_response(self, message: str) -> dict:
+        """Deliver the final customer-facing response and finish the resolved conversation.
+
+        Use only after all current customer requests are resolved, the customer
+        explicitly ends the request, or a human transfer was accepted. Describe
+        actual results, not merely intended tool calls. Ordinary questions and
+        progress updates should be normal assistant replies, not this action.
+        Do not combine this action with other tools; read their results first.
+        This control action performs no business API request.
+
+        Args:
+            message: Nonempty final reply in the customer's language, grounded in actual results.
+        """
+        if not isinstance(message, str) or not message.strip():
+            raise ValueError("A final customer-facing message is required")
+        return {"message": message}
 
     @is_tool(ToolType.THINK)
     def calculate(self, expression: str) -> str:
