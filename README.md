@@ -21,7 +21,8 @@
 - [agent/agent.py](agent/agent.py)：零参数 `create_agent()` 工厂，在此获取平台上下文并返回 `CustomerAgent`。
 - [agent/tools.py](agent/tools.py)：`Tools(CustomerTools)`，作为平台工具发现入口。
 - [agent/support_agent/application.py](agent/support_agent/application.py)：平台模型调用与历史管理。用户原话直接进入模型，没有固定句式、意图正则、候选 JSON 或业务路由器。
-- [agent/support_agent/adapters/customer_tools.py](agent/support_agent/adapters/customer_tools.py)：17 个模型工具，包含原始 `lookup_customer(customer_id, email="")`，以及身份搜索、查询、地址／支付／商品修改、取消、退换货、转人工与计算。
+- [agent/support_agent/adapters/customer_tools.py](agent/support_agent/adapters/customer_tools.py)：18 个模型工具，包含原始 `lookup_customer(customer_id, email="")`，以及身份搜索、查询、偏好排序、地址／支付／商品修改、取消、退换货、转人工与计算。
+- [agent/support_agent/domain/preferences.py](agent/support_agent/domain/preferences.py)：只读 `rank_preferred` 执行器。模型从用户说明中提取硬约束和有序排序规则；工具按传入规则筛选、比较，不添加默认的价格或商品 ID 优先级。同分候选保持并列。
 - [agent/support_agent/state.py](agent/support_agent/state.py)：保留 `turn`／`pending_call_id`／`customer_id`，增加 JSON 消息历史；完整保存多工具调用与结果的 ID。
 - [agent/policy.md](agent/policy.md)：业务政策与对话要求。描述理解、跨轮信息、完整清单、条件与确认由模型负责；端点资格和数据库更新由平台后端执行。
 - [agent/agent.json](agent/agent.json)：Python／retail_plus 部署声明。
@@ -39,7 +40,7 @@ Windows PowerShell，使用已有 SDK 环境：
 
 测试拒绝网络访问。使用真实 SDK 的 `ModelGateway`、候选模型代理序列化、`ClientAPI`、`Environment` 及上游 `RetailTools`，数据由测试独立构造，模型底层响应为脚本替身。它们检查接线和工具行为，不证明实际模型理解质量、正式案例通过或零费用。
 
-当前结果见 [平台兼容修复](docs/PLATFORM-COMPATIBILITY.md)，重建历史见 [docs/RESTART.md](docs/RESTART.md)。旧 1163 方法／522 条合成断言不是这次重建的通过证据。
+当前排序工具与验证见 [偏好排序](docs/PREFERENCE-RANKING.md)，原接口修复见 [平台兼容修复](docs/PLATFORM-COMPATIBILITY.md)，重建历史见 [docs/RESTART.md](docs/RESTART.md)。旧 1163 方法／522 条合成断言不是这次重建的通过证据。
 
 ## 远程评测
 
