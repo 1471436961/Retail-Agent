@@ -10,6 +10,7 @@ from tau2.environment.toolkit import ToolType, is_tool
 from tau2.hyper.client_api import ClientAPIToolKitBase as _ClientAPIToolKitBase
 from support_agent.adapters.customer_api import request_object, read_customer, verify_and_read_customer
 from support_agent.config import DOMAIN
+from support_agent.domain.preferences import RankingCriterion, rank_variants, ranking_criteria
 
 
 def _address(address1, address2, city, state, country, zip):
@@ -102,6 +103,54 @@ class CustomerTools(_ClientAPIToolKitBase):
             item_id: Exact variant item ID from an order or product.
         """
         return self._request("GET", f"/v1/catalog/items/{quote(item_id, safe='')}")
+
+    @is_tool(ToolType.READ)
+    def rank_preferred(self, order_id: str, item_id: str, allowed_options: dict[str, list[str] | None],
+                       sort_by: list[RankingCriterion]) -> dict:
+        """Rank same-product variants using the model's interpretation of customer priorities.
+
+        Reads the order and catalog; does not modify anything. Allowed-option
+        lists are hard constraints, not priority orders. Unmentioned original
+        options stay unchanged; null explicitly removes a constraint. Sort keys
+        execute in the exact order supplied, with no implicit price or ID tie
+        breaker. Empty sort_by leaves all eligible candidates tied. The model
+        extracts priorities from ordinary customer language, including conditional
+        fallbacks, then uses actual catalog names/values in this tool.
+
+        Args:
+            order_id: Exact owned order ID, after customer authentication.
+            item_id: Original purchased item ID from that order.
+            allowed_options: Accepted values per changed option, using catalog strings;
+                null only when the customer is indifferent. Unmentioned options retain original values.
+            sort_by: Customer-derived criteria in decreasing priority. For price use
+                field='price' and an explicit direction='ascending' or 'descending'.
+                For an option use field='option', option=<catalog name>, values=<preferred
+                values in order>; unlisted values tie last. Omit unstated criteria;
+                use [] when there is no ranking preference. Never invent a priority.
+        """
+        criteria = ranking_criteria(sort_by)
+        order = self.get_order_details(order_id)
+        originals = [item for item in order["items"] if item["item_id"] == item_id]
+        if not originals:
+            raise ValueError("The original item is not present in this order")
+        original = originals[0]
+        if any(item["product_id"] != original["product_id"] or item["options"] != original["options"]
+               for item in originals):
+            raise ValueError("Repeated original item IDs have inconsistent product specifications")
+        product = self.get_product_details(original["product_id"])
+        if product["product_id"] != original["product_id"]:
+            raise ValueError("The catalog response does not match the purchased product")
+        ranking = rank_variants(original["options"], allowed_options, criteria, product["items"])
+        for candidate in ranking["ranked_candidates"]:
+            candidate["is_current_item"] = candidate["item_id"] == item_id
+        return {
+            "order_id": order_id,
+            "item_id": item_id,
+            "product_id": original["product_id"],
+            "original_options": original["options"],
+            "original_purchase_prices": [item["price"] for item in originals],
+            **ranking,
+        }
 
     @is_tool(ToolType.WRITE)
     def modify_user_address(self, user_id: str, address1: str, address2: str,

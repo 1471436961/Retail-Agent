@@ -23,7 +23,8 @@ class PackageTests(unittest.TestCase):
                           "support_agent/__init__.py","support_agent/application.py","support_agent/state.py",
                           "support_agent/config.py","support_agent/adapters/__init__.py",
                           "support_agent/adapters/customer_api.py","support_agent/adapters/customer_tools.py",
-                          "support_agent/domain/__init__.py","support_agent/domain/customer.py"})
+                          "support_agent/domain/__init__.py","support_agent/domain/customer.py",
+                          "support_agent/domain/preferences.py"})
         self.assertEqual(json.loads(next(f["content"] for f in files if f["path"]=="agent.json"))["domain"],"retail_plus")
         self.assertLess(sum(len(f["content"].encode("utf-8")) for f in files),2*1024*1024)
 
@@ -60,7 +61,7 @@ with patch('tau2.hyper.agent_context.generate',return_value=AssistantMessage(rol
     reply,state=application.generate_next_message(UserMessage(role='user',content='Please help me exchange a shirt.'),application.get_init_state())
 assert reply.content=='What is your email address?'
 assert inference.call_count==1
-assert len(inference.call_args.kwargs['tools'])==17
+assert len(inference.call_args.kwargs['tools'])==18
 import json
 json.dumps(state,allow_nan=False)
 print('ISOLATED_UPLOAD_OK network_attempts=0 real_model_calls=0')
