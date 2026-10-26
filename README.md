@@ -23,7 +23,7 @@
 - [agent/support_agent/application.py](agent/support_agent/application.py)：平台模型调用、历史管理和模型显式结束动作。用户原话直接进入模型，没有固定句式、意图正则或候选 JSON；`finish_response` 转为最终文本，并由可选的 `is_stop` 钩子结束会话。
 - [agent/support_agent/adapters/customer_tools.py](agent/support_agent/adapters/customer_tools.py)：注册 20 个 SDK 工具。模型实际看到 16 个：通过 `get_customer_context` 一次验证身份并读取客户／指定订单；原 `lookup_customer` 等四个身份查询方法保留兼容，模型使用组合入口。另有排序、业务变更、转接、计算和结束动作。
 - [agent/support_agent/domain/preferences.py](agent/support_agent/domain/preferences.py)：只读 `rank_preferred` 执行器。模型从用户说明中提取硬约束和有序排序规则；工具按传入规则筛选、比较，不添加默认的价格或商品 ID 优先级。同分候选保持并列。
-- [agent/support_agent/state.py](agent/support_agent/state.py)：保留 `turn`／`pending_call_id`／`customer_id`，增加 JSON 消息历史；完整保存多工具调用与结果的 ID。
+- [agent/support_agent/state.py](agent/support_agent/state.py)：保留 `turn`／`pending_call_id`／`customer_id`，增加 JSON 消息历史；完整保存多工具调用与结果的 ID，显式结束元数据可随 SDK 消息序列化及恢复。
 - [agent/policy.md](agent/policy.md)：业务政策与对话要求。描述理解、跨轮信息、完整清单、条件与确认由模型负责；端点资格和数据库更新由平台后端执行。
 - [agent/agent.json](agent/agent.json)：Python／retail_plus 部署声明。
 - [agent/THIRD-PARTY-NOTICES.txt](agent/THIRD-PARTY-NOTICES.txt)：开源参考及 MIT 许可。
@@ -40,7 +40,7 @@ Windows PowerShell，使用已有 SDK 环境：
 
 测试拒绝网络访问。使用真实 SDK 的 `ModelGateway`、候选模型代理序列化、`ClientAPI`、`Environment` 及上游 `RetailTools`，数据由测试独立构造，模型底层响应为脚本替身。它们检查接线和工具行为，不证明实际模型理解质量、正式案例通过或零费用。
 
-当前会话闭环修复与验证见 [会话完成](docs/AGENT-COMPLETION.md)，排序参数见 [偏好排序](docs/PREFERENCE-RANKING.md)，原接口修复见 [平台兼容修复](docs/PLATFORM-COMPATIBILITY.md)，重建历史见 [docs/RESTART.md](docs/RESTART.md)。旧 1163 方法／522 条合成断言不是这次重建的通过证据。
+会话完成实现的本地证据及后续失败见 [会话完成](docs/AGENT-COMPLETION.md)；工具回执处截断的复现与证据边界见 [会话审计](docs/TOOL-CONTINUATION-AUDIT.md)。排序参数见 [偏好排序](docs/PREFERENCE-RANKING.md)，原接口修复见 [平台兼容修复](docs/PLATFORM-COMPATIBILITY.md)，重建历史见 [docs/RESTART.md](docs/RESTART.md)。旧 1163 方法／522 条合成断言不是这次重建的通过证据。
 
 ## 远程评测
 
