@@ -13,13 +13,17 @@ ROOT=Path(__file__).resolve().parents[1]
 
 
 class PackageTests(unittest.TestCase):
-    def test_official_collector_contains_only_the_new_runtime(self):
+    def test_official_collector_contains_entry_points_and_original_package_layout(self):
         spec=importlib.util.spec_from_file_location("official_collector",ROOT/"scripts/lab_eval.py")
         collector=importlib.util.module_from_spec(spec)
         spec.loader.exec_module(collector)
         files=collector.collect(ROOT)
         self.assertEqual({f["path"] for f in files},
-                         {"agent.py","tools.py","policy.md","agent.json","THIRD-PARTY-NOTICES.txt"})
+                         {"agent.py","tools.py","policy.md","agent.json","THIRD-PARTY-NOTICES.txt",
+                          "support_agent/__init__.py","support_agent/application.py","support_agent/state.py",
+                          "support_agent/config.py","support_agent/adapters/__init__.py",
+                          "support_agent/adapters/customer_api.py","support_agent/adapters/customer_tools.py",
+                          "support_agent/domain/__init__.py","support_agent/domain/customer.py"})
         self.assertEqual(json.loads(next(f["content"] for f in files if f["path"]=="agent.json"))["domain"],"retail_plus")
         self.assertLess(sum(len(f["content"].encode("utf-8")) for f in files),2*1024*1024)
 
@@ -50,11 +54,15 @@ kit=tools.Tools(ClientAPI(lambda _: (_ for _ in ()).throw(AssertionError('Unexpe
 context=build_agent_context(domain='retail_plus',tools=list(kit.get_tools().values()),resource_root=upload,
                             model_configs=[{'model':'offline/package'}])
 with activate_agent_context(context):application=agent.create_agent()
+assert application.__class__.__module__=='support_agent.application'
+assert application.__class__.__name__=='CustomerAgent'
 with patch('tau2.hyper.agent_context.generate',return_value=AssistantMessage(role='assistant',content='What is your email address?')) as inference:
     reply,state=application.generate_next_message(UserMessage(role='user',content='Please help me exchange a shirt.'),application.get_init_state())
 assert reply.content=='What is your email address?'
 assert inference.call_count==1
-assert len(inference.call_args.kwargs['tools'])==16
+assert len(inference.call_args.kwargs['tools'])==17
+import json
+json.dumps(state,allow_nan=False)
 print('ISOLATED_UPLOAD_OK network_attempts=0 real_model_calls=0')
 '''
             env=dict(os.environ)

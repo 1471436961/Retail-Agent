@@ -30,6 +30,7 @@ from tau2.hyper.client_api.runtime import ClientAPIRuntime
 from tau2.utils.llm_utils import to_litellm_messages, validate_message_history
 from agent import create_agent
 from tools import Tools
+from platform_contract import validate_request, validate_response
 
 logger.disable("tau2.environment.environment")
 
@@ -56,8 +57,11 @@ def setup_retail():
     requests = []
 
     def transport(payload):
+        validate_request(payload)
         requests.append(payload)
-        return runtime.dispatch(payload)
+        response=runtime.dispatch(payload)
+        validate_response(payload,response)
+        return response
 
     toolkit = Tools(ClientAPI(transport, context=runtime.context))
     return db, requests, toolkit, Environment("retail_plus", "", toolkit)
@@ -91,8 +95,8 @@ class NativeAgentTests(unittest.TestCase):
         reply=AssistantMessage(role="assistant",content="Of course. What is your email or name and postal code?")
         actual,state=self.run_model(UserMessage(role="user",content=original),self.agent.get_init_state(),reply)
         self.assertIs(actual,reply)
-        self.assertEqual(state["messages"][0].content,original)
-        self.assertEqual(len(self.provider_request["tools"]),16)
+        self.assertEqual(state["messages"][0]["content"],original)
+        self.assertEqual(len(self.provider_request["tools"]),17)
         self.assertEqual(self.provider_request["model"],"offline/teacher-model")
         self.assertEqual(self.provider_request["max_tokens"],777)
         self.assertEqual(self.provider_request["temperature"],0)
@@ -129,8 +133,8 @@ class NativeAgentTests(unittest.TestCase):
         outcome=self.environment.get_response(call.tool_calls[0])
         restored=self.agent.get_init_state([*state["messages"],MultiToolMessage(role="tool",tool_messages=[outcome])])
         self.assertEqual(len(self.requests),1)
-        self.assertEqual(restored["messages"][-1].id,"call-1")
-        self.assertEqual(restored["messages"][-1].content,outcome.content)
+        self.assertEqual(restored["messages"][-1]["id"],"call-1")
+        self.assertEqual(restored["messages"][-1]["content"],outcome.content)
 
     def test_gateway_exception_is_observable_and_is_not_a_fake_business_reply(self):
         with patch("tau2.hyper.agent_context.generate",side_effect=RuntimeError("offline provider failure")):
@@ -158,7 +162,7 @@ class NativeAgentTests(unittest.TestCase):
             reply,state=self.agent.generate_next_message(UserMessage(role="user",content="Could we exchange my shirt?"),self.agent.get_init_state())
         payload=json.loads(outbound.getvalue().removeprefix("__TAU2_MODEL_REQUEST__"))
         self.assertEqual(reply.content,result.content)
-        self.assertEqual(len(payload["tools"]),16)
+        self.assertEqual(len(payload["tools"]),17)
         self.assertEqual(payload["kwargs"]["max_tokens"],777)
         self.assertEqual(payload["messages"][-1]["content"],"Could we exchange my shirt?")
         self.assertIn("exchange_delivered_order_items",{s["function"]["name"] for s in payload["tools"]})
@@ -204,7 +208,7 @@ class RetailToolTests(unittest.TestCase):
         from tau2.hyper.client_api import ClientAPIToolKitBase
         from tau2.hyper.sandbox.candidate_server import _find_subclass
         self.assertIs(_find_subclass(tools,ClientAPIToolKitBase),Tools)
-        self.assertEqual(len(self.tools.get_tools()),16)
+        self.assertEqual(len(self.tools.get_tools()),17)
         self.assertFalse(any("session_json" in t.params.model_fields for t in self.tools.get_tools().values()))
 
     def test_read_operations_and_json_scalars_use_the_real_sdk_transport(self):

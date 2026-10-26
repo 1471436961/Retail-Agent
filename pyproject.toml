@@ -9,9 +9,9 @@ description = "Tau2-style retail tool-calling agent for the Agentist classroom r
 requires-python = ">=3.12"
 dependencies = []
 
-[tool.setuptools]
-py-modules = ["agent", "tools"]
-package-dir = {"" = "agent"}
+[tool.setuptools.packages.find]
+where = ["agent"]
+include = ["support_agent*"]
 
 # Packaging metadata is for local development, not a remote install instruction.
 # tau2 is provided by the evaluation runtime, not installed by this package.
